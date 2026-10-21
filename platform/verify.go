@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"sync"
@@ -59,8 +60,41 @@ func verifyCourse(root string, c *Course, filter string) bool {
 			fmt.Println("      ", strings.ReplaceAll(p, "\n", "\n       "))
 		}
 	}
+	if problems := verifyReadme(root, c); len(problems) > 0 {
+		ok = false
+		fmt.Println("FAIL   README.md")
+		for _, p := range problems {
+			fmt.Println("      ", p)
+		}
+	} else {
+		fmt.Println("ok     README.md")
+	}
 	fmt.Printf("\n%d exercises checked\n", len(ids))
 	return ok
+}
+
+// verifyReadme keeps the README's exercise count and curriculum table in step
+// with the course, so new content can't ship with a stale README.
+func verifyReadme(root string, c *Course) []string {
+	b, err := os.ReadFile(filepath.Join(root, "README.md"))
+	if err != nil {
+		return []string{"cannot read README.md: " + err.Error()}
+	}
+	readme := string(b)
+	var problems []string
+	if want := fmt.Sprintf("%d exercises", len(c.exercises)); !strings.Contains(readme, want) {
+		problems = append(problems, fmt.Sprintf("exercise count is stale: expected %q", want))
+	}
+	rows := regexp.MustCompile(`(?m)^\|\s*(\d+) ·`).FindAllStringSubmatch(readme, -1)
+	if len(rows) != len(c.Modules) {
+		problems = append(problems, fmt.Sprintf("curriculum table has %d module rows, the course has %d modules", len(rows), len(c.Modules)))
+	}
+	for i, m := range c.Modules {
+		if !regexp.MustCompile(fmt.Sprintf(`(?m)^\|\s*%d ·`, i+1)).MatchString(readme) {
+			problems = append(problems, fmt.Sprintf("curriculum table is missing a row for %q", m.Title))
+		}
+	}
+	return problems
 }
 
 func verifyExercise(goMod string, ex *Exercise) []string {
