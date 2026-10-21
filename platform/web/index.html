@@ -1,0 +1,1518 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Learn Go</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2300ADD8'/%3E%3Ctext x='31' y='44' text-anchor='middle' font-family='Segoe UI,Helvetica,Arial,sans-serif' font-size='34' font-weight='800' font-style='italic' fill='white' letter-spacing='-1'%3EGo%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Monaco's AMD loader must load after marked/hljs, or they stop registering as globals -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+<script>
+const MONACO_BASE = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/';
+// Workers can't be loaded cross-origin directly; bootstrap them from a data: URL.
+window.MonacoEnvironment = {
+  getWorkerUrl: () => 'data:text/javascript;charset=utf-8,' + encodeURIComponent(
+    `self.MonacoEnvironment = { baseUrl: '${MONACO_BASE}' }; importScripts('${MONACO_BASE}vs/base/worker/workerMain.min.js');`)
+};
+require.config({ paths: { vs: MONACO_BASE + 'vs' } });
+const monacoReady = new Promise((resolve, reject) => require(['vs/editor/editor.main'], () => resolve(window.monaco), reject));
+</script>
+<style>
+/* --- Design tokens — GitHub Primer dark --- */
+:root {
+  --canvas: #0d1117; --canvas-subtle: #161b22; --canvas-inset: #010409; --overlay: #161b22;
+  --border: #30363d; --border-muted: #21262d;
+  --fg: #e6edf3; --fg-muted: #8b949e; --fg-subtle: #6e7681;
+  --accent: #4493f8; --accent-emph: #1f6feb; --accent-subtle: rgba(56,139,253,0.15);
+  --success: #3fb950; --success-emph: #238636; --success-hover: #2ea043; --success-subtle: rgba(46,160,67,0.15); --success-border: rgba(46,160,67,0.4);
+  --danger: #f85149; --danger-emph: #da3633; --danger-subtle: rgba(248,81,73,0.1); --danger-border: rgba(248,81,73,0.4);
+  --attention: #d29922; --attention-subtle: rgba(187,128,9,0.15); --attention-border: rgba(187,128,9,0.4);
+  --neutral-muted: rgba(110,118,129,0.4);
+  --btn-bg: #21262d; --btn-hover: #30363d; --btn-border: rgba(240,246,252,0.1);
+  --tab-underline: #f78166;
+  --thumb: #30363d; --thumb-hover: #484f58;
+  --shadow-lg: 0 8px 24px rgba(1,4,9,.75);
+  --radius: 8px;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--canvas); color: var(--fg); font: 14px/1.5 var(--sans); display: flex; flex-direction: column; overflow: hidden; -webkit-font-smoothing: antialiased; }
+button, input, select { font-family: inherit; color: inherit; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+svg.oct { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; display: inline-block; vertical-align: -3px; }
+:focus-visible { outline: 2px solid var(--accent-emph); outline-offset: 1px; border-radius: 6px; }
+.mono { font-family: var(--mono); }
+.muted { color: var(--fg-muted); }
+.small { font-size: 12px; }
+.spacer { flex: 1; }
+
+/* scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--thumb); border-radius: 10px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--thumb-hover); border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-button { display: none; height: 0; width: 0; }
+@-moz-document url-prefix() { * { scrollbar-width: thin; scrollbar-color: var(--thumb) transparent; } }
+
+/* --- Primitives: buttons, labels, kbd, boxes --- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 14px; border-radius: 6px; border: 1px solid var(--btn-border); background: var(--btn-bg); color: var(--fg); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: background .12s, border-color .12s, color .12s; text-decoration: none !important; }
+.btn:hover { background: var(--btn-hover); border-color: #8b949e; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-primary { background: var(--success-emph); color: #fff; border-color: rgba(240,246,252,.1); }
+.btn-primary:hover { background: var(--success-hover); border-color: rgba(240,246,252,.1); }
+.btn-danger { color: var(--danger); }
+.btn-danger:hover { background: var(--danger-emph); border-color: var(--danger-emph); color: #fff; }
+.btn-danger-solid { background: var(--danger-emph); color: #fff; border-color: rgba(240,246,252,.1); }
+.btn-danger-solid:hover { background: #b62324; }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--fg-muted); }
+.btn-ghost:hover { background: var(--btn-hover); border-color: transparent; color: var(--fg); }
+.btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
+.icon-btn { width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: var(--fg-muted); cursor: pointer; transition: background .12s, color .12s; }
+.icon-btn:hover { background: var(--btn-hover); color: var(--fg); }
+.icon-btn.bordered { border: 1px solid var(--border); width: 32px; height: 32px; }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.label { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 10px; font: 500 12px/1 var(--sans); border: 1px solid var(--border); border-radius: 2em; color: var(--fg-muted); white-space: nowrap; }
+.label svg.oct { width: 13px; height: 13px; vertical-align: 0; }
+.diff { font-weight: 600; }
+.diff.easy { color: var(--success); }
+.diff.medium { color: var(--attention); }
+.diff.hard { color: var(--danger); }
+.label.diff.easy { background: var(--success-subtle); border-color: transparent; }
+.label.diff.medium { background: var(--attention-subtle); border-color: transparent; }
+.label.diff.hard { background: var(--danger-subtle); border-color: transparent; }
+.label.solved { color: var(--success); border-color: var(--success-border); }
+.label.attempted { color: var(--attention); border-color: var(--attention-border); }
+kbd { display: inline-block; font: 500 10.5px/16px var(--mono); padding: 0 5px; border: 1px solid var(--border); border-bottom-color: var(--border-muted); border-radius: 5px; background: var(--canvas-subtle); box-shadow: inset 0 -1px 0 var(--border-muted); color: var(--fg); vertical-align: 1px; }
+
+.Box { border: 1px solid var(--border); border-radius: var(--radius); background: var(--canvas); margin: 16px 0; overflow: hidden; }
+.Box-header { background: var(--canvas-subtle); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.Box-header .right { margin-left: auto; font-weight: 400; color: var(--fg-muted); font-size: 12px; }
+.Box-row { padding: 12px 16px; border-top: 1px solid var(--border-muted); display: flex; align-items: center; gap: 12px; color: var(--fg); }
+.Box-row:first-child { border-top: 0; }
+a.Box-row:hover { background: var(--canvas-subtle); text-decoration: none; }
+.Box-row .grow { flex: 1; min-width: 0; }
+
+.st { display: inline-flex; color: var(--fg-subtle); }
+.st.attempted { color: var(--attention); }
+.st.passed { color: var(--success); }
+
+.bar { height: 6px; background: var(--neutral-muted); border-radius: 6px; overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--success-emph); border-radius: 6px; transition: width .4s ease; }
+
+/* --- App shell: header + sidebar --- */
+header { background: var(--canvas-inset); border-bottom: 1px solid var(--border); height: 52px; padding: 0 12px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; flex-shrink: 0; position: relative; z-index: 20; }
+.hdr-left, .hdr-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.hdr-right { justify-content: flex-end; }
+.hdr-center { display: flex; align-items: center; gap: 8px; }
+.brand { color: var(--fg); font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; margin-right: 4px; }
+.brand:hover { text-decoration: none; opacity: .85; }
+.go-mark { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 7px; border-radius: 6px; background: #00add8; color: #fff; font: italic 700 14px/1 var(--sans); letter-spacing: -.02em; }
+.hdr-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+.hdr-crumb { display: inline-flex; align-items: center; gap: 6px; color: var(--fg); font-weight: 500; font-size: 14px; min-width: 0; }
+.hdr-crumb span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hdr-progress { display: inline-flex; align-items: center; gap: 8px; color: var(--fg-muted); font-size: 12px; }
+.hdr-progress .bar { width: 120px; }
+
+.layout { flex: 1; display: flex; min-height: 0; position: relative; }
+#sidebar { width: 280px; flex-shrink: 0; border-right: 1px solid var(--border); overflow-y: auto; padding: 12px 8px 40px; background: var(--canvas); transition: margin-left .2s ease, transform .2s ease; }
+/* docked on every page; the toggle remembers its state separately for reading and exercise pages */
+body.sb-collapsed #sidebar { margin-left: -281px; }
+body.sb-instant #sidebar { transition: none; }
+.scrim { position: absolute; inset: 0; background: rgba(1,4,9,.5); z-index: 25; opacity: 0; pointer-events: none; transition: opacity .2s; }
+body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
+.mod-title { width: 100%; display: flex; align-items: center; gap: 6px; padding: 10px 8px 6px; font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--fg-muted); background: none; border: 0; cursor: pointer; text-align: left; border-radius: 6px; }
+.mod-title:hover { color: var(--fg); }
+.mod-title span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mod-title .chev { transition: transform .15s; }
+.mod-title.collapsed .chev { transform: rotate(-90deg); }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; color: var(--fg); font-size: 14px; position: relative; }
+.nav-item:hover { background: var(--btn-hover); text-decoration: none; }
+.nav-item.active { background: var(--btn-bg); font-weight: 600; }
+.nav-item.active::before { content: ""; position: absolute; left: -8px; top: 5px; bottom: 5px; width: 4px; border-radius: 6px; background: var(--accent-emph); }
+.nav-item .grow { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-item .counter { font-size: 11px; color: var(--fg-muted); background: var(--neutral-muted); border-radius: 2em; padding: 0 7px; line-height: 18px; font-weight: 500; }
+.nav-sub .nav-item { padding-left: 30px; font-size: 13px; }
+
+#main { flex: 1; overflow-y: auto; min-width: 0; }
+body.ws-mode #main { overflow: hidden; background: var(--canvas-inset); }
+.content { max-width: 1012px; margin: 0 auto; padding: 32px 32px 80px; }
+.page-title { font-size: 28px; font-weight: 600; letter-spacing: -.01em; line-height: 1.25; margin: 0 0 6px; }
+.page-sub { color: var(--fg-muted); margin: 0 0 24px; }
+
+/* --- Home / lesson / settings --- */
+.stats { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: center; padding: 20px 24px; }
+.ring { position: relative; width: 132px; height: 132px; margin: 0 auto; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring .ring-label b { font-size: 26px; font-weight: 600; line-height: 1.1; }
+.ring .ring-label span { font-size: 12px; color: var(--fg-muted); }
+.diff-rows { display: grid; gap: 14px; }
+.diff-row { display: grid; grid-template-columns: 70px 1fr 64px; align-items: center; gap: 12px; font-size: 13px; }
+.diff-row .bar { height: 8px; }
+.diff-row.easy .bar > span { background: var(--success); }
+.diff-row.medium .bar > span { background: var(--attention); }
+.diff-row.hard .bar > span { background: var(--danger); }
+.diff-row .n { text-align: right; color: var(--fg-muted); font-variant-numeric: tabular-nums; }
+.continue { display: flex; align-items: center; gap: 14px; padding: 16px 20px; }
+.continue .grow { flex: 1; min-width: 0; }
+.continue .eyebrow { font-size: 12px; color: var(--fg-muted); }
+.continue .title { font-weight: 600; font-size: 15px; }
+
+.ptable { width: 100%; border-collapse: collapse; }
+.ptable th { text-align: left; font: 500 12px var(--sans); color: var(--fg-muted); padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--canvas-subtle); }
+.ptable td { padding: 11px 16px; border-bottom: 1px solid var(--border-muted); }
+.ptable tr:last-child td { border-bottom: 0; }
+.ptable tbody tr { cursor: pointer; transition: background .1s; }
+.ptable tbody tr:hover { background: var(--canvas-subtle); }
+.ptable tbody tr:nth-child(2n) { background: rgba(22,27,34,.45); }
+.ptable tbody tr:nth-child(2n):hover { background: var(--canvas-subtle); }
+.ptable .c-status { width: 56px; }
+.ptable .c-diff { width: 110px; }
+.lesson-head { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 8px; }
+.lesson-head .grow { flex: 1; min-width: 0; }
+.lesson-progress { min-width: 180px; text-align: right; }
+.lesson-progress .bar { margin-top: 6px; }
+.section-title { font-size: 16px; font-weight: 600; margin: 32px 0 12px; display: flex; align-items: center; gap: 8px; }
+
+.setting-row { padding: 16px; border-top: 1px solid var(--border-muted); display: flex; align-items: center; gap: 16px; }
+.setting-row:first-of-type { border-top: 0; }
+.setting-row .grow { flex: 1; }
+.setting-row .desc { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+/* settings */
+/* one centred column; ~880px keeps each label close to its control on the right */
+.settings { max-width: 880px; margin: 0 auto; }
+.s-section { margin-bottom: 20px; }
+.s-section .Box { margin: 0; }
+.s-section .Box-header svg.oct { color: var(--fg-muted); vertical-align: 0; }
+.s-section .Box-header.danger-head { color: var(--danger); border-bottom-color: var(--danger-border); background: var(--danger-subtle); }
+.s-section .Box-header.danger-head svg.oct { color: var(--danger); }
+.Box-body { padding: 16px; }
+.s-section .Box-body.stat-grid { border-bottom: 1px solid var(--border-muted); }
+.s-section .Box-header + .setting-row, .s-section .Box-body + .setting-row { border-top: 0; }
+.preview { border-top: 1px solid var(--border-muted); padding: 14px 16px 16px; background: var(--canvas-inset); }
+.preview-cap { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--fg-muted); margin-bottom: 10px; }
+.preview pre { background: var(--canvas) !important; transition: font-size .15s; }
+.kbd-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 600px) { .kbd-grid, .stat-grid { grid-template-columns: 1fr; } }
+.kbd-card { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--canvas-subtle); }
+.kbd-card .keys { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.kbd-card .keys kbd { font-size: 12px; line-height: 22px; padding: 0 8px; }
+.kbd-card .plus { color: var(--fg-subtle); font-size: 12px; margin: 0 2px; }
+.kbd-card .t { font-weight: 600; font-size: 14px; }
+.kbd-card .d { color: var(--fg-muted); font-size: 12px; margin-top: 2px; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--canvas-subtle); }
+.stat b { display: block; font-size: 26px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--fg-muted); }.data-ic { width: 32px; height: 32px; border-radius: 8px; background: var(--btn-bg); display: inline-flex; align-items: center; justify-content: center; color: var(--fg-muted); flex-shrink: 0; }
+.data-ic svg.oct { vertical-align: 0; }
+.path-pill { font: 12px var(--mono); color: var(--fg-muted); background: var(--canvas-subtle); border: 1px solid var(--border-muted); border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
+.switch { width: 36px; height: 20px; border-radius: 20px; border: 1px solid var(--border); background: var(--btn-bg); position: relative; cursor: pointer; padding: 0; transition: background .15s, border-color .15s; flex-shrink: 0; }
+.switch span { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--fg-muted); transition: transform .15s, background .15s; }
+.switch[aria-checked="true"] { background: var(--success-emph); border-color: var(--success-emph); }
+.switch[aria-checked="true"] span { transform: translateX(16px); background: #fff; }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.stepper button { width: 32px; height: 30px; border: 0; background: var(--btn-bg); cursor: pointer; font-size: 16px; }
+.stepper button:hover { background: var(--btn-hover); }
+.stepper span { width: 44px; text-align: center; font: 500 13px var(--mono); }
+
+/* --- Markdown (GitHub markdown-body) --- */
+.markdown-body { font-size: 15px; line-height: 1.6; word-wrap: break-word; }
+.markdown-body > :first-child { margin-top: 0 !important; }
+.markdown-body.hide-h1 > h1:first-child { display: none; }
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 { margin: 28px 0 14px; font-weight: 600; line-height: 1.25; }
+.markdown-body h1 { font-size: 1.9em; padding-bottom: .3em; border-bottom: 1px solid var(--border-muted); }
+.markdown-body h2 { font-size: 1.4em; padding-bottom: .3em; border-bottom: 1px solid var(--border-muted); }
+.markdown-body h3 { font-size: 1.15em; }
+.markdown-body p, .markdown-body ul, .markdown-body ol, .markdown-body table, .markdown-body pre, .markdown-body blockquote { margin: 0 0 16px; }
+.markdown-body ul, .markdown-body ol { padding-left: 1.6em; }
+.markdown-body li + li { margin-top: .3em; }
+.markdown-body code { font-family: var(--mono); font-size: 85%; padding: .15em .4em; background: var(--neutral-muted); border-radius: 5px; white-space: break-spaces; }
+.markdown-body pre { background: var(--canvas-subtle); border: 1px solid var(--border-muted); border-radius: var(--radius); padding: 14px 16px; overflow: auto; font-size: 85%; line-height: 1.5; position: relative; }
+.markdown-body pre code, .markdown-body pre code.hljs { background: transparent; padding: 0; font-size: 100%; white-space: pre; border-radius: 0; }
+.markdown-body table { border-collapse: collapse; display: block; width: max-content; max-width: 100%; overflow: auto; font-size: 14px; }
+.markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 7px 13px; }
+.markdown-body th { font-weight: 600; background: var(--canvas-subtle); text-align: left; }
+.markdown-body tr:nth-child(2n) td { background: rgba(22,27,34,.6); }
+.markdown-body blockquote { padding: 10px 16px; color: var(--fg); border-left: 3px solid var(--accent-emph); background: var(--accent-subtle); border-radius: 0 6px 6px 0; }
+.markdown-body blockquote > :last-child { margin-bottom: 0; }
+.markdown-body hr { height: 1px; padding: 0; margin: 24px 0; background: var(--border); border: 0; }
+.markdown-body strong { font-weight: 600; }
+.hljs { background: transparent !important; }
+.code-wrap { position: relative; }
+.copy-btn { position: absolute; top: 8px; right: 8px; opacity: 0; transition: opacity .15s; background: var(--btn-bg); border: 1px solid var(--border); }
+.code-wrap:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
+
+/* --- Workspace (exercise page) — LeetCode-style panels --- */
+.ws { height: 100%; padding: 8px; display: grid; grid-template-columns: var(--left, 44%) 8px minmax(0, 1fr); min-height: 0; }
+.ws-col { display: grid; grid-template-rows: minmax(0, 1fr) 8px var(--console, 34%); min-height: 0; min-width: 0; }
+.panel { background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+.panel-head { display: flex; align-items: center; gap: 2px; height: 40px; padding: 0 6px; background: var(--canvas-subtle); border-bottom: 1px solid var(--border-muted); flex-shrink: 0; user-select: none; }
+.ptab { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; color: var(--fg-muted); font: 500 13px var(--sans); cursor: pointer; white-space: nowrap; transition: color .12s, background .12s; }
+.ptab:hover { color: var(--fg); background: var(--btn-hover); }
+.ptab.active { color: var(--fg); }
+.ptab.active svg.oct { color: var(--tab-underline); }
+.ptab .count { font-size: 11px; color: var(--fg-muted); background: var(--neutral-muted); border-radius: 2em; padding: 0 6px; line-height: 16px; }
+.ptab-sep { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
+.panel-head .tools { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.panel-body { flex: 1; min-height: 0; overflow: auto; }
+.panel-pad { padding: 20px 24px 32px; }
+.panel-foot { display: flex; align-items: center; gap: 12px; height: 30px; padding: 0 12px; border-top: 1px solid var(--border-muted); background: var(--canvas-subtle); font-size: 12px; color: var(--fg-muted); flex-shrink: 0; }
+.gutter-v { cursor: col-resize; display: flex; align-items: center; justify-content: center; }
+.gutter-h { cursor: row-resize; display: flex; align-items: center; justify-content: center; }
+.gutter-v::after { content: ""; width: 2px; height: 32px; border-radius: 2px; background: var(--border); transition: background .12s, height .12s; }
+.gutter-h::after { content: ""; height: 2px; width: 32px; border-radius: 2px; background: var(--border); transition: background .12s, width .12s; }
+.gutter-v:hover::after, .gutter-v.dragging::after { background: var(--accent-emph); height: 100%; }
+.gutter-h:hover::after, .gutter-h.dragging::after { background: var(--accent-emph); width: 100%; }
+body.resizing { user-select: none; }
+body.resizing #editor { pointer-events: none; }
+/* maximized panel: hidden siblings free their grid cells, so the visible one gets a single 1fr track */
+.ws.max-desc, .ws.max-code, .ws.max-result { grid-template-columns: minmax(0, 1fr); }
+.ws.max-desc .ws-col, .ws.max-desc .gutter-v { display: none; }
+.ws.max-code > .panel, .ws.max-result > .panel, .ws.max-code .gutter-v, .ws.max-result .gutter-v { display: none; }
+.ws.max-code .ws-col, .ws.max-result .ws-col { grid-template-rows: minmax(0, 1fr); }
+.ws.max-code .gutter-h, .ws.max-code #result-panel { display: none; }
+.ws.max-result .gutter-h, .ws.max-result #code-panel { display: none; }
+.ws.console-min .ws-col { grid-template-rows: minmax(0, 1fr) 8px 41px; }
+
+/* description */
+.q-title { font-size: 22px; font-weight: 600; letter-spacing: -.01em; margin: 0 0 12px; line-height: 1.3; }
+.q-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.acc { border: 1px solid var(--border-muted); border-radius: var(--radius); overflow: hidden; margin-top: 28px; }
+.acc-item + .acc-item { border-top: 1px solid var(--border-muted); }
+.acc-head { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: transparent; border: 0; cursor: pointer; font: 500 14px var(--sans); text-align: left; color: var(--fg); transition: background .12s; }
+.acc-head:hover:not(:disabled) { background: var(--canvas-subtle); }
+.acc-head:disabled { cursor: not-allowed; color: var(--fg-subtle); }
+.acc-head .ic { color: var(--attention); display: inline-flex; }
+.acc-item.locked .acc-head .ic { color: var(--fg-subtle); }
+.acc-head .hint-note { margin-left: auto; font-size: 12px; color: var(--fg-muted); font-weight: 400; display: inline-flex; align-items: center; gap: 6px; }
+.acc-head .chev { transition: transform .15s; color: var(--fg-muted); }
+.acc-item.open .acc-head .chev { transform: rotate(180deg); }
+.acc-body { display: none; padding: 2px 14px 14px 40px; }
+.acc-item.open .acc-body { display: block; animation: fadeIn .18s ease; }
+.acc-body .markdown-body { font-size: 14px; }
+.acc-body .markdown-body p:last-child { margin-bottom: 0; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; padding: 48px 24px; color: var(--fg-muted); }
+.empty .big { width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--canvas-subtle); border: 1px solid var(--border); color: var(--fg-muted); }
+.empty .big svg.oct { width: 22px; height: 22px; vertical-align: 0; }
+.empty h3 { margin: 4px 0 0; color: var(--fg); font-size: 16px; font-weight: 600; }
+.empty p { margin: 0; max-width: 360px; font-size: 13px; }
+.file-cap { display: flex; align-items: center; gap: 6px; font: 500 12px var(--mono); color: var(--fg-muted); margin: 0 0 8px; }
+.info-note { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; margin-bottom: 16px; border-radius: 6px; background: var(--accent-subtle); color: var(--fg); font-size: 13px; }
+.info-note svg.oct { color: var(--accent); margin-top: 2px; }
+
+/* code editor */
+#editor { flex: 1; min-height: 0; background: var(--canvas); }
+.editor-loading { height: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--fg-muted); }
+.lang-pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 6px; font: 500 12px var(--sans); color: var(--fg-muted); background: var(--btn-bg); }
+#save-state { display: inline-flex; align-items: center; gap: 7px; }
+.save-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); display: inline-block; }
+.save-dot.dirty { background: var(--attention); }
+.save-dot.saving { background: var(--accent); animation: pulse 1s ease infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+.ptab .dirty { width: 7px; height: 7px; border-radius: 50%; background: var(--fg-muted); display: none; }
+.ptab.is-dirty .dirty { display: inline-block; }
+
+/* results */
+.verdict { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.verdict .v-title { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+.verdict.ok .v-title { color: var(--success); }
+.verdict.bad .v-title { color: var(--danger); }
+.verdict.warn .v-title { color: var(--attention); }
+.verdict .v-sub { color: var(--fg-muted); font-size: 13px; }
+.success-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--radius); background: var(--success-subtle); border: 1px solid var(--success-border); margin-bottom: 16px; }
+.success-card .ic { width: 36px; height: 36px; border-radius: 50%; background: var(--success-emph); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.success-card .ic svg.oct { vertical-align: 0; }
+.success-card .grow { flex: 1; min-width: 0; }
+.success-card .t { font-weight: 600; }
+.success-card .s { font-size: 12px; color: var(--fg-muted); }
+.cases { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.case { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; border-radius: 6px; border: 1px solid transparent; background: var(--btn-bg); color: var(--fg-muted); font: 500 13px var(--sans); cursor: pointer; transition: background .12s, color .12s; }
+.case:hover { color: var(--fg); background: var(--btn-hover); }
+.case.active { color: var(--fg); background: var(--btn-hover); border-color: var(--border); }
+.case .dotc { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+.case.fail .dotc { background: var(--danger); }
+.kv { margin: 0 0 12px; }
+.kv .k { font-size: 12px; font-weight: 500; color: var(--fg-muted); margin-bottom: 6px; }
+.kv .v { font: 13px/1.55 var(--mono); background: var(--canvas-subtle); border: 1px solid var(--border-muted); border-radius: var(--radius); padding: 10px 12px; white-space: pre-wrap; word-break: break-word; }
+.kv .v.got { border-color: var(--danger-border); }
+.kv .v.want { border-color: var(--success-border); }
+.kv .v.empty-val { color: var(--fg-subtle); font-style: italic; }
+.check-label { font-size: 12px; color: var(--fg-muted); margin: 14px 0 8px; display: flex; align-items: center; gap: 8px; }
+.check-label::after { content: ""; flex: 1; height: 1px; background: var(--border-muted); }
+.berrs { border: 1px solid var(--danger-border); border-radius: var(--radius); overflow: hidden; background: var(--danger-subtle); }
+.berr { display: flex; gap: 12px; align-items: baseline; padding: 9px 12px; cursor: pointer; font: 13px/1.5 var(--mono); border-top: 1px solid var(--danger-border); transition: background .1s; }
+.berr:first-child { border-top: 0; }
+.berr:hover { background: rgba(248,81,73,.16); }
+.berr .loc { color: var(--accent); white-space: nowrap; }
+.berr .msg { color: var(--fg); }
+.hint-line { font-size: 12px; color: var(--fg-muted); margin: 0 0 10px; }
+.raw-cmd { font: 12px var(--mono); color: var(--fg-muted); padding: 10px 14px; border-bottom: 1px solid var(--border-muted); white-space: nowrap; overflow-x: auto; }
+.raw-cmd::before { content: "$ "; color: var(--fg-subtle); }
+.raw pre { margin: 0; padding: 12px 14px; font: 12px/1.65 var(--mono); white-space: pre-wrap; word-break: break-word; }
+.l-pass { color: var(--success); } .l-fail { color: var(--danger); } .l-dim { color: var(--fg-subtle); }
+.running { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 40px; color: var(--fg-muted); }
+
+/* --- Overlays: modal + toast --- */
+.modal-scrim { position: fixed; inset: 0; background: rgba(1,4,9,.6); display: flex; align-items: center; justify-content: center; z-index: 100; animation: fadeIn .12s ease; padding: 16px; }
+.modal { width: 100%; max-width: 440px; background: var(--overlay); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); overflow: hidden; }
+.modal-head { display: flex; align-items: center; gap: 10px; padding: 16px 16px 0; font-weight: 600; font-size: 16px; }
+.modal-head .ic { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--btn-bg); flex-shrink: 0; }
+.modal-head .ic.danger { background: var(--danger-subtle); color: var(--danger); }
+.modal-head .ic svg.oct { vertical-align: 0; }
+.modal-body { padding: 10px 16px 16px 58px; color: var(--fg-muted); font-size: 14px; }
+.modal-body input { width: 100%; margin-top: 12px; height: 34px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--canvas); font: 14px var(--mono); }
+.modal-body input:focus { outline: none; border-color: var(--accent-emph); box-shadow: 0 0 0 3px var(--accent-subtle); }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border-muted); background: var(--canvas); }
+#toasts { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 110; pointer-events: none; }
+.toast { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; background: var(--overlay); border: 1px solid var(--border); box-shadow: var(--shadow-lg); font-size: 13px; animation: toastIn .18s ease; pointer-events: auto; }
+.toast.ok svg.oct { color: var(--success); } .toast.err svg.oct { color: var(--danger); } .toast.info svg.oct { color: var(--accent); }
+.toast.out { opacity: 0; transform: translateY(6px); transition: all .2s ease; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* --- Responsive --- */
+@media (max-width: 1100px) {
+  body.ws-mode #main { overflow-y: auto; }
+  .ws { display: flex; flex-direction: column; height: auto; gap: 8px; }
+  .ws-col { display: flex; flex-direction: column; gap: 8px; }
+  .gutter-v, .gutter-h { display: none !important; }
+  .ws > .panel { max-height: none; }
+  #code-panel { height: 520px; }
+  #result-panel { min-height: 260px; }
+  .panel-body { overflow: visible; }
+  .tools [data-max] { display: none; }
+}
+@media (max-width: 860px) {
+  #sidebar { position: absolute; top: 0; bottom: 0; left: 0; z-index: 30; transform: translateX(-100%); margin-left: 0 !important; }
+  body.drawer-open #sidebar { transform: none; box-shadow: var(--shadow-lg); }
+  .hdr-progress, .brand-text { display: none; }
+  .content { padding: 20px 16px 60px; }
+  .stats { grid-template-columns: 1fr; }
+  .hide-sm { display: none !important; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hdr-left">
+    <button class="icon-btn" id="sb-toggle" title="Toggle sidebar" aria-label="Toggle sidebar">
+      <svg class="oct" viewBox="0 0 16 16"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"/></svg>
+    </button>
+    <a class="brand" href="/"><span class="go-mark">Go</span><span class="brand-text">Learn Go</span></a>
+    <div id="hdr-left-extra" style="display:contents"></div>
+  </div>
+  <div class="hdr-center" id="hdr-center"></div>
+  <div class="hdr-right">
+    <div class="hdr-progress" id="progress"></div>
+    <a class="icon-btn" href="/settings" title="Settings" aria-label="Settings" id="settings-link"></a>
+  </div>
+</header>
+<div class="layout">
+  <nav id="sidebar"></nav>
+  <div class="scrim" id="scrim"></div>
+  <main id="main"><div class="content" id="view"></div></main>
+</div>
+<div id="toasts"></div>
+
+<script>
+// --- Utilities ---
+const $ = id => document.getElementById(id);
+const $view = $('view'), $main = $('main'), $side = $('sidebar');
+let course = [];
+
+// Octicons (MIT, github.com/primer/octicons)
+const P = {
+  circle: 'M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z',
+  dot: 'M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z',
+  checkCircle: 'M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-.018-1.042.751.751 0 0 0-1.042-.018L6.75 9.19 5.28 7.72a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042l2 2a.75.75 0 0 0 1.06 0Z',
+  check: 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z',
+  xCircle: 'M2.343 13.657A8 8 0 1 1 13.658 2.343 8 8 0 0 1 2.343 13.657ZM6.03 4.97a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042L6.94 8 4.97 9.97a.749.749 0 0 0 .326 1.275.749.749 0 0 0 .734-.215L8 9.06l1.97 1.97a.749.749 0 0 0 1.275-.326.749.749 0 0 0-.215-.734L9.06 8l1.97-1.97a.749.749 0 0 0-.326-1.275.749.749 0 0 0-.734.215L8 6.94Z',
+  book: 'M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z',
+  file: 'M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z',
+  play: 'M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z',
+  light: 'M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z',
+  lock: 'M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z',
+  unlock: 'M5.5 4v2h7.75c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 13.25 15h-10.5A1.75 1.75 0 0 1 1 13.25v-5.5C1 6.784 1.784 6 2.75 6H4V4a4 4 0 0 1 7.875-1 .75.75 0 0 1-1.45.388A2.5 2.5 0 0 0 5.5 4Zm-2.75 3.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25Z',
+  code: 'm11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8l-3.72-3.72a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z',
+  history: 'm.427 1.927 1.215 1.215a8.002 8.002 0 1 1-1.6 5.685.75.75 0 1 1 1.493-.154 6.5 6.5 0 1 0 1.18-4.458l1.358 1.358A.25.25 0 0 1 3.896 6H.25A.25.25 0 0 1 0 5.75V2.104a.25.25 0 0 1 .427-.177ZM7.75 4a.75.75 0 0 1 .75.75v2.992l2.028.812a.75.75 0 0 1-.557 1.392l-2.5-1A.751.751 0 0 1 7 8.25v-3.5A.75.75 0 0 1 7.75 4Z',
+  chevDown: 'M12.78 5.22a.749.749 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.06 0L3.22 6.28a.749.749 0 1 1 1.06-1.06L8 8.939l3.72-3.719a.749.749 0 0 1 1.06 0Z',
+  chevLeft: 'M9.78 12.78a.75.75 0 0 1-1.06 0L4.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L6.06 8l3.72 3.72a.75.75 0 0 1 0 1.06Z',
+  chevRight: 'M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z',
+  terminal: 'M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM7.25 8a.749.749 0 0 1-.22.53l-2.25 2.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L5.44 8 3.72 6.28a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l2.25 2.25c.141.14.22.331.22.53Zm1.5 1.5h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5Z',
+  beaker: 'M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.746.746 0 0 1 9.5 6Z',
+  screenFull: 'M1.75 10a.75.75 0 0 1 .75.75v2.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 1 13.25v-2.5a.75.75 0 0 1 .75-.75Zm12.5 0a.75.75 0 0 1 .75.75v2.5A1.75 1.75 0 0 1 13.25 15h-2.5a.75.75 0 0 1 0-1.5h2.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 .75-.75ZM2.75 2.5a.25.25 0 0 0-.25.25v2.5a.75.75 0 0 1-1.5 0v-2.5C1 1.784 1.784 1 2.75 1h2.5a.75.75 0 0 1 0 1.5ZM10 1.75a.75.75 0 0 1 .75-.75h2.5c.966 0 1.75.784 1.75 1.75v2.5a.75.75 0 0 1-1.5 0v-2.5a.25.25 0 0 0-.25-.25h-2.5a.75.75 0 0 1-.75-.75Z',
+  screenNormal: 'M10.75 1a.75.75 0 0 1 .75.75v2.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 10 4.25v-2.5a.75.75 0 0 1 .75-.75Zm-5.5 0a.75.75 0 0 1 .75.75v2.5A1.75 1.75 0 0 1 4.25 6h-2.5a.75.75 0 0 1 0-1.5h2.5a.25.25 0 0 0 .25-.25v-2.5A.75.75 0 0 1 5.25 1ZM1 10.75a.75.75 0 0 1 .75-.75h2.5c.966 0 1.75.784 1.75 1.75v2.5a.75.75 0 0 1-1.5 0v-2.5a.25.25 0 0 0-.25-.25h-2.5a.75.75 0 0 1-.75-.75Zm9 1c0-.966.784-1.75 1.75-1.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v2.5a.75.75 0 0 1-1.5 0Z',
+  copy: 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z',
+  paintbrush: 'M11.134 1.535c.7-.509 1.416-.942 2.076-1.155.649-.21 1.463-.267 2.069.34.603.601.568 1.411.368 2.07-.202.668-.624 1.39-1.125 2.096-1.011 1.424-2.496 2.987-3.775 4.249-1.098 1.084-2.132 1.839-3.04 2.3a3.744 3.744 0 0 1-1.055 3.217c-.431.431-1.034.607-1.554.705-.546.103-1.124.137-1.641.137-.493 0-.983-.033-1.393-.076-.3-.032-.594-.077-.874-.142C.97 15.172.5 14.91.5 14.25c0-.284.152-.523.357-.75.174-.193.417-.373.636-.536l.074-.054c.408-.304.848-.646 1.14-1.155.144-.255.251-.555.312-.932a3.745 3.745 0 0 1 3.217-3.254c.457-.907 1.208-1.938 2.282-3.024 1.318-1.335 2.92-2.787 4.616-4.01Z M6.003 9.24c-.71.05-1.413.36-1.928.875-.502.502-.62 1.14-.728 1.734-.062.338-.12.665-.243.957-.244.578-.665 1.002-1.141 1.369.237.03.49.054.75.07.76.044 1.596.011 2.214-.175.39-.117.72-.29.95-.52.58-.581.86-1.404.79-2.21Z',
+  info: 'M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z',
+  alert: 'M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z',
+  gear: 'M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.038.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.102-.302c-.067-.019-.177-.011-.3.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.211.224l-.29 1.106c-.168.646-.715 1.196-1.458 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.064-1.289-.614-1.458-1.26l-.289-1.106c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.05-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.038-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.102.302c.067.019.177.011.3-.071.214-.143.437-.272.668-.386.133-.066.194-.158.211-.224l.29-1.106C6.009.645 6.556.095 7.299.03 7.53.01 7.764 0 8 0Zm-.571 1.525c-.036.003-.108.036-.137.146l-.289 1.105c-.147.561-.549.967-.998 1.189-.173.086-.34.183-.5.29-.417.278-.97.423-1.529.27l-1.103-.303c-.109-.03-.175.016-.195.045-.22.312-.412.644-.573.99-.014.031-.021.11.059.19l.815.806c.411.406.562.957.53 1.456a4.709 4.709 0 0 0 0 .582c.032.499-.119 1.05-.53 1.456l-.815.806c-.081.08-.073.159-.059.19.162.346.353.677.573.989.02.03.085.076.195.046l1.102-.303c.56-.153 1.113-.008 1.53.27.161.107.328.204.501.29.447.222.85.629.997 1.189l.289 1.105c.029.109.101.143.137.146a6.6 6.6 0 0 0 1.142 0c.036-.003.108-.036.137-.146l.289-1.105c.147-.561.549-.967.998-1.189.173-.086.34-.183.5-.29.417-.278.97-.423 1.529-.27l1.103.303c.109.029.175-.016.195-.045.22-.313.411-.644.573-.99.014-.031.021-.11-.059-.19l-.815-.806c-.411-.406-.562-.957-.53-1.456a4.709 4.709 0 0 0 0-.582c-.032-.499.119-1.05.53-1.456l.815-.806c.081-.08.073-.159.059-.19a6.464 6.464 0 0 0-.573-.989c-.02-.03-.085-.076-.195-.046l-1.102.303c-.56.153-1.113.008-1.53-.27a4.44 4.44 0 0 0-.501-.29c-.447-.222-.85-.629-.997-1.189l-.289-1.105c-.029-.11-.101-.143-.137-.146a6.6 6.6 0 0 0-1.142 0ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9.5 8a1.5 1.5 0 1 0-3.001.001A1.5 1.5 0 0 0 9.5 8Z',
+  trophy: 'M3.217 6.962A3.75 3.75 0 0 1 0 3.25v-.5C0 1.784.784 1 1.75 1h1.356c.228-.585.796-1 1.462-1h6.864c.647 0 1.227.397 1.462 1h1.356c.966 0 1.75.784 1.75 1.75v.5a3.75 3.75 0 0 1-3.217 3.712 5.014 5.014 0 0 1-2.771 3.117l.144 1.446c.005.05.03.12.114.204.086.087.217.17.373.227.283.103.512.287.633.55.148.32.199.69.199 1.044a1.25 1.25 0 0 1-1.25 1.25h-4.5A1.25 1.25 0 0 1 3.5 14.5c0-.354.05-.724.2-1.044.12-.263.35-.447.632-.55.156-.057.287-.14.373-.227.084-.084.109-.154.114-.204l.144-1.446a5.014 5.014 0 0 1-2.77-3.117ZM4.5 1.568V5.5a3.5 3.5 0 1 0 7 0V1.568a.068.068 0 0 0-.068-.068H4.568a.068.068 0 0 0-.068.068Zm2.957 8.902-.12 1.204c-.093.925-.873 1.578-1.551 1.85a.346.346 0 0 0-.035.143c0 .04.01.073.026.1.007.012.02.02.034.02h4.378c.014 0 .027-.008.034-.02a.193.193 0 0 0 .026-.1.346.346 0 0 0-.035-.143c-.678-.272-1.458-.925-1.551-1.85l-.12-1.204a5.009 5.009 0 0 1-1.086 0ZM1.75 2.5a.25.25 0 0 0-.25.25v.5c0 .892.524 1.662 1.28 2.016A5.007 5.007 0 0 1 3 4.26V2.5Zm10.75 1.76c0 .323-.032.637-.093.94.734-.358 1.093-1.101 1.093-1.95v-.5a.25.25 0 0 0-.25-.25H12.5Z',
+  list: 'M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z',
+};
+const icon = (name, cls = '') => `<svg class="oct ${cls}" viewBox="0 0 16 16" aria-hidden="true"><path d="${P[name]}"/></svg>`;
+const statusIcon = s => s === 'passed' ? `<span class="st passed" title="Solved">${icon('checkCircle')}</span>`
+  : s === 'attempted' ? `<span class="st attempted" title="Attempted">${icon('dot')}</span>` : `<span class="st" title="Not started">${icon('circle')}</span>`;
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : '';
+const diffLabel = d => `<span class="label diff ${d}">${cap(d)}</span>`;
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+const enc = id => id.split('/').map(encodeURIComponent).join('/');
+const allExercises = () => course.flatMap(m => m.lessons.flatMap(l => l.exercises || []));
+
+// Browser-only conveniences in one versioned object; code and progress live in workspace/.
+const PREFS_KEY = 'learngo.prefs';
+const PREFS_VERSION = 1;
+const PREFS_DEFAULTS = {
+  version: PREFS_VERSION,
+  editor: { fontSize: 14, ligatures: true },
+  layout: {
+    sidebar: { reading: 'open', exercise: 'collapsed' },
+    collapsedModules: [],
+    workspace: { leftPanel: null, consoleHeight: null, consoleCollapsed: false }, // null = default size
+  },
+  session: { lastExercise: null },
+};
+const prefs = (() => {
+  const clone = o => JSON.parse(JSON.stringify(o));
+  // merge keeps the defaults' shape: unknown keys are dropped, missing ones filled in
+  const merge = (def, val) => {
+    if (def === null || typeof def !== 'object' || Array.isArray(def)) return val === undefined ? def : val;
+    const out = {};
+    for (const k of Object.keys(def)) out[k] = merge(def[k], val == null ? undefined : val[k]);
+    return out;
+  };
+  // migrateLegacy converts the old flat "learngo.<key>" strings (pre-v1) and deletes them.
+  const migrateLegacy = () => {
+    let ls; try { ls = localStorage; } catch { return {}; }
+    const g = k => ls.getItem('learngo.' + k);
+    const num = s => s == null || s === '' || isNaN(+s) ? undefined : +s;
+    const flag = (s, yes) => s == null ? undefined : s === yes;
+    let mods; try { mods = JSON.parse(g('collapsedModules')); } catch { }
+    const old = {
+      editor: { fontSize: num(g('fontSize')), ligatures: g('ligatures') == null ? undefined : g('ligatures') !== '0' },
+      layout: {
+        sidebar: {
+          reading: g('sidebarCollapsed') == null ? undefined : g('sidebarCollapsed') === '1' ? 'collapsed' : 'open',
+          exercise: g('sidebarCollapsedWs') == null ? undefined : g('sidebarCollapsedWs') === '0' ? 'open' : 'collapsed',
+        },
+        collapsedModules: Array.isArray(mods) ? mods : undefined,
+        workspace: { leftPanel: num(g('splitLeft')), consoleHeight: num(g('consoleHeight')), consoleCollapsed: flag(g('consoleMin'), '1') },
+      },
+      session: { lastExercise: g('lastExercise') || undefined },
+    };
+    for (let i = ls.length - 1; i >= 0; i--) {
+      const k = ls.key(i);
+      if (k && k.startsWith('learngo.') && k !== PREFS_KEY) ls.removeItem(k);
+    }
+    return old;
+  };
+  let data;
+  try { data = JSON.parse(localStorage.getItem(PREFS_KEY)); } catch { }
+  data = merge(clone(PREFS_DEFAULTS), data || migrateLegacy());
+  data.version = PREFS_VERSION;
+  const save = () => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(data)); } catch { /* storage blocked: keep in memory */ } };
+  save();
+  const parent = (path, create) => {
+    const keys = path.split('.'), last = keys.pop();
+    let o = data;
+    for (const k of keys) { if (o[k] == null) { if (!create) return [undefined, last]; o[k] = {}; } o = o[k]; }
+    return [o, last];
+  };
+  return {
+    get(path) { const [o, k] = parent(path, false); return o === undefined ? undefined : o[k]; },
+    set(path, value) { const [o, k] = parent(path, true); o[k] = value; save(); },
+    reset(path) { const def = path.split('.').reduce((o, k) => o?.[k], PREFS_DEFAULTS); this.set(path, def === undefined ? undefined : clone(def)); },
+  };
+})();
+
+async function api(path, method = 'GET', body) {
+  const opts = { method };
+  if (body !== undefined) { opts.body = JSON.stringify(body); opts.headers = { 'Content-Type': 'application/json' }; }
+  const r = await fetch(path, opts);
+  if (!r.ok) throw new Error((await r.text()).trim() || r.statusText);
+  return r.json();
+}
+
+marked.use({ gfm: true });
+// highlight.js's Go grammar predates Go 1.18/1.21; add the newer built-ins and types.
+(() => {
+  const go = hljs.getLanguage('go');
+  if (!go || !go.keywords) return;
+  const add = (cls, words) => {
+    const cur = go.keywords[cls];
+    go.keywords[cls] = Array.isArray(cur) ? [...cur, ...words] : (cur ? cur + ' ' : '') + words.join(' ');
+  };
+  add('built_in', ['min', 'max', 'clear']);
+  add('type', ['any', 'comparable']);
+})();
+// bash marks words like `test`/`env` in `go test` as shell built-ins; for our
+// command snippets, colour only the command at the start of a line and comments.
+hljs.registerLanguage('sh', () => ({
+  name: 'Shell', aliases: ['shell', 'bash', 'console'],
+  contains: [hljs.HASH_COMMENT_MODE, hljs.QUOTE_STRING_MODE, { className: 'built_in', begin: /^\s*(?:\$\s+)?[A-Za-z][\w.-]*/m }],
+}));
+function md(text, cls = '') {
+  const div = document.createElement('div');
+  div.className = 'markdown-body ' + cls;
+  div.innerHTML = marked.parse(text || '');
+  div.querySelectorAll('pre code').forEach(el => {
+    if (!/language-/.test(el.className)) el.classList.add('language-plaintext');
+    hljs.highlightElement(el);
+  });
+  return div;
+}
+function codeBlock(code, lang = 'go') {
+  const wrap = document.createElement('div');
+  wrap.className = 'code-wrap';
+  const m = md('```' + lang + '\n' + code.replace(/\n$/, '') + '\n```');
+  wrap.appendChild(m);
+  const b = document.createElement('button');
+  b.className = 'icon-btn copy-btn'; b.title = 'Copy'; b.innerHTML = icon('copy');
+  b.onclick = async () => {
+    try { await navigator.clipboard.writeText(code); b.innerHTML = icon('check'); toast('Copied to clipboard', 'ok'); setTimeout(() => b.innerHTML = icon('copy'), 1400); }
+    catch { toast('Copy failed', 'err'); }
+  };
+  wrap.appendChild(b);
+  return wrap;
+}
+
+// --- toasts & modals ---
+function toast(msg, kind = 'info', ms = 2200) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + kind;
+  t.innerHTML = icon(kind === 'ok' ? 'checkCircle' : kind === 'err' ? 'xCircle' : 'info') + `<span>${esc(msg)}</span>`;
+  $('toasts').appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 220); }, ms);
+}
+// modal resolves true when confirmed; typeToConfirm requires typing that word first.
+function modal({ title, body, confirm = 'Confirm', cancel = 'Cancel', danger = false, typeToConfirm = '' }) {
+  return new Promise(resolve => {
+    const scrim = document.createElement('div');
+    scrim.className = 'modal-scrim';
+    scrim.innerHTML = `<div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head"><span class="ic ${danger ? 'danger' : ''}">${icon(danger ? 'alert' : 'info')}</span>${esc(title)}</div>
+      <div class="modal-body">${body}${typeToConfirm ? `<div style="margin-top:12px">Type <b class="mono" style="color:var(--fg)">${esc(typeToConfirm)}</b> to confirm.</div><input id="m-input" autocomplete="off" spellcheck="false">` : ''}</div>
+      <div class="modal-foot"><button class="btn" id="m-cancel">${esc(cancel)}</button><button class="btn ${danger ? 'btn-danger-solid' : 'btn-primary'}" id="m-ok">${esc(confirm)}</button></div></div>`;
+    document.body.appendChild(scrim);
+    const ok = scrim.querySelector('#m-ok'), input = scrim.querySelector('#m-input');
+    const done = v => { scrim.remove(); document.removeEventListener('keydown', onKey, true); resolve(v); };
+    const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); done(false); } if (e.key === 'Enter' && !ok.disabled) { e.preventDefault(); done(true); } };
+    if (input) { ok.disabled = true; input.oninput = () => ok.disabled = input.value !== typeToConfirm; setTimeout(() => input.focus(), 0); } else setTimeout(() => ok.focus(), 0);
+    scrim.addEventListener('mousedown', e => { if (e.target === scrim) done(false); });
+    scrim.querySelector('#m-cancel').onclick = () => done(false);
+    ok.onclick = () => done(true);
+    document.addEventListener('keydown', onKey, true);
+  });
+}
+
+// --- Shell: header + sidebar ---
+$('settings-link').innerHTML = icon('gear');
+const isNarrow = () => matchMedia('(max-width: 860px)').matches;
+// Two remembered states: reading pages (open by default) and exercise pages
+// (collapsed by default, so the editor gets the space).
+const onExercisePage = () => decodeURIComponent(location.pathname).startsWith('/exercise/') || location.hash.startsWith('#/exercise/');
+const sbKey = () => onExercisePage() ? 'layout.sidebar.exercise' : 'layout.sidebar.reading';
+const sbCollapsedPref = () => prefs.get(sbKey()) === 'collapsed';
+// no slide animation when the state changes because of navigation
+function applySidebar() {
+  document.body.classList.add('sb-instant');
+  document.body.classList.toggle('sb-collapsed', sbCollapsedPref());
+  requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('sb-instant')));
+}
+applySidebar();
+function toggleSidebar() {
+  if (isNarrow()) { document.body.classList.toggle('drawer-open'); return; } // small screens: overlay drawer
+  prefs.set(sbKey(), document.body.classList.toggle('sb-collapsed') ? 'collapsed' : 'open');
+}
+$('sb-toggle').onclick = toggleSidebar;
+$('scrim').onclick = () => document.body.classList.remove('drawer-open');
+
+async function loadCourse() {
+  course = await api('/api/course') || [];
+  renderShell();
+}
+function renderShell() {
+  const exs = allExercises();
+  const done = exs.filter(e => e.status === 'passed').length;
+  $('progress').innerHTML = `<span title="Exercises solved">${done} / ${exs.length} solved</span><div class="bar"><span style="width:${exs.length ? 100 * done / exs.length : 0}%"></span></div>`;
+
+  const route = currentPath();
+  const collapsedMods = new Set(prefs.get('layout.collapsedModules'));
+  let html = '';
+  for (const m of course) {
+    const here = m.lessons.some(l => route === '/lesson/' + l.id || route.startsWith('/exercise/' + l.id + '/'));
+    const collapsed = collapsedMods.has(m.id) && !here;
+    html += `<button class="mod-title ${collapsed ? 'collapsed' : ''}" data-mod="${esc(m.id)}" title="${esc(m.title)}">${icon('chevDown', 'chev')}<span>${esc(m.short || m.title)}</span></button>`;
+    if (collapsed) continue;
+    m.lessons.forEach((l, li) => {
+      const lex = l.exercises || [];
+      const passed = lex.filter(e => e.status === 'passed').length;
+      const complete = lex.length && passed === lex.length;
+      const active = route === '/lesson/' + l.id;
+      const open = active || route.startsWith('/exercise/' + l.id + '/');
+      html += `<a class="nav-item ${active ? 'active' : ''}" href="/lesson/${enc(l.id)}" title="${esc(l.title)}">
+        <span class="st ${complete ? 'passed' : ''}">${icon(complete ? 'checkCircle' : 'book')}</span>
+        <span class="grow">${li + 1}. ${esc(l.short || l.title)}</span><span class="counter">${passed}/${lex.length}</span></a>`;
+      if (open) html += '<div class="nav-sub">' + lex.map((e, ei) =>
+        `<a class="nav-item ${route === '/exercise/' + e.id ? 'active' : ''}" href="/exercise/${enc(e.id)}" title="${esc(e.title)}">${statusIcon(e.status)}<span class="grow">${ei + 1}. ${esc(e.title)}</span></a>`).join('') + '</div>';
+    });
+  }
+  $side.innerHTML = html;
+  $side.querySelectorAll('.mod-title').forEach(b => b.onclick = () => {
+    const set = new Set(prefs.get('layout.collapsedModules'));
+    set.has(b.dataset.mod) ? set.delete(b.dataset.mod) : set.add(b.dataset.mod);
+    prefs.set('layout.collapsedModules', [...set]);
+    renderShell();
+  });
+}
+
+// --- Home ---
+function ringSVG(pct) {
+  const r = 58, c = 2 * Math.PI * r;
+  return `<svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${r}" fill="none" stroke="var(--neutral-muted)" stroke-width="8"/>
+    <circle cx="66" cy="66" r="${r}" fill="none" stroke="var(--success)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - pct)}" style="transition:stroke-dashoffset .6s ease"/></svg>`;
+}
+function viewHome() {
+  const exs = allExercises();
+  const done = exs.filter(e => e.status === 'passed').length;
+  const by = d => { const xs = exs.filter(e => e.difficulty === d); return [xs.filter(e => e.status === 'passed').length, xs.length]; };
+  const last = exs.find(e => e.id === prefs.get('session.lastExercise'));
+  const target = last && last.status !== 'passed' ? last : exs.find(e => e.status !== 'passed');
+  let html = `<h1 class="page-title">Welcome back</h1><p class="page-sub">Pick up where you left off, or jump into any module.</p>`;
+  if (target) {
+    const lesson = course.flatMap(m => m.lessons).find(l => (l.exercises || []).some(e => e.id === target.id));
+    html += `<div class="Box"><div class="continue">${statusIcon(target.status)}
+      <div class="grow"><div class="eyebrow">${target === last ? 'Continue' : 'Up next'} · ${esc(lesson ? lesson.short || lesson.title : '')}</div><div class="title">${esc(target.title)}</div></div>
+      ${diffLabel(target.difficulty)}<a class="btn btn-primary" href="/exercise/${enc(target.id)}">${icon('play')} ${target === last ? 'Continue' : 'Start'}</a></div></div>`;
+  }
+  html += `<div class="Box"><div class="stats">
+      <div class="ring">${ringSVG(exs.length ? done / exs.length : 0)}<div class="ring-label"><b>${done}</b><span>of ${exs.length} solved</span></div></div>
+      <div class="diff-rows">${['easy', 'medium', 'hard'].map(d => { const [a, b] = by(d); return `<div class="diff-row ${d}"><span class="diff ${d}">${cap(d)}</span><div class="bar"><span style="width:${b ? 100 * a / b : 0}%"></span></div><span class="n">${a} / ${b}</span></div>`; }).join('')}</div>
+    </div></div>`;
+  html += `<div class="section-title">${icon('book')} Modules</div><div class="Box" style="margin-top:0">`;
+  for (const m of course) {
+    const mex = m.lessons.flatMap(l => l.exercises || []);
+    const md_ = mex.filter(e => e.status === 'passed').length;
+    html += `<a class="Box-row" href="/lesson/${enc(m.lessons[0]?.id || '')}" title="${esc(m.summary || '')}">
+      <span class="grow"><b>${esc(m.title)}</b><div class="muted small" style="margin-top:2px">${esc(m.summary || '')}</div></span>
+      <span class="bar hide-sm" style="width:140px"><span style="width:${mex.length ? 100 * md_ / mex.length : 0}%"></span></span>
+      <span class="muted small" style="width:56px;text-align:right;font-variant-numeric:tabular-nums">${md_}/${mex.length}</span></a>`;
+  }
+  $view.innerHTML = html + '</div>';
+}
+
+// --- Lesson ---
+async function viewLesson(id) {
+  const { lesson, markdown } = await api('/api/lesson/' + enc(id));
+  const mod = course.find(m => m.lessons.some(l => l.id === id));
+  const exs = lesson.exercises || [];
+  const passed = exs.filter(e => e.status === 'passed').length;
+  $view.innerHTML = `<div class="lesson-head"><div class="grow"><div class="muted small" style="margin-bottom:6px">${esc(mod ? mod.title : '')}</div>
+      <h1 class="page-title">${esc(lesson.title)}</h1></div>
+      <div class="lesson-progress"><span class="muted small">${passed} of ${exs.length} solved</span><div class="bar"><span style="width:${exs.length ? 100 * passed / exs.length : 0}%"></span></div></div></div>`;
+  $view.appendChild(md(markdown, 'hide-h1'));
+  if (!exs.length) return;
+  const box = document.createElement('div');
+  box.innerHTML = `<div class="section-title" id="problems">${icon('code')} Problems <span class="muted small" style="font-weight:400">${exs.length}</span>
+      <span class="spacer"></span><a class="btn btn-primary btn-sm" href="/exercise/${enc((exs.find(e => e.status !== 'passed') || exs[0]).id)}">${icon('play')} ${passed ? 'Continue' : 'Start'}</a></div>
+    <div class="Box" style="margin-top:0"><table class="ptable"><thead><tr><th class="c-status">Status</th><th>Title</th><th class="c-diff">Difficulty</th></tr></thead><tbody>` +
+    exs.map((e, i) => `<tr data-id="${esc(e.id)}"><td class="c-status">${statusIcon(e.status)}</td><td>${i + 1}. ${esc(e.title)}</td><td class="c-diff"><span class="diff ${e.difficulty}">${cap(e.difficulty)}</span></td></tr>`).join('') +
+    `</tbody></table></div>`;
+  $view.appendChild(box);
+  box.querySelectorAll('tbody tr').forEach(tr => tr.onclick = () => navigate('/exercise/' + enc(tr.dataset.id)));
+}
+
+// --- Settings ---
+const SETTINGS_SAMPLE = `// Clamp limits x to the range [lo, hi].
+func Clamp(x, lo, hi int) int {
+	if x <= lo {
+		return lo
+	}
+	res := min(x, hi)
+	if res != x && hi >= 0 {
+		return res
+	}
+	return x
+}`;
+
+function viewSettings() {
+  const size = prefs.get('editor.fontSize');
+  const lig = prefs.get('editor.ligatures');
+  const exs = allExercises();
+  const solved = exs.filter(e => e.status === 'passed').length;
+  const attempted = exs.filter(e => e.status === 'attempted').length;
+  const sw = (id, on, label) => `<button class="switch" id="${id}" role="switch" aria-checked="${on}" aria-label="${label}"><span></span></button>`;
+  const keys = k => k.map(x => `<kbd>${x}</kbd>`).join('<span class="plus">+</span>');
+  const shortcut = (k, t, d) => `<div class="kbd-card"><div class="keys">${k}</div><div><div class="t">${t}</div><div class="d">${d}</div></div></div>`;
+
+  const head = (ic, title, note, cls = '') => `<div class="Box-header ${cls}">${icon(ic)}${title}${note ? `<span class="right">${note}</span>` : ''}</div>`;
+  $view.innerHTML = `<div class="settings">
+      <h1 class="page-title" style="margin-bottom:24px">Settings</h1>
+      <div class="settings-main">
+        <section class="s-section" id="s-editor">
+          <div class="Box">
+            ${head('code', 'Editor', 'Applies when you open an exercise')}
+            <div class="setting-row"><div class="grow"><b>Font size</b><div class="desc">Also <kbd>Ctrl</kbd> <kbd>=</kbd> / <kbd>Ctrl</kbd> <kbd>-</kbd> while typing.</div></div>
+              <div class="stepper"><button id="fs-dec" aria-label="Smaller">−</button><span id="fs-val">${size}px</span><button id="fs-inc" aria-label="Bigger">+</button></div></div>
+            <div class="setting-row"><div class="grow"><b>Font ligatures</b><div class="desc">Draw <span class="mono" style="font-variant-ligatures:none">:= != &lt;= &gt;=</span> as single symbols.</div></div>
+              ${sw('lig-toggle', lig, 'Font ligatures')}</div>
+            <div class="preview"><div class="preview-cap"><span>Preview</span><span class="lang-pill">Go</span></div><div id="preview"></div></div>
+          </div>
+        </section>
+
+        <section class="s-section" id="s-shortcuts">
+          <div class="Box">
+          ${head('terminal', 'Keyboard shortcuts', 'On every exercise page')}
+          <div class="kbd-grid Box-body">
+            ${shortcut(keys(['Ctrl', 'Enter']), 'Run tests', 'Saves, then runs go test')}
+            ${shortcut(keys(['Ctrl', 'S']), 'Format &amp; save', 'Runs gofmt on your code')}
+            ${shortcut(keys(['Ctrl', '=']) + '<span class="plus">/</span><kbd>-</kbd>', 'Font size', 'Bigger / smaller editor text')}
+            ${shortcut(keys(['Esc']), 'Close', 'Dialogs and the problem list')}
+          </div>
+          </div>
+        </section>
+
+        <section class="s-section" id="s-layout">
+          <div class="Box">
+            ${head('screenFull', 'Layout')}
+            <div class="setting-row"><div class="grow"><b>Sidebar on reading pages</b><div class="desc">Home, lessons and settings. Toggle any time with ${icon('list')}.</div></div>
+              ${sw('sb-read-set', prefs.get('layout.sidebar.reading') === 'open', 'Show sidebar on reading pages')}</div>
+            <div class="setting-row"><div class="grow"><b>Sidebar on exercise pages</b><div class="desc">Off by default so the editor gets the full width.</div></div>
+              ${sw('sb-ws-set', prefs.get('layout.sidebar.exercise') === 'open', 'Show sidebar on exercise pages')}</div>
+            <div class="setting-row"><div class="grow"><b>Panel sizes</b><div class="desc">Restore the default split between task, editor and results.</div></div>
+              <button class="btn btn-sm" id="reset-layout">${icon('history')}Reset layout</button></div>
+            <div class="setting-row"><div class="grow"><b>Sidebar modules</b><div class="desc">Expand every module you have collapsed in the sidebar.</div></div>
+              <button class="btn btn-sm" id="expand-mods">${icon('chevDown')}Expand all</button></div>
+          </div>
+        </section>
+
+        <section class="s-section" id="s-data">
+          <div class="Box">
+          ${head('file', 'Your data', 'Stored on your machine')}
+          <div class="stat-grid Box-body">
+            ${(() => {
+              // Solved + Attempted + Not started always add up to Total.
+              const total = exs.length, notStarted = total - solved - attempted;
+              const stat = (n, label, color) => `<div class="stat"><b style="color:${color}">${n}</b><span>${label}</span></div>`;
+              return stat(total, 'Total', 'var(--fg)')
+                + stat(solved, 'Solved', 'var(--success)')
+                + stat(attempted, 'Attempted', 'var(--attention)')
+                + stat(notStarted, 'Not started', 'var(--fg-muted)');
+            })()}
+          </div>
+            <div class="setting-row"><span class="data-ic">${icon('code')}</span><div class="grow"><b>Your code</b><div class="desc">One folder per exercise, ignored by git.</div></div><span class="path-pill">workspace/course/</span></div>
+            <div class="setting-row"><span class="data-ic">${icon('checkCircle')}</span><div class="grow"><b>Progress</b><div class="desc">Solved exercises, revealed hints, unlocked solutions.</div></div><span class="path-pill">workspace/progress.json</span></div>
+            <div class="setting-row"><span class="data-ic">${icon('gear')}</span><div class="grow"><b>Preferences</b><div class="desc">Font, layout and the last exercise you opened.</div></div><span class="path-pill">this browser</span></div>
+          </div>
+        </section>
+
+        <section class="s-section" id="s-danger">
+          <div class="Box" style="border-color:var(--danger-border)">
+            ${head('alert', 'Danger zone', 'Cannot be undone', 'danger-head')}
+            <div class="setting-row"><div class="grow"><b>Reset progress</b><div class="desc">Forget solved exercises, revealed hints and unlocked solutions. Your code stays.</div></div>
+              <button class="btn btn-danger btn-sm" id="reset-progress">Reset progress</button></div>
+            <div class="setting-row"><div class="grow"><b>Reset everything</b><div class="desc">Reset progress <b>and</b> restore every exercise to its starter code.</div></div>
+              <button class="btn btn-danger btn-sm" id="reset-all">Reset everything</button></div>
+          </div>
+        </section>
+      </div>
+    </div>`;
+
+  const renderPreview = () => {
+    const p = $('preview'); p.innerHTML = '';
+    const m = md('```go\n' + SETTINGS_SAMPLE + '\n```');
+    const pre = m.querySelector('pre');
+    pre.style.fontSize = prefs.get('editor.fontSize') + 'px';
+    pre.style.fontVariantLigatures = prefs.get('editor.ligatures') ? 'normal' : 'none';
+    pre.style.margin = '0';
+    p.appendChild(m);
+  };
+  renderPreview();
+  const setSize = d => { const s = Math.min(24, Math.max(10, prefs.get('editor.fontSize') + d)); prefs.set('editor.fontSize', s); $('fs-val').textContent = s + 'px'; renderPreview(); };
+  $('fs-dec').onclick = () => setSize(-1);
+  $('fs-inc').onclick = () => setSize(1);
+  const toggle = (el, fn) => el.onclick = () => { const on = el.getAttribute('aria-checked') !== 'true'; el.setAttribute('aria-checked', on); fn(on); };
+  toggle($('lig-toggle'), on => { prefs.set('editor.ligatures', on); renderPreview(); });
+  toggle($('sb-read-set'), on => { prefs.set('layout.sidebar.reading', on ? 'open' : 'collapsed'); document.body.classList.toggle('sb-collapsed', !on); });
+  toggle($('sb-ws-set'), on => prefs.set('layout.sidebar.exercise', on ? 'open' : 'collapsed'));
+  $('reset-layout').onclick = () => { prefs.reset('layout.workspace'); toast('Panel sizes restored', 'ok'); };
+  $('expand-mods').onclick = () => { prefs.reset('layout.collapsedModules'); renderShell(); toast('All modules expanded', 'ok'); };
+  const resetAll = async code => {
+    const ok = await modal(code
+      ? { title: 'Reset everything?', body: 'This deletes <b>all your solutions</b> and all progress. Every exercise goes back to its starter code. This cannot be undone.', confirm: 'Reset everything', danger: true, typeToConfirm: 'RESET ALL' }
+      : { title: 'Reset progress?', body: 'Solved exercises, revealed hints and unlocked solutions will be forgotten. Your code is kept.', confirm: 'Reset progress', danger: true, typeToConfirm: 'RESET' });
+    if (!ok) return;
+    try {
+      await api('/api/reset-all', 'POST', { code });
+      prefs.reset('session.lastExercise');
+      await loadCourse();
+      toast(code ? 'Everything was reset' : 'Progress was reset', 'ok');
+      navigate('/');
+    } catch (e) { toast(e.message, 'err', 4000); }
+  };
+  $('reset-progress').onclick = () => resetAll(false);
+  $('reset-all').onclick = () => resetAll(true);
+}
+
+// --- Exercise workspace ---
+// cur holds the open exercise: its detail, the Monaco editor and one model per file.
+let cur = null;
+let themeDefined = false;
+
+function defineTheme(monaco) {
+  if (themeDefined) return;
+  themeDefined = true;
+  // Monokai syntax colours on the app's dark background
+  monaco.editor.defineTheme('monokai', {
+    base: 'vs-dark', inherit: true,
+    rules: [
+      { token: '', foreground: 'f8f8f2' },
+      { token: 'keyword', foreground: 'f92672' },
+      { token: 'string', foreground: 'e6db74' },
+      { token: 'string.escape', foreground: 'ae81ff' },
+      { token: 'number', foreground: 'ae81ff' },
+      { token: 'comment', foreground: '75715e', fontStyle: 'italic' },
+      { token: 'type', foreground: '66d9ef', fontStyle: 'italic' },
+      { token: 'identifier', foreground: 'f8f8f2' },
+      { token: 'delimiter', foreground: 'f8f8f2' },
+      { token: 'operator', foreground: 'f92672' },
+      { token: 'predefined', foreground: '66d9ef' },
+      { token: 'function', foreground: 'a6e22e' },
+    ],
+    colors: {
+      'editor.background': '#0d1117', 'editor.foreground': '#f8f8f2',
+      'editorLineNumber.foreground': '#484f58', 'editorLineNumber.activeForeground': '#c9d1d9',
+      'editor.lineHighlightBackground': '#161b22', 'editor.lineHighlightBorder': '#00000000',
+      'editorCursor.foreground': '#f8f8f0', 'editor.selectionBackground': '#3a3d41',
+      'editor.selectionHighlightBackground': '#3a3d4180', 'editor.wordHighlightBackground': '#30363d80',
+      'editorWhitespace.foreground': '#30363d',
+      'editorIndentGuide.background1': '#21262d', 'editorIndentGuide.activeBackground1': '#30363d',
+      'editorBracketMatch.background': '#30363d', 'editorBracketMatch.border': '#6e7681',
+      'editorWidget.background': '#161b22', 'editorWidget.border': '#30363d',
+      'editorSuggestWidget.background': '#161b22', 'editorSuggestWidget.border': '#30363d', 'editorSuggestWidget.selectedBackground': '#21262d',
+      'editorHoverWidget.background': '#161b22', 'editorHoverWidget.border': '#30363d',
+      'editorGutter.background': '#0d1117', 'scrollbar.shadow': '#00000000',
+      'scrollbarSlider.background': '#30363d99', 'scrollbarSlider.hoverBackground': '#484f58cc', 'scrollbarSlider.activeBackground': '#6e7681cc',
+      'editorOverviewRuler.border': '#00000000', 'editorError.foreground': '#f85149',
+    },
+  });
+}
+
+// Monaco's Go grammar colours all identifiers alike; add function and built-in
+// type tokens so the editor matches the highlighted code in the description.
+let goPatched = false;
+async function patchGoTokens(monaco) {
+  if (goPatched) return;
+  goPatched = true;
+  const go = monaco.languages.getLanguages().find(l => l.id === 'go');
+  if (!go || !go.loader) return;
+  const { language } = await go.loader();
+  const lang = { ...language, tokenizer: { ...language.tokenizer } };
+  lang.goTypes = ['bool', 'byte', 'complex64', 'complex128', 'error', 'float32', 'float64', 'int', 'int8', 'int16', 'int32', 'int64',
+    'rune', 'string', 'uint', 'uint8', 'uint16', 'uint32', 'uint64', 'uintptr', 'any', 'comparable'];
+  lang.tokenizer.root = [
+    [/[a-zA-Z_]\w*(?=\s*\()/, { cases: { '@goTypes': 'type', '@keywords': 'keyword', '@default': 'function' } }],
+    [/[a-zA-Z_]\w*/, { cases: { '@goTypes': 'type', '@keywords': 'keyword', '@default': 'identifier' } }],
+    ...language.tokenizer.root,
+  ];
+  monaco.languages.setMonarchTokensProvider('go', lang);
+}
+
+const isDirty = name => !!(cur && cur.models[name] && cur.models[name].getValue() !== cur.saved[name]);
+const anyDirty = () => !!cur && Object.keys(cur.models).some(isDirty);
+
+function setSaveState(state) { // 'saved' | 'dirty' | 'saving' | 'error'
+  const el = $('save-state'); if (!el) return;
+  const text = { saved: 'Saved', dirty: 'Unsaved changes', saving: 'Saving…', error: 'Save failed' }[state];
+  el.innerHTML = `<span class="save-dot ${state === 'saved' ? '' : state === 'saving' ? 'saving' : 'dirty'}"></span>${text}`;
+}
+function updateDirtyUI() {
+  if (!cur) return;
+  document.querySelectorAll('#code-tabs .ptab[data-file]').forEach(t => t.classList.toggle('is-dirty', isDirty(t.dataset.file)));
+  if (!cur.saving) setSaveState(anyDirty() ? 'dirty' : 'saved');
+}
+
+// replaceContent swaps a model's text while keeping undo history and the cursor.
+function replaceContent(model, text) {
+  if (model.getValue() === text) return;
+  const pos = cur.editor && cur.editor.getModel() === model ? cur.editor.getPosition() : null;
+  model.pushEditOperations([], [{ range: model.getFullModelRange(), text }], () => null);
+  if (pos) cur.editor.setPosition(pos);
+}
+
+// format=true runs gofmt (Ctrl+S, before tests); autosave skips it so code doesn't jump while typing.
+async function save(format) {
+  if (!cur || !cur.editor) return null;
+  const mine = cur;
+  clearTimeout(mine.autosaveTimer);
+  const files = {};
+  for (const [name, m] of Object.entries(mine.models)) files[name] = m.getValue();
+  mine.saving = true; setSaveState('saving');
+  try {
+    const { exercise, formatErrors } = await api('/api/save/' + enc(mine.ex.id), 'POST', { files, format });
+    if (cur !== mine) return exercise;
+    for (const f of exercise.files) {
+      if (cur.models[f.name] && cur.models[f.name].getValue() === files[f.name]) {
+        cur.saved[f.name] = f.content;
+        if (format) replaceContent(cur.models[f.name], f.content);
+      }
+    }
+    if (format) setMarkers('gofmt', parseFormatErrors(formatErrors || {}));
+    return exercise;
+  } catch (e) {
+    setSaveState('error'); toast('Save failed: ' + e.message, 'err', 4000);
+    throw e;
+  } finally {
+    mine.saving = false;
+    updateDirtyUI();
+  }
+}
+function scheduleAutosave() {
+  if (!cur) return;
+  updateDirtyUI();
+  clearTimeout(cur.autosaveTimer);
+  cur.autosaveTimer = setTimeout(() => save(false).catch(() => {}), 900);
+}
+async function formatNow() {
+  try {
+    await save(true);
+    const errs = cur && window.monaco ? Object.values(cur.models).flatMap(m => monaco.editor.getModelMarkers({ resource: m.uri, owner: 'gofmt' })) : [];
+    toast(errs.length ? 'Saved — fix the syntax error to format' : 'Formatted & saved', errs.length ? 'err' : 'ok');
+  } catch { }
+}
+
+// closeExercise disposes the editor; unsaved edits are saved first.
+function closeExercise() {
+  if (!cur) return;
+  const old = cur;
+  clearTimeout(old.autosaveTimer);
+  if (anyDirty()) {
+    const files = {};
+    for (const [name, m] of Object.entries(old.models)) files[name] = m.getValue();
+    fetch('/api/save/' + enc(old.ex.id), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ files, format: false }), keepalive: true });
+  }
+  if (old.editor) old.editor.dispose();
+  Object.values(old.models).forEach(m => m.dispose());
+  cur = null;
+}
+
+// --- diagnostics ---
+function parseFormatErrors(errs) {
+  const out = [];
+  for (const [file, msg] of Object.entries(errs)) for (const line of msg.split('\n')) {
+    const m = /^(\d+):(\d+): (.*)$/.exec(line.trim());
+    if (m) out.push({ file, line: +m[1], col: +m[2], msg: m[3] });
+  }
+  return out;
+}
+function diagnosticsFromResult(r) {
+  if (!r || !r.report) return [];
+  return (r.report.buildErrors || []).map(e => ({ file: e.file, line: e.line, col: e.col, msg: e.message }));
+}
+function setMarkers(owner, diags) {
+  if (!cur || !window.monaco) return;
+  for (const [name, model] of Object.entries(cur.models)) {
+    monaco.editor.setModelMarkers(model, owner, diags.filter(d => d.file === name).map(d => ({
+      startLineNumber: d.line, startColumn: d.col, endLineNumber: d.line,
+      endColumn: model.getLineMaxColumn(Math.min(d.line, model.getLineCount())),
+      message: d.msg, severity: monaco.MarkerSeverity.Error,
+    })));
+  }
+}
+
+// --- layout ---
+async function viewExercise(id) {
+  const ex = await api('/api/exercise/' + enc(id));
+  prefs.set('session.lastExercise', id);
+  cur = { ex, editor: null, models: {}, saved: {}, active: ex.files[0]?.name, result: ex.lastResult || null,
+          viewStates: {}, leftTab: 'desc', bottomTab: 'result', openHints: new Set(), max: '' };
+  document.body.classList.add('ws-mode');
+  $view.className = 'ws';
+  renderHeaderControls();
+  renderWorkspace();
+  await mountEditor();
+}
+
+function renderHeaderControls() {
+  const ex = cur.ex;
+  $('hdr-left-extra').innerHTML = `<span class="hdr-sep hide-sm"></span>
+    <a class="hdr-crumb hide-sm" href="/lesson/${enc(ex.lessonId)}" title="${esc(ex.lessonTitle)}">${icon('list')}<span>${esc(ex.lessonShort || ex.lessonTitle)}</span></a>
+    <a class="icon-btn ${ex.prev ? '' : 'disabled'}" ${ex.prev ? `href="/exercise/${enc(ex.prev)}"` : 'aria-disabled="true" style="opacity:.35;pointer-events:none"'} title="Previous problem">${icon('chevLeft')}</a>
+    <a class="icon-btn" ${ex.next ? `href="/exercise/${enc(ex.next)}"` : 'aria-disabled="true" style="opacity:.35;pointer-events:none"'} title="Next problem">${icon('chevRight')}</a>`;
+  $('hdr-center').innerHTML = `<button class="btn btn-primary" id="run" title="Run tests (Ctrl+Enter)">${icon('play')}<span>Run tests</span></button>`;
+  $('run').onclick = runTests;
+}
+
+function renderWorkspace() {
+  const ex = cur.ex;
+  $view.innerHTML = `
+    <section class="panel" id="desc-panel">
+      <div class="panel-head" id="left-tabs"></div>
+      <div class="panel-body" id="left-body"></div>
+    </section>
+    <div class="gutter-v" id="gut-v" title="Drag to resize"></div>
+    <div class="ws-col">
+      <section class="panel" id="code-panel">
+        <div class="panel-head" id="code-tabs"></div>
+        <div id="editor"><div class="editor-loading"><span class="spinner"></span>Loading editor…</div></div>
+        <div class="panel-foot"><span id="save-state"></span><span class="spacer"></span><span id="cursor-pos"></span><span class="hide-sm"><kbd>Ctrl</kbd> <kbd>S</kbd> format</span></div>
+      </section>
+      <div class="gutter-h" id="gut-h" title="Drag to resize"></div>
+      <section class="panel" id="result-panel">
+        <div class="panel-head" id="bottom-tabs"></div>
+        <div class="panel-body" id="bottom-body"></div>
+      </section>
+    </div>`;
+  applyLayout();
+  renderLeftTabs(); renderLeft();
+  renderCodeTabs();
+  renderBottomTabs(); renderBottom();
+  setSaveState('saved');
+  setupGutters();
+}
+
+function applyLayout() {
+  const ws = $view;
+  const left = prefs.get('layout.workspace.leftPanel'); if (left) ws.style.setProperty('--left', left + '%');
+  const ch = prefs.get('layout.workspace.consoleHeight'); if (ch) ws.style.setProperty('--console', ch + 'px');
+  ws.classList.toggle('console-min', prefs.get('layout.workspace.consoleCollapsed') && !cur.max);
+  ws.classList.remove('max-desc', 'max-code', 'max-result');
+  if (cur.max) ws.classList.add('max-' + cur.max);
+}
+function toggleMax(which) {
+  cur.max = cur.max === which ? '' : which;
+  applyLayout();
+  renderLeftTabs(); renderCodeTabs(); renderBottomTabs();
+}
+const maxBtn = which => `<button class="icon-btn" data-max="${which}" title="${cur.max === which ? 'Restore' : 'Maximize'}">${icon(cur.max === which ? 'screenNormal' : 'screenFull')}</button>`;
+function bindMax(root) { root.querySelectorAll('[data-max]').forEach(b => b.onclick = () => toggleMax(b.dataset.max)); }
+
+function setupGutters() {
+  const ws = $view;
+  const drag = (el, onMove, onEnd) => el.addEventListener('pointerdown', e => {
+    e.preventDefault(); el.setPointerCapture(e.pointerId);
+    el.classList.add('dragging'); document.body.classList.add('resizing');
+    const move = ev => onMove(ev);
+    const up = () => { el.classList.remove('dragging'); document.body.classList.remove('resizing'); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); onEnd(); };
+    el.addEventListener('pointermove', move); el.addEventListener('pointerup', up);
+  });
+  let pct = prefs.get('layout.workspace.leftPanel') || 44;
+  drag($('gut-v'), ev => {
+    const r = ws.getBoundingClientRect();
+    pct = Math.min(70, Math.max(24, (ev.clientX - r.left) / r.width * 100));
+    ws.style.setProperty('--left', pct + '%');
+  }, () => prefs.set('layout.workspace.leftPanel', +pct.toFixed(1)));
+  let h = prefs.get('layout.workspace.consoleHeight') || 0;
+  drag($('gut-h'), ev => {
+    const col = $('gut-h').parentElement.getBoundingClientRect();
+    h = Math.min(col.height - 160, Math.max(90, col.bottom - ev.clientY));
+    ws.classList.remove('console-min'); prefs.set('layout.workspace.consoleCollapsed', false);
+    ws.style.setProperty('--console', h + 'px');
+  }, () => h && prefs.set('layout.workspace.consoleHeight', Math.round(h)));
+}
+
+// --- left panel: Description / Solution / Tests ---
+function renderLeftTabs() {
+  const ex = cur.ex;
+  const tabs = [['desc', 'book', 'Description'], ['solution', ex.solution ? 'unlock' : 'lock', 'Solution'], ['tests', 'beaker', 'Tests']];
+  const el = $('left-tabs');
+  el.innerHTML = tabs.map(([k, ic, label], i) => `${i ? '<span class="ptab-sep"></span>' : ''}<button class="ptab ${cur.leftTab === k ? 'active' : ''}" data-tab="${k}">${icon(ic)}${label}</button>`).join('') +
+    `<span class="tools">${maxBtn('desc')}</span>`;
+  el.querySelectorAll('.ptab').forEach(b => b.onclick = () => { cur.leftTab = b.dataset.tab; renderLeftTabs(); renderLeft(); $('left-body').scrollTop = 0; });
+  bindMax(el);
+}
+function renderLeft() {
+  const body = $('left-body');
+  body.innerHTML = '';
+  const pad = document.createElement('div');
+  pad.className = 'panel-pad';
+  body.appendChild(pad);
+  if (cur.leftTab === 'desc') renderDescription(pad);
+  else if (cur.leftTab === 'solution') renderSolution(pad);
+  else renderTests(pad);
+}
+function renderDescription(pad) {
+  const ex = cur.ex;
+  const status = ex.status === 'passed' ? `<span class="label solved">${icon('checkCircle')} Solved</span>`
+    : ex.status === 'attempted' ? `<span class="label attempted">${icon('dot')} Attempted</span>` : '';
+  pad.innerHTML = `<h1 class="q-title">${ex.index}. ${esc(ex.title)}</h1>
+    <div class="q-meta">${diffLabel(ex.difficulty)}${status}
+      ${ex.runs ? `<span class="label" title="Test runs">${icon('history')}${ex.runs} ${ex.runs > 1 ? 'runs' : 'run'}</span>` : ''}
+      ${ex.gaveUp ? `<span class="label" style="color:var(--danger);border-color:var(--danger-border)">Solution viewed early</span>` : ''}</div>`;
+  pad.appendChild(md(ex.readme, 'hide-h1'));
+  const acc = document.createElement('div');
+  acc.className = 'acc';
+  pad.appendChild(acc);
+  renderHints(acc);
+}
+
+// Hints: LeetCode-style accordion; hint N+1 stays locked until hint N is revealed.
+function renderHints(acc) {
+  const ex = cur.ex;
+  acc.innerHTML = '';
+  for (let i = 0; i < ex.hintsTotal; i++) {
+    const revealed = i < ex.hints.length, next = i === ex.hints.length;
+    const item = document.createElement('div');
+    item.className = `acc-item ${revealed ? 'revealed' : next ? 'next' : 'locked'} ${revealed && cur.openHints.has(i) ? 'open' : ''}`;
+    const note = revealed ? '' : next ? 'Click to reveal' : `${icon('lock')}Reveal hint ${i} first`;
+    item.innerHTML = `<button class="acc-head" ${!revealed && !next ? 'disabled' : ''}>
+        <span class="ic">${icon(!revealed && !next ? 'lock' : 'light')}</span>Hint ${i + 1}
+        <span class="hint-note">${note}${revealed ? icon('chevDown', 'chev') : ''}</span></button>
+      <div class="acc-body"></div>`;
+    if (revealed) item.querySelector('.acc-body').appendChild(md(ex.hints[i]));
+    item.querySelector('.acc-head').onclick = async () => {
+      if (revealed) { cur.openHints.has(i) ? cur.openHints.delete(i) : cur.openHints.add(i); item.classList.toggle('open'); return; }
+      if (!next) return;
+      try {
+        const d = await api('/api/hint/' + enc(ex.id), 'POST');
+        cur.ex = { ...d, files: cur.ex.files };
+        cur.openHints.add(i);
+        renderHints(acc);
+      } catch (e) { toast(e.message, 'err'); }
+    };
+    acc.appendChild(item);
+  }
+}
+
+function renderSolution(pad) {
+  const ex = cur.ex;
+  if (ex.solution) {
+    if (ex.status === 'passed') pad.insertAdjacentHTML('beforeend', `<div class="info-note">${icon('info')}<span>Different can still be correct. Compare approaches and borrow the idioms you like.</span></div>`);
+    for (const [name, code] of Object.entries(ex.solution)) {
+      pad.insertAdjacentHTML('beforeend', `<div class="file-cap">${icon('file')}${esc(name)}</div>`);
+      pad.appendChild(codeBlock(code));
+    }
+    return;
+  }
+  const passed = ex.status === 'passed';
+  pad.innerHTML = `<div class="empty"><span class="big">${icon(passed ? 'unlock' : 'lock')}</span>
+    <h3>${passed ? 'Solution unlocked' : 'Solution is locked'}</h3>
+    <p>${passed ? 'You solved it — compare your code with the reference solution.' : 'It unlocks automatically when all tests pass. Try the hints in the Description tab first.'}</p>
+    <div style="margin-top:8px">${passed ? `<button class="btn btn-primary" id="sol-btn">${icon('unlock')} View solution</button>` : `<button class="btn btn-ghost btn-sm" id="sol-btn" style="color:var(--danger)">I give up — show it anyway</button>`}</div></div>`;
+  $('sol-btn').onclick = async () => {
+    if (!passed && !await modal({ title: 'Show the solution?', body: 'Struggling is where the learning happens — try the hints first. If you continue, this exercise is marked as “solution viewed early”.', confirm: 'Show solution', danger: true })) return;
+    try {
+      const d = await api('/api/solution/' + enc(ex.id), 'POST');
+      cur.ex = { ...d, files: cur.ex.files };
+      renderLeftTabs(); renderLeft();
+    } catch (e) { toast(e.message, 'err'); }
+  };
+}
+
+function renderTests(pad) {
+  pad.innerHTML = `<div class="info-note">${icon('beaker')}<span>These tests decide whether your solution is accepted. Reading them is encouraged — they are the exact specification.</span></div>`;
+  for (const t of cur.ex.tests || []) {
+    pad.insertAdjacentHTML('beforeend', `<div class="file-cap">${icon('file')}${esc(t.name)} <span class="muted" style="font-family:var(--sans)">· read-only</span></div>`);
+    pad.appendChild(codeBlock(t.content));
+  }
+}
+
+// --- code panel ---
+function renderCodeTabs() {
+  const ex = cur.ex;
+  const el = $('code-tabs');
+  el.innerHTML = `<span class="ptab active" style="cursor:default">${icon('code')}Code</span><span class="ptab-sep"></span>` +
+    ex.files.map(f => `<button class="ptab mono ${f.name === cur.active ? 'active' : ''}" data-file="${esc(f.name)}" style="font-size:12px">${esc(f.name)}<span class="dirty"></span></button>`).join('') +
+    `<span class="tools"><span class="lang-pill hide-sm">Go 1.27</span>
+      <button class="icon-btn" id="fmt-btn" title="Format & save (Ctrl+S)">${icon('paintbrush')}</button>
+      <button class="icon-btn" id="reset-btn" title="Reset to starter code">${icon('history')}</button>${maxBtn('code')}</span>`;
+  el.querySelectorAll('.ptab[data-file]').forEach(t => t.onclick = () => {
+    if (!cur.editor || t.dataset.file === cur.active) return;
+    cur.viewStates[cur.active] = cur.editor.saveViewState();
+    cur.active = t.dataset.file;
+    cur.editor.setModel(cur.models[cur.active]);
+    if (cur.viewStates[cur.active]) cur.editor.restoreViewState(cur.viewStates[cur.active]);
+    cur.editor.focus();
+    renderCodeTabs();
+  });
+  $('fmt-btn').onclick = formatNow;
+  $('reset-btn').onclick = resetCode;
+  bindMax(el);
+  updateDirtyUI();
+}
+
+async function resetCode() {
+  if (!await modal({ title: 'Reset to starter code?', body: 'Your current code for this exercise will be replaced with the original starter code.', confirm: 'Reset code', danger: true })) return;
+  try {
+    clearTimeout(cur.autosaveTimer);
+    const d = await api('/api/reset/' + enc(cur.ex.id), 'POST');
+    for (const f of d.files) { cur.saved[f.name] = f.content; if (cur.models[f.name]) replaceContent(cur.models[f.name], f.content); }
+    cur.result = null; setMarkers('go', []); setMarkers('gofmt', []);
+    renderBottom(); updateDirtyUI();
+    toast('Code reset to starter', 'ok');
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+async function mountEditor() {
+  const mine = cur;
+  let monaco;
+  try { monaco = await monacoReady; } catch {
+    $('editor').innerHTML = `<div class="editor-loading">${icon('alert')} The editor could not load. Check your internet connection and refresh.</div>`;
+    return;
+  }
+  if (cur !== mine) return;
+  defineTheme(monaco);
+  await patchGoTokens(monaco);
+  for (const f of cur.ex.files) {
+    const uri = monaco.Uri.parse('file:///' + cur.ex.id + '/' + f.name);
+    monaco.editor.getModel(uri)?.dispose();
+    cur.models[f.name] = monaco.editor.createModel(f.content, 'go', uri);
+    cur.saved[f.name] = f.content;
+    cur.models[f.name].onDidChangeContent(scheduleAutosave);
+  }
+  const host = $('editor');
+  host.innerHTML = '';
+  cur.editor = monaco.editor.create(host, {
+    model: cur.models[cur.active] || null, theme: 'monokai', automaticLayout: true,
+    fontFamily: '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace', fontLigatures: prefs.get('editor.ligatures'),
+    fontSize: prefs.get('editor.fontSize'), lineHeight: 1.6, tabSize: 4, insertSpaces: false, detectIndentation: false,
+    wordWrap: 'on', wrappingIndent: 'indent', minimap: { enabled: false }, scrollBeyondLastLine: false,
+    renderLineHighlight: 'all', padding: { top: 14, bottom: 14 }, bracketPairColorization: { enabled: true },
+    guides: { indentation: true }, smoothScrolling: true, cursorSmoothCaretAnimation: 'on', cursorBlinking: 'smooth',
+    fixedOverflowWidgets: true, overviewRulerLanes: 0, hideCursorInOverviewRuler: true, overviewRulerBorder: false,
+    scrollbar: { verticalScrollbarSize: 10, horizontalScrollbarSize: 10, useShadows: false, verticalSliderSize: 6, horizontalSliderSize: 6 },
+  });
+  document.fonts.ready.then(() => window.monaco && monaco.editor.remeasureFonts());
+  setMarkers('go', diagnosticsFromResult(cur.result));
+  const pos = () => { const p = cur.editor.getPosition(); if (p) $('cursor-pos').textContent = `Ln ${p.lineNumber}, Col ${p.column}`; };
+  cur.editor.onDidChangeCursorPosition(pos); pos();
+  cur.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, formatNow);
+  cur.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runTests);
+  const zoom = d => {
+    const size = Math.min(24, Math.max(10, cur.editor.getOption(monaco.editor.EditorOption.fontSize) + d));
+    cur.editor.updateOptions({ fontSize: size }); prefs.set('editor.fontSize', size);
+  };
+  cur.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Equal, () => zoom(1));
+  cur.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Minus, () => zoom(-1));
+  cur.editor.focus();
+}
+
+// --- bottom panel: Test Result / Output ---
+function renderBottomTabs() {
+  const r = cur.result;
+  const badge = !r ? '' : r.passed ? `<span class="st passed" style="margin-left:2px">${icon('checkCircle')}</span>` : `<span class="st" style="color:var(--danger);margin-left:2px">${icon('xCircle')}</span>`;
+  const el = $('bottom-tabs');
+  const minimized = $view.classList.contains('console-min');
+  el.innerHTML = `<button class="ptab ${cur.bottomTab === 'result' ? 'active' : ''}" data-tab="result">${icon('beaker')}Test Result${badge}</button><span class="ptab-sep"></span>
+    <button class="ptab ${cur.bottomTab === 'output' ? 'active' : ''}" data-tab="output">${icon('terminal')}Output</button>
+    <span class="tools">${r ? `<span class="muted small" style="margin-right:6px">${esc(r.duration)}</span>` : ''}
+      <button class="icon-btn" id="min-btn" title="${minimized ? 'Expand' : 'Collapse'}">${icon('chevDown', '')}</button>${maxBtn('result')}</span>`;
+  $('min-btn').querySelector('svg').style.transform = minimized ? 'rotate(180deg)' : '';
+  el.querySelectorAll('.ptab').forEach(b => b.onclick = () => {
+    cur.bottomTab = b.dataset.tab;
+    if ($view.classList.contains('console-min')) { $view.classList.remove('console-min'); prefs.set('layout.workspace.consoleCollapsed', false); }
+    renderBottomTabs(); renderBottom();
+  });
+  $('min-btn').onclick = () => {
+    if (cur.max) { toggleMax(cur.max); return; }
+    prefs.set('layout.workspace.consoleCollapsed', $view.classList.toggle('console-min'));
+    renderBottomTabs();
+  };
+  bindMax(el);
+}
+
+const VERDICT = {
+  accepted: ['Accepted', 'ok'], wrong_answer: ['Wrong Answer', 'bad'], compile_error: ['Compile Error', 'bad'],
+  runtime_error: ['Runtime Error', 'bad'], timeout: ['Time Limit Exceeded', 'warn'],
+};
+const kv = (k, v, cls = '') => `<div class="kv"><div class="k">${k}</div><div class="v ${cls} ${v === '' ? 'empty-val' : ''}">${v === '' ? '(empty)' : esc(v)}</div></div>`;
+function failureHTML(f) {
+  if (f.got !== undefined || f.want !== undefined) return (f.input ? kv('Input', f.input) : '') + kv('Output', f.got || '', 'got') + kv('Expected', f.want || '', 'want');
+  return kv('Message', f.message);
+}
+function caseHTML(tc) {
+  if (tc.passed) return `<div class="hint-line" style="color:var(--success)">${icon('checkCircle')} This test passed.</div>`;
+  let html = '';
+  if (tc.panicked) html += `<div class="hint-line" style="color:var(--danger)">The program panicked (crashed) while running this test.</div>`;
+  const fs = tc.failures || [];
+  fs.forEach((f, i) => { if (fs.length > 1) html += `<div class="check-label">Check ${i + 1} of ${fs.length}</div>`; html += failureHTML(f); });
+  if (tc.log && tc.log.trim()) {
+    let log = tc.log.trimEnd();
+    if (tc.panicked) { const ls = log.split('\n'); log = ls.slice(0, 14).join('\n') + (ls.length > 14 ? '\n…' : ''); }
+    html += kv(tc.panicked ? 'Panic' : 'Stdout', log);
+  }
+  return html || `<div class="hint-line">This test failed without a message — see the Output tab.</div>`;
+}
+function jumpTo(file, line, col) {
+  if (!cur || !cur.editor || !cur.models[file]) return;
+  if (cur.active !== file) document.querySelector(`#code-tabs .ptab[data-file="${CSS.escape(file)}"]`)?.click();
+  cur.editor.revealLineInCenter(line);
+  cur.editor.setPosition({ lineNumber: line, column: col || 1 });
+  cur.editor.focus();
+}
+
+function renderBottom() {
+  const body = $('bottom-body');
+  const r = cur.result;
+  if (cur.running) { body.innerHTML = `<div class="running"><span class="spinner"></span>Running tests…</div>`; return; }
+  if (cur.bottomTab === 'output') {
+    if (!r) { body.innerHTML = `<div class="empty"><span class="big">${icon('terminal')}</span><p>Raw <span class="mono">go test</span> output appears here after a run.</p></div>`; return; }
+    const lines = esc(r.output).split('\n').map(l =>
+      /^\s*(--- PASS|ok\s|PASS$)/.test(l) ? `<span class="l-pass">${l}</span>` :
+      /^\s*(--- FAIL|FAIL|panic:)|\.go:\d+:(\d+:)?/.test(l) ? `<span class="l-fail">${l}</span>` :
+      /^(=== (RUN|PAUSE|CONT)|#)/.test(l) ? `<span class="l-dim">${l}</span>` : l).join('\n');
+    body.innerHTML = `<div class="raw"><div class="raw-cmd">${esc(r.command)}</div><pre>${lines}</pre></div>`;
+    return;
+  }
+  if (!r) {
+    body.innerHTML = `<div class="empty"><span class="big">${icon('play')}</span><h3>Run your code to see results</h3><p>Press <b>Run tests</b> or <kbd>Ctrl</kbd> <kbd>Enter</kbd>. Your code is saved automatically.</p></div>`;
+    return;
+  }
+  const rep = r.report;
+  if (!rep) { cur.bottomTab = 'output'; renderBottomTabs(); renderBottom(); return; }
+  const [title, cls] = VERDICT[rep.verdict] || ['Failed', 'bad'];
+  let html = `<div class="panel-pad" style="padding-top:16px"><div class="verdict ${cls}"><span class="v-title">${title}</span>`;
+  if (!['compile_error', 'runtime_error'].includes(rep.verdict)) html += `<span class="v-sub">${rep.passed} / ${rep.total} tests passed</span>`;
+  html += `<span class="v-sub">Runtime ${esc(r.duration)}</span></div>`;
+
+  if (rep.verdict === 'accepted') {
+    const ex = cur.ex;
+    html += `<div class="success-card"><span class="ic">${icon('trophy')}</span><div class="grow"><div class="t">Great work — all tests pass!</div>
+      <div class="s">The reference solution is now unlocked. Compare approaches, then move on.</div></div>
+      <button class="btn btn-sm" id="see-sol">${icon('unlock')} Solution</button>${ex.next ? `<a class="btn btn-primary btn-sm" href="/exercise/${enc(ex.next)}">Next ${icon('chevRight')}</a>` : ''}</div>`;
+  } else if (rep.verdict === 'compile_error') {
+    const vet = (rep.buildErrors || []).some(e => /Printf|Sprintf|Errorf|format/.test(e.message));
+    html += `<p class="hint-line">${vet ? 'The code compiles, but <span class="mono">go vet</span> found bugs. ' : ''}Click an error to jump to that line.</p><div class="berrs">` +
+      (rep.buildErrors || []).map(e => `<div class="berr" data-file="${esc(e.file)}" data-line="${e.line}" data-col="${e.col}"><span class="loc">${esc(e.file)}:${e.line}:${e.col}</span><span class="msg">${esc(e.message)}</span></div>`).join('') + `</div>`;
+    if (rep.buildOutput) html += `<div style="margin-top:12px">${kv('Details', rep.buildOutput.trimEnd())}</div>`;
+  } else if (rep.verdict === 'timeout') {
+    html += `<p class="hint-line">Your code ran for more than 2 minutes. Look for a loop that never ends.</p>`;
+  }
+
+  const tests = rep.tests || [];
+  if (tests.length && rep.verdict !== 'compile_error') {
+    if (cur.caseIdx == null || cur.caseIdx >= tests.length) {
+      const f = tests.findIndex(t => !t.passed);
+      cur.caseIdx = f >= 0 ? f : 0;
+    }
+    html += `<div class="cases">` + tests.map((t, i) => `<button class="case ${t.passed ? '' : 'fail'} ${i === cur.caseIdx ? 'active' : ''}" data-i="${i}" title="${esc(t.name)}"><span class="dotc"></span>${esc(t.display)}</button>`).join('') + `</div>`;
+    html += caseHTML(tests[cur.caseIdx]);
+  }
+  body.innerHTML = html + '</div>';
+  body.querySelectorAll('.case').forEach(b => b.onclick = () => { cur.caseIdx = +b.dataset.i; renderBottom(); });
+  body.querySelectorAll('.berr').forEach(b => b.onclick = () => jumpTo(b.dataset.file, +b.dataset.line, +b.dataset.col));
+  const see = $('see-sol');
+  if (see) see.onclick = () => { cur.leftTab = 'solution'; renderLeftTabs(); renderLeft(); if (cur.max) toggleMax(cur.max); };
+}
+
+async function runTests() {
+  const run = $('run');
+  if (!cur || !run || cur.running) return;
+  cur.running = true;
+  run.disabled = true; run.innerHTML = `<span class="spinner"></span><span>Running…</span>`;
+  cur.bottomTab = 'result';
+  if ($view.classList.contains('console-min')) { $view.classList.remove('console-min'); prefs.set('layout.workspace.consoleCollapsed', false); }
+  if (cur.max === 'code' || cur.max === 'desc') toggleMax(cur.max);
+  renderBottomTabs(); renderBottom();
+  const wasSolved = cur.ex.status === 'passed';
+  try {
+    if (cur.editor) await save(true);
+    const { result, exercise } = await api('/api/run/' + enc(cur.ex.id), 'POST');
+    if (!cur) return;
+    cur.ex = { ...exercise, files: cur.ex.files };
+    cur.result = result; cur.caseIdx = null;
+    setMarkers('go', diagnosticsFromResult(result));
+    await loadCourse();
+    if (result.passed && !wasSolved) toast('Accepted! Exercise solved 🎉', 'ok', 3000);
+    renderHeaderControls();
+    const lb = $('left-body'), top = lb ? lb.scrollTop : 0; // keep the reader's place
+    renderLeftTabs(); renderLeft();
+    if (lb) lb.scrollTop = top;
+  } catch (e) {
+    toast(e.message, 'err', 4000);
+  } finally {
+    if (cur) {
+      cur.running = false;
+      renderBottomTabs(); renderBottom();
+      const b = $('run'); if (b) { b.disabled = false; b.innerHTML = `${icon('play')}<span>Run tests</span>`; }
+    }
+  }
+}
+
+// Pick up edits made outside the platform (e.g. VS Code) when the tab regains focus.
+window.addEventListener('focus', async () => {
+  if (!cur || !cur.editor) return;
+  try {
+    const d = await api('/api/exercise/' + enc(cur.ex.id));
+    for (const f of d.files) {
+      if (!cur.models[f.name] || isDirty(f.name) || f.content === cur.saved[f.name]) continue;
+      cur.saved[f.name] = f.content;
+      replaceContent(cur.models[f.name], f.content);
+      cur.saved[f.name] = f.content;
+    }
+    clearTimeout(cur.autosaveTimer);
+    updateDirtyUI();
+  } catch { }
+});
+window.addEventListener('beforeunload', e => { if (anyDirty()) { e.preventDefault(); e.returnValue = ''; } });
+
+// --- Router — clean URLs via the History API (/settings, /exercise/…) ---
+const currentPath = () => decodeURIComponent(location.pathname).replace(/\/+$/, '') || '/';
+function navigate(path, replace = false) {
+  if (path === location.pathname && !replace) return;
+  history[replace ? 'replaceState' : 'pushState'](null, '', path);
+  route();
+}
+// Old bookmarks like /#/exercise/... keep working.
+if (location.hash.startsWith('#/')) history.replaceState(null, '', location.hash.slice(1));
+// Same-origin links switch pages without a reload; modified clicks (new tab, etc.) behave normally.
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="/"]');
+  if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target) return;
+  e.preventDefault();
+  navigate(a.getAttribute('href'));
+});
+
+async function route() {
+  document.body.classList.remove('drawer-open');
+  applySidebar();
+  closeExercise();
+  document.body.classList.remove('ws-mode');
+  $('hdr-left-extra').innerHTML = ''; $('hdr-center').innerHTML = '';
+  $view.className = 'content'; $view.removeAttribute('style');
+  const r = currentPath();
+  renderShell();
+  try {
+    let title = '';
+    if (r.startsWith('/lesson/')) {
+      await viewLesson(r.slice(8));
+      const l = course.flatMap(m => m.lessons).find(l => l.id === r.slice(8));
+      title = l ? l.short || l.title : '';
+    } else if (r.startsWith('/exercise/')) {
+      await viewExercise(r.slice(10));
+      title = cur ? `${cur.ex.index}. ${cur.ex.title}` : '';
+    } else if (r === '/settings') { viewSettings(); title = 'Settings'; }
+    else viewHome();
+    document.title = title ? `${title} · Learn Go` : 'Learn Go';
+    $main.scrollTop = 0;
+    $side.querySelector('.nav-item.active')?.scrollIntoView({ block: 'nearest' });
+  } catch (e) {
+    $view.className = 'content';
+    $view.innerHTML = `<div class="empty"><span class="big">${icon('alert')}</span><h3>Something went wrong</h3><p class="mono">${esc(e.message)}</p><a class="btn" href="/">Go home</a></div>`;
+  }
+}
+document.addEventListener('keydown', e => {
+  if (document.querySelector('.modal-scrim')) return;
+  if (!(e.ctrlKey || e.metaKey)) { if (e.key === 'Escape') document.body.classList.remove('drawer-open'); return; }
+  if (e.key === 'Enter' && cur) { e.preventDefault(); runTests(); }
+  if ((e.key === 's' || e.key === 'S') && cur) { e.preventDefault(); formatNow(); }
+});
+window.addEventListener('popstate', route);
+loadCourse().then(route).catch(e => { $view.innerHTML = `<div class="empty"><span class="big">${icon('alert')}</span><h3>Could not reach the platform server</h3><p>${esc(e.message)}</p></div>`; });
+</script>
+</body>
+</html>
