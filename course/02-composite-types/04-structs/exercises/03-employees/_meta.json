@@ -1,0 +1,9 @@
+{
+  "title": "Employee reports",
+  "difficulty": "easy",
+  "hints": [
+    "`for _, e := range emps` gives you each `Employee` as a copy; read `e.Dept` and `e.Salary` directly.",
+    "Filter into a fresh slice: `var out []Employee` then `out = append(out, e)` when `e.Dept == dept`. For totals, `totals := make(map[string]float64)` and `totals[e.Dept] += e.Salary` (missing keys read as 0).",
+    "In `HighestPaid`, return early when `len(emps) == 0`, start with `best := emps[0]`, and replace it only when `e.Salary > best.Salary` (strictly greater keeps the first on ties). Comparing whole structs with `==` works here because every field is comparable."
+  ]
+}

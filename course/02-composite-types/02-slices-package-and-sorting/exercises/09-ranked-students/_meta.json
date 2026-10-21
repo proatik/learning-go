@@ -1,0 +1,9 @@
+{
+  "title": "Ranked students",
+  "difficulty": "hard",
+  "hints": [
+    "Check `len(names) != len(scores)` first. Then build the index slice: `idx := make([]int, len(names))` and `for i := range idx { idx[i] = i }`. Put this in a small helper both functions can call.",
+    "Sort the **indices**: `slices.SortFunc(idx, func(a, b int) int { return cmp.Or(cmp.Compare(scores[b], scores[a]), strings.Compare(names[a], names[b])) })`. Note `b, a` for the descending score. `names[idx[0]]` is now the winner.",
+    "For competition ranking, walk `for pos, i := range idx`: when `pos == 0` or `scores[i]` differs from `scores[idx[pos-1]]`, set `rank = pos + 1`; otherwise keep the previous rank. Then `fmt.Sprintf(\"%d. %s (%d)\", rank, names[i], scores[i])`."
+  ]
+}

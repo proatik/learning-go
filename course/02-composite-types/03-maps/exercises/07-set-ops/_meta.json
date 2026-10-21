@@ -1,0 +1,9 @@
+{
+  "title": "Set operations",
+  "difficulty": "medium",
+  "hints": [
+    "`NewSet`: `s := make(Set, len(items))`, then `s[it] = struct{}{}` for each item. `struct{}{}` is the single value of the empty struct type.",
+    "`Intersection`: range over `a` and keep `x` if `_, ok := b[x]; ok`. `Difference` is the same with `!ok`. `IsSubset` returns `false` at the first element of `a` missing from `b`. Reading a nil `b` is safe: every lookup just reports `ok == false`.",
+    "`Union`: collect into a fresh `Set` (`u := Set{}`, then `maps.Copy(u, a)` and `maps.Copy(u, b)`) so shared elements appear once, then `return slices.Sorted(maps.Keys(u))`. Finish the others with `slices.Sort(out)`."
+  ]
+}

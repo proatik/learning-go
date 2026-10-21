@@ -1,0 +1,9 @@
+{
+  "title": "LRU cache",
+  "difficulty": "hard",
+  "hints": [
+    "Start with two helpers. `unlink(c, n)`: if `n.prev != nil` set `n.prev.next = n.next`, else `c.head = n.next`; mirror that for `n.next` and `c.tail`; finally clear `n.prev, n.next`. `pushFront(c, n)`: link `n` before `c.head`, update `c.head`, and set `c.tail = n` if the list was empty.",
+    "`Get` = look up in `c.items` (comma-ok), then `unlink` + `pushFront`. `Put` on an existing key = update `n.value`, then `unlink` + `pushFront`.",
+    "For a new key when `len(c.items) == c.capacity`: take `old := c.tail`, `unlink(c, old)`, `delete(c.items, old.key)` and remember `old.key` as the evicted key. Then create `&node{key: key, value: value}`, store it in the map and `pushFront` it."
+  ]
+}

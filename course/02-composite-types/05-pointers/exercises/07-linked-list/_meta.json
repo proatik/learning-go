@@ -1,0 +1,9 @@
+{
+  "title": "Singly linked list",
+  "difficulty": "medium",
+  "hints": [
+    "`Push` is one line: `return &Node{Val: v, Next: head}`. `Len` and `ToSlice` use the standard loop `for n := head; n != nil; n = n.Next`.",
+    "`FromSlice`: start with `var head *Node` and push the values from the **last** to the first, so the first value ends up in front.",
+    "`Reverse` walks with two pointers, `prev` (starts nil) and `cur` (starts at head). Each step: save `next := cur.Next`, set `cur.Next = prev`, then `prev, cur = cur, next`. When `cur` is nil, `prev` is the new head."
+  ]
+}

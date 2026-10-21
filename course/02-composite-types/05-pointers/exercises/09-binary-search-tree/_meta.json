@@ -1,0 +1,9 @@
+{
+  "title": "Binary search tree",
+  "difficulty": "hard",
+  "hints": [
+    "`Insert`: if `t == nil`, `return &Tree{Key: key}`. Otherwise recurse into one side and **store the result back**: `t.Left = Insert(t.Left, key)` (that is how a new leaf gets linked). Return `t`.",
+    "`Contains` and `Min` can be loops: move `t = t.Left` or `t = t.Right` until you find the key or hit nil. The minimum is the leftmost node. `Height` is `1 + max(Height(t.Left), Height(t.Right))` with `0` for nil.",
+    "For `InOrder`, write a helper `appendInOrder(out []int, t *Tree) []int` that returns `out` for nil, otherwise appends the left subtree, then `t.Key`, then the right subtree, returning the grown slice each time. `InOrder(t)` is `appendInOrder(nil, t)`."
+  ]
+}

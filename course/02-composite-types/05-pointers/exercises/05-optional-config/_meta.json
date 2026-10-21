@@ -1,0 +1,9 @@
+{
+  "title": "Optional config fields",
+  "difficulty": "medium",
+  "hints": [
+    "In `Effective`, start with the defaults `Settings{Retries: 3, Cache: true, Name: \"app\"}` and overwrite a field only when the matching pointer is non-nil: `if c.Retries != nil { s.Retries = *c.Retries }`.",
+    "`Merge` receives copies of both structs. Copy each non-nil pointer from `override` into `base` and return `base`; the caller's values are untouched.",
+    "`FromSettings` is a single struct literal: `Config{Retries: new(s.Retries), Cache: new(s.Cache), Name: new(s.Name)}`. Each `new(expr)` allocates a fresh variable holding that value."
+  ]
+}

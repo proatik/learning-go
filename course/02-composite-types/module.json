@@ -1,0 +1,13 @@
+{
+  "title": "Module 2 · Composite Types",
+  "short": "2 · Composite Types",
+  "summary": "Arrays, slices, the slices package, maps, structs and pointers: Go's building blocks for real data.",
+  "lessons": {
+    "01-arrays-and-slices": "Arrays & Slices",
+    "02-slices-package-and-sorting": "Sorting",
+    "03-maps": "Maps",
+    "04-structs": "Structs",
+    "05-pointers": "Pointers",
+    "06-module-challenge": "Challenge"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Filter in place",
+  "difficulty": "medium",
+  "hints": [
+    "`s[:0]` is a slice of length 0 that shares `s`'s backing array and has its full capacity. Appending to it writes over `s` from the front without allocating.",
+    "Loop over `s` with `range` and `append` only the elements you keep to `out := s[:0]`. Writing never overtakes reading, so you never overwrite an element you haven't looked at yet.",
+    "After the loop, `clear(s[len(out):])` zeroes the leftovers (`s` still has its original length). Then `return out`. An even number satisfies `v%2 == 0` (also true for negatives)."
+  ]
+}

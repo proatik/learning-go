@@ -1,0 +1,9 @@
+{
+  "title": "Customer records: embedding & JSON tags",
+  "difficulty": "medium",
+  "hints": [
+    "Promoted fields read like the customer's own: `c.City` is `c.Address.City`. `Label` starts from `s := c.Name` and appends `\" <\" + c.Email + \">\"` and `\" (\" + c.City + \")\"` only when they are non-empty. `ToJSON` is `b, err := json.Marshal(v)`, then `string(b)`.",
+    "A tag goes after the field type, in back quotes: ``Email string `json:\"email,omitempty\"` ``. Use `omitempty` for Email, Zip, Tags and Note; ``Password string `json:\"-\"` `` hides the password.",
+    "Leave the embedded `Address` line **without** a tag: then `encoding/json` flattens `street`, `city` and `zip` into the customer object. Tag the fields inside `Address` instead. `Order.Customer` gets ``json:\"customer\"``, which nests the object."
+  ]
+}

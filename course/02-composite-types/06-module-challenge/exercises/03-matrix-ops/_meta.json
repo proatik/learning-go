@@ -1,0 +1,9 @@
+{
+  "title": "Matrix operations",
+  "difficulty": "medium",
+  "hints": [
+    "Write two helpers first: `dims(m) (rows, cols int, err error)` that rejects ragged matrices, and `newMatrix(rows, cols) [][]int` that allocates every row with `make` so results never alias the input.",
+    "Multiply is a triple loop: `c[i][j] += a[i][x] * b[x][j]`. For Rotate, element `m[r][c]` lands at `out[c][rows-1-r]` in a `cols×rows` result.",
+    "For Spiral keep four boundaries `top, bottom, left, right`. Walk right along `top` (then `top++`), down `right` (`right--`), and — only if `top <= bottom` / `left <= right` still hold — left along `bottom` and up `left`. Loop while `top <= bottom && left <= right`."
+  ]
+}

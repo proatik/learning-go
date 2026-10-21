@@ -1,0 +1,9 @@
+{
+  "title": "Point geometry",
+  "difficulty": "easy",
+  "hints": [
+    "Read fields with a dot: `p.X`, `q.Y`. The horizontal distance is `q.X - p.X`, the vertical one `q.Y - p.Y`.",
+    "`Distance` is `math.Hypot(q.X-p.X, q.Y-p.Y)`. `Midpoint` is a keyed literal: `Point{X: (p.X + q.X) / 2, Y: (p.Y + q.Y) / 2}`.",
+    "`p` is a copy, so `Translate` may do `p.X += dx; p.Y += dy; return p`. For `Centroid`, return early on `len(points) == 0`, sum into `var sum Point`, then divide each field by `float64(len(points))`."
+  ]
+}

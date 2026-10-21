@@ -1,0 +1,9 @@
+{
+  "title": "Library system",
+  "difficulty": "hard",
+  "hints": [
+    "`AddBook` receives `b` by value — it is already your own copy. Set `b.Available = b.Copies` and store `&b`. For an existing ISBN, update the stored `*Book` through the pointer from the map.",
+    "Write `lookup(lib, memberID, isbn) (*Member, *Book, error)` to return `ErrNoMember`/`ErrNoBook` in the right order, then a `switch` for the remaining checks. `slices.Contains(m.Loans, isbn)` detects an existing loan.",
+    "`Return` uses `i := slices.Index(m.Loans, isbn)` and `m.Loans = slices.Delete(m.Loans, i, i+1)`. `Catalog` appends `*b` (a struct copy) to a fresh `[]Book{}` and sorts with `cmp.Or(cmp.Compare(x.Title, y.Title), cmp.Compare(x.ISBN, y.ISBN))`."
+  ]
+}

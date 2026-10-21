@@ -1,0 +1,9 @@
+{
+  "title": "Two sum",
+  "difficulty": "medium",
+  "hints": [
+    "While walking `nums`, the partner you need for `nums[j]` is `want := target - nums[j]`. A map from value to index answers \"have I already seen `want`, and where?\" in O(1).",
+    "`seen := map[int]int{}`; in `for j, n := range nums`, check `if i, found := seen[target-n]; found { return i, j, true }`. You need comma-ok because index `0` is a valid stored value.",
+    "Only after the check, record `n`, and only if it's new: `if _, dup := seen[n]; !dup { seen[n] = j }`. Keeping the first index gives the smallest `i`. After the loop, `return 0, 0, false`."
+  ]
+}

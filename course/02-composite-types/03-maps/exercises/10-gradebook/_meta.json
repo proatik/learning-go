@@ -1,0 +1,9 @@
+{
+  "title": "Nested maps: a gradebook",
+  "difficulty": "hard",
+  "hints": [
+    "`AddGrade`: `scores, ok := g[student]; if !ok { scores = map[string]int{}; g[student] = scores }`, then `scores[subject] = score`. The inner map is reference-like, so writing to `scores` writes into `g[student]`.",
+    "`Average`: `scores := g[student]` (nil for an unknown student) and `if len(scores) == 0 { return 0, false }`. Sum with `for _, s := range scores`, then `float64(sum) / float64(len(scores))`. `SubjectAverages` needs two maps, `sums` and `counts`, filled by a nested `range`; divide per subject at the end.",
+    "`PrintReport`: `for _, name := range slices.Sorted(maps.Keys(g))`. Inside, collect `parts = append(parts, fmt.Sprintf(\"%s=%d\", subj, scores[subj]))` over `slices.Sorted(maps.Keys(scores))`, then `fmt.Printf(\"%s: %s (avg %.2f)\\n\", name, strings.Join(parts, \" \"), avg)`. Use `Average`'s `ok` to choose the `(no grades)` line."
+  ]
+}

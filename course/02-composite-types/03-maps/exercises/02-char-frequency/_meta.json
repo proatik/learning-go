@@ -1,0 +1,9 @@
+{
+  "title": "Character frequency",
+  "difficulty": "easy",
+  "hints": [
+    "`for _, r := range s` gives each rune `r` (decoded from UTF-8). Count into a `map[rune]int{}` with `freq[r]++`.",
+    "In `CharFrequency`, skip whitespace with `if unicode.IsSpace(r) { continue }`. `FirstUnique` builds its own counts that include whitespace.",
+    "Second pass in `FirstUnique`: `for _, r := range s { if counts[r] == 1 { return r, true } }`, then `return 0, false` after the loop. Walking `s` (not the map) is what makes it \"first\"."
+  ]
+}

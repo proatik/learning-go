@@ -1,0 +1,9 @@
+{
+  "title": "Double: arrays vs slices",
+  "difficulty": "easy",
+  "hints": [
+    "All three functions use the same loop: `for i := range x { x[i] *= 2 }`. The difference is only *whose* elements get changed.",
+    "`a *Quad` can be indexed and ranged directly: `a[i]` means `(*a)[i]`. Guard with `if a == nil { return }` first.",
+    "In `Doubled`, the parameter `a` is already a fresh copy of the caller's array: double its elements and `return a`."
+  ]
+}

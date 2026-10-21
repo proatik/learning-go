@@ -1,0 +1,9 @@
+{
+  "title": "Grid walk",
+  "difficulty": "hard",
+  "hints": [
+    "`Move` works on its own copy of `p`: a `switch dir` with `p.Y++`, `p.Y--`, `p.X++`, `p.X--`, and `default: return p, false`. In `Run`, start with `var p Pos` and `w := Walk{Visits: map[Pos]int{p: 1}}`, then `for i, r := range path`.",
+    "After each successful move: `w.Visits[p]++` (a struct key, no `\"x,y\"` strings), and widen the box with `w.Min = Pos{X: min(w.Min.X, p.X), Y: min(w.Min.Y, p.Y)}` (likewise `max` for `w.Max`). On a bad rune: `return Walk{}, fmt.Errorf(\"invalid direction %q at index %d\", r, i)`.",
+    "`FirstRevisit`: reject the path if `Run` fails, then walk again with `seen := map[Pos]bool{{}: true}`. For `Render`, loop `for y := w.Max.Y; y >= w.Min.Y; y--` and `for x := w.Min.X; x <= w.Max.X; x++`, check `p == Pos{}` first, then `p == w.End`, then `w.Visits[p] > 0`, and `strings.Join` the rows with `\"\\n\"`."
+  ]
+}

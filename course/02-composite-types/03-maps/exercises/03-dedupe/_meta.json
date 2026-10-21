@@ -1,0 +1,9 @@
+{
+  "title": "Duplicates with a set",
+  "difficulty": "easy",
+  "hints": [
+    "A set is a map whose keys are the elements. `seen := map[int]bool{}`; reading a missing key gives `false`, so `if seen[n]` is a membership test.",
+    "`HasDuplicate`: in the loop, `if seen[n] { return true }`, then `seen[n] = true`. After the loop, `return false`.",
+    "`Dedupe`: `seen := map[string]struct{}{}` and `var out []string`. For each `w`: `if _, ok := seen[w]; ok { continue }`, then `seen[w] = struct{}{}` and `out = append(out, w)`."
+  ]
+}

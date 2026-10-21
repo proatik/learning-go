@@ -1,0 +1,9 @@
+{
+  "title": "Word frequency Top-K",
+  "difficulty": "medium",
+  "hints": [
+    "Split with `strings.FieldsFunc(text, f)` where `f` reports `true` for separator runes — i.e. anything that is neither `unicode.IsLetter` nor `unicode.IsDigit`. Then `counts[strings.ToLower(w)]++`.",
+    "Maps have no order, so copy every `(word, count)` pair into a `[]WordCount` before sorting. Preallocate with `make([]WordCount, 0, len(counts))`.",
+    "Sort with `slices.SortFunc(ws, func(a, b WordCount) int { return cmp.Or(cmp.Compare(b.Count, a.Count), cmp.Compare(a.Word, b.Word)) })`, then `return ws[:min(k, len(ws))]` (after handling `k <= 0`)."
+  ]
+}

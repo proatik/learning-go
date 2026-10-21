@@ -1,0 +1,9 @@
+{
+  "title": "Rotate in place",
+  "difficulty": "medium",
+  "hints": [
+    "First normalize `k` into `0..len(s)-1` with `%`. Return early for an empty slice (you can't take `k % 0`). If the remainder is negative, add `len(s)`.",
+    "Split the slice into `A = s[:k]` and `B = s[k:]`; rotating left turns `AB` into `BA`. Reversing a sub-slice reverses those elements of `s` in place, because they share the backing array.",
+    "Write `reverse(s []int)` with two indices, then: `reverse(s[:k]); reverse(s[k:]); reverse(s)`. `RotateRight(s, k)` is just `RotateLeft(s, -k)`."
+  ]
+}

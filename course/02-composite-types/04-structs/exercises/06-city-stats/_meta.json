@@ -1,0 +1,9 @@
+{
+  "title": "City statistics",
+  "difficulty": "medium",
+  "hints": [
+    "Start each function with `make(map[...]...)` so the result is never nil. For grouping, `groups[p.City] = append(groups[p.City], p.Name)` works even for a new city, because a missing key gives a nil slice.",
+    "`stats[p.City].Count++` doesn't compile (map elements aren't addressable). Instead: `s := stats[p.City]`, update `s.Count`, `s.TotalAge` and `s.Oldest`, then `stats[p.City] = s`. Replace `Oldest` when `s.Count == 0` (first person) or `p.Age > s.Oldest.Age` (strictly older keeps the first on ties).",
+    "For `Cities`, collect the keys with `for city := range stats`, then `slices.SortFunc(cities, func(a, b string) int { return cmp.Or(cmp.Compare(stats[b].Count, stats[a].Count), cmp.Compare(a, b)) })`."
+  ]
+}

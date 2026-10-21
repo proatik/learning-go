@@ -1,0 +1,9 @@
+{
+  "title": "Reverse in place vs by value",
+  "difficulty": "easy",
+  "hints": [
+    "Swap the first and last elements, then the second and second-to-last, and so on, stopping in the middle.",
+    "A `for` loop can declare and update two variables: `for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 { ... }`.",
+    "The body is one line: `s[i], s[j] = s[j], s[i]`. `ReversedArray` uses the exact same loop on `a`, then `return a`."
+  ]
+}

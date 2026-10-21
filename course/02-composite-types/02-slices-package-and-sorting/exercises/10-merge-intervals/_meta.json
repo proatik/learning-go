@@ -1,0 +1,9 @@
+{
+  "title": "Merge intervals",
+  "difficulty": "hard",
+  "hints": [
+    "Sort a copy: `sorted := slices.Clone(intervals)` then `slices.SortFunc(sorted, func(a, b [2]int) int { return cmp.Or(cmp.Compare(a[0], b[0]), cmp.Compare(a[1], b[1])) })`. After that, any interval that can merge with the previous result is the very next one.",
+    "Keep `var merged [][2]int`. For each `iv` in `sorted`: if `merged` is non-empty and `iv[0] <= merged[len(merged)-1][1]`, extend with `merged[last][1] = max(merged[last][1], iv[1])` (the `max` matters for contained intervals); otherwise `merged = append(merged, iv)`.",
+    "`Covered`: loop over `Merge(intervals)` summing `iv[1] - iv[0]`. `Gaps`: for `i := 1; i < len(merged); i++`, append `[2]int{merged[i-1][1], merged[i][0]}`: merged intervals never touch, so every neighbouring pair has a hole."
+  ]
+}

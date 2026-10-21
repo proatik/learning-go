@@ -1,0 +1,9 @@
+{
+  "title": "Isomorphic strings and word patterns",
+  "difficulty": "medium",
+  "hints": [
+    "Convert both inputs to slices (`rs, rt := []rune(s), []rune(t)`) and return `false` immediately if their lengths differ. Then loop `for i := range rs` and look at `rs[i]` and `rt[i]` together.",
+    "One map isn't enough: `\"ab\"`→`\"aa\"` passes a forward-only check. Keep `fwd := map[rune]rune{}` and `back := map[rune]rune{}`.",
+    "At each position: `if m, ok := fwd[a]; ok && m != b { return false }` and the same for `back[b] != a`; then record `fwd[a] = b` and `back[b] = a`. `WordPattern` is identical with `map[rune]string` and `map[string]rune` over `[]rune(pattern)` and `strings.Fields(s)`."
+  ]
+}

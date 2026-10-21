@@ -1,0 +1,9 @@
+{
+  "title": "Inventory with value semantics",
+  "difficulty": "medium",
+  "hints": [
+    "A small helper saves repetition: `slices.IndexFunc(inv, func(it Item) bool { return it.SKU == sku })` returns the index or -1. `Find` returns `inv[i], true`: indexing a slice of structs gives a copy.",
+    "In `AddItem` and `RemoveItem`, begin with `out := slices.Clone(inv)`. Now `out[i].Qty += it.Qty` and `append(out, it)` only touch your own backing array. (`for _, x := range out { x.Qty++ }` would change a copy and do nothing.)",
+    "In `RemoveItem`, reject first: `if i < 0 || qty <= 0 || qty > out[i].Qty { return out, false }`. After subtracting, `out = slices.Delete(out, i, i+1)` when the quantity hits 0."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Money in cents",
+  "difficulty": "easy",
+  "hints": [
+    "Every function builds a result with a keyed literal: `return Money{Cents: a.Cents + b.Cents}`. In `Sum`, start from `var total Money` (the zero value is $0.00).",
+    "For `Format`, work on `c := m.Cents`; if it's negative remember a `\"-\"` sign and negate `c`. Then `fmt.Sprintf(\"%s$%d.%02d\", sign, c/100, c%100)`: `%02d` pads the cents to two digits.",
+    "For `Split`, `base := m.Cents / int64(n)` and `extra := m.Cents % int64(n)`. Make `parts := make([]Money, n)` and give `base+1` cents to the first `extra` parts, `base` to the rest."
+  ]
+}

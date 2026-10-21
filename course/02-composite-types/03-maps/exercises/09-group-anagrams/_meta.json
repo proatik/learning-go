@@ -1,0 +1,9 @@
+{
+  "title": "Group anagrams",
+  "difficulty": "hard",
+  "hints": [
+    "`Key`: `rs := []rune(strings.ToLower(word))`, then `slices.Sort(rs)` and `return string(rs)`. Runes are integers, so they sort like numbers.",
+    "Group with a map of slices: `groups := map[string][]string{}` and `groups[Key(w)] = append(groups[Key(w)], w)` for every word. Then move each group into `out := make([][]string, 0, len(groups))`, calling `slices.Sort(g)` on each.",
+    "The map gave you the groups in random order. Fix it with `slices.SortFunc(out, func(a, b []string) int { return cmp.Compare(a[0], b[0]) })`: every group has at least one word, so `a[0]` is safe."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Sorted slices: merge, dedupe, intersect",
+  "difficulty": "hard",
+  "hints": [
+    "Two pointers: `i` indexes `a`, `j` indexes `b`. Compare `a[i]` with `b[j]` and advance only the side you consumed. Because both are sorted, you never need to look back.",
+    "`MergeSorted`: `out := make([]int, 0, len(a)+len(b))`; loop while both have elements, appending the smaller; afterwards append the leftovers `a[i:]...` and `b[j:]...`. `Dedupe`: `out := s[:0]` and append `v` only when `out` is empty or `v != out[len(out)-1]`.",
+    "`Intersect`: use a `switch` with `a[i] < b[j]` (i++), `a[i] > b[j]` (j++) and `default` (equal): append the value once, then skip forward on both sides while the elements still equal that value. Start from `var out []int` so you never write into `a` or `b`."
+  ]
+}

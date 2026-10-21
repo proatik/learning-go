@@ -1,0 +1,9 @@
+{
+  "title": "Student ranking",
+  "difficulty": "medium",
+  "hints": [
+    "Write one comparison function and reuse it: `func compare(a, b Student) int { return cmp.Or(cmp.Compare(b.Grade, a.Grade), cmp.Compare(a.Name, b.Name)) }`. Swapping `b, a` makes grades descending. Then `slices.SortFunc(students, compare)`.",
+    "`TopN` and `Ranks` must leave the input alone: `sorted := slices.Clone(students)` and sort that. Cut with `sorted[:min(n, len(sorted))]` (and handle `n <= 0` first).",
+    "In `Ranks`, walk the sorted copy: the rank is `i + 1`, unless the grade equals the previous student's grade, in which case reuse the previous rank. Build each element with `Ranked{Student: s, Rank: rank}`."
+  ]
+}

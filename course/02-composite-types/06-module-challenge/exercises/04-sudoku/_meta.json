@@ -1,0 +1,9 @@
+{
+  "title": "Sudoku checker",
+  "difficulty": "medium",
+  "hints": [
+    "A fixed-size array of bools is a perfect small set: `var rows, cols, boxes [9][10]bool`. For a digit `v` at `(r, c)`, check and set `rows[r][v]`, `cols[c][v]` and `boxes[r/3*3+c/3][v]`.",
+    "For `Candidates`, collect the digits used in the row, column and box into a `[10]bool`. The box's top-left corner is `(row/3*3, col/3*3)`; with `i` from 0 to 8 its cells are `g[br+i/3][bc+i%3]`.",
+    "`Place` validates the arguments in order (nil pointer, range, digit, empty cell), then checks `v` against `Candidates(*g, row, col)` and only then writes `g[row][col] = v`. Indexing through an array pointer auto-dereferences."
+  ]
+}

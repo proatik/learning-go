@@ -1,0 +1,9 @@
+{
+  "title": "Bank ledger",
+  "difficulty": "hard",
+  "hints": [
+    "`NewLedger` must create the map: `return &Ledger{Accounts: make(map[string]*Account)}`. Storing `*Account` means `a := l.Accounts[id]; a.Balance += amount` updates the stored account directly.",
+    "Write a helper `account(l, id) (*Account, error)` using comma-ok that returns `fmt.Errorf(\"%w: %q\", ErrNoAccount, id)` when missing. Then each operation is: look up, validate in the README's order, and only then mutate and `append` to `l.History`.",
+    "`Statement` builds a fresh slice with `append` from an empty `[]Tx{}`. For `FormatCents`, take the magnitude as `u := uint64(c)` and negate `u` (not `c`) when `c < 0` — then `fmt.Sprintf(\"%s%d.%02d\", sign, u/100, u%100)`."
+  ]
+}

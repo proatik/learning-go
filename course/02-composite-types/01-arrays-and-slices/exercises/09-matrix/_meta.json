@@ -1,0 +1,9 @@
+{
+  "title": "Matrix: transpose and spiral order",
+  "difficulty": "hard",
+  "hints": [
+    "Get the dimensions first: `rows, cols := len(m), len(m[0])` (after checking `len(m) == 0`). `Transpose` has `cols` rows of length `rows`. For `Spiral`, think of the matrix as nested rings you peel from the outside in.",
+    "`Transpose`: `t := make([][]int, cols)`, then for each `j`, `t[j] = make([]int, rows)` and fill `t[j][i] = m[i][j]`. `Spiral`: keep inclusive bounds `top, bottom, left, right`; loop while `top <= bottom && left <= right`, walking top row → right column → bottom row → left column.",
+    "After walking the top row do `top++`; after the right column, `right--`. Only walk the bottom row `if top <= bottom` (then `bottom--`) and the left column `if left <= right` (then `left++`): those checks stop single rows/columns from being visited twice."
+  ]
+}

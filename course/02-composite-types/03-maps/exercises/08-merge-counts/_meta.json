@@ -1,0 +1,9 @@
+{
+  "title": "Merge, prune and print counts",
+  "difficulty": "medium",
+  "hints": [
+    "`MergeCounts`: start from a copy of `a` so `a` itself is never written. `maps.Clone(nil)` returns `nil`, so build `out := make(map[string]int, len(a)+len(b))` and `maps.Copy(out, a)` instead. Then `for k, v := range b { out[k] += v }`.",
+    "`Prune`: `maps.DeleteFunc(m, func(k string, v int) bool { return v < minCount })`. A plain `for k, v := range m { if v < minCount { delete(m, k) } }` works too: deleting while ranging is safe.",
+    "`PrintCounts`: `if len(m) == 0 { fmt.Println(\"(none)\"); return }`, then `for _, k := range slices.Sorted(maps.Keys(m)) { fmt.Printf(\"%s: %d\\n\", k, m[k]) }`."
+  ]
+}

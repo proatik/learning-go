@@ -1,0 +1,9 @@
+{
+  "title": "Tic-tac-toe referee",
+  "difficulty": "medium",
+  "hints": [
+    "In `Parse`, convert each row with `[]rune(row)` so you count characters, not bytes, then copy into `b[r][c]`. On any error return `[3][3]rune{}`.",
+    "Store the eight winning lines as data — e.g. `var lines = [8][3][2]int{{{0, 0}, {0, 1}, {0, 2}}, ...}` — and write `hasLine(b, player) bool` that loops over them.",
+    "In `Winner`: count X and O (rejecting bad cells), check `x-o` is 0 or 1, compute `xWins, oWins`, then a `switch` on the four impossible cases before returning the winner. `Status` reuses `Winner` and then looks at the counts."
+  ]
+}

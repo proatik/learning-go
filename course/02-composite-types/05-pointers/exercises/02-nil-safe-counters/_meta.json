@@ -1,0 +1,9 @@
+{
+  "title": "Nil-safe counters",
+  "difficulty": "easy",
+  "hints": [
+    "Start every function with the nil case: `if p == nil { return }` (or `return def`). Only after that is `*p` safe.",
+    "`*p++` increments the int that `p` points to (Go has no pointer arithmetic, so it can't mean anything else). `*p = 0` resets it.",
+    "In `Sum`, loop with `for _, p := range ps` and add `SafeDeref(p, 0)` to a running total."
+  ]
+}

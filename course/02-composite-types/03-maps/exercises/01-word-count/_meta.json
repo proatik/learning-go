@@ -1,0 +1,9 @@
+{
+  "title": "Word count",
+  "difficulty": "easy",
+  "hints": [
+    "Create the result first with `counts := map[string]int{}` (or `make(map[string]int)`). Returning it untouched handles the empty input.",
+    "`strings.Fields(s)` returns a `[]string` of the words; range over it with `for _, w := range strings.Fields(s)`.",
+    "A missing key reads as `0`, so `counts[strings.ToLower(w)]++` both inserts and increments. Then `return counts`."
+  ]
+}

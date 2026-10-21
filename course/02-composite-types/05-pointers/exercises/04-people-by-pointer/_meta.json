@@ -1,0 +1,9 @@
+{
+  "title": "People by pointer",
+  "difficulty": "medium",
+  "hints": [
+    "`p.Age++` works on a `*Person` (Go writes `(*p).Age` for you). Check `p == nil` first.",
+    "Loop with `for i := range people` and use `&people[i]`: that is the address of the element inside the slice. `for _, p := range people` then `&p` would point to a copy.",
+    "For `Oldest`, keep `var best *Person` (nil = nothing seen yet) and replace it when `best == nil || people[i].Age > best.Age`. Strict `>` keeps the first one on ties."
+  ]
+}

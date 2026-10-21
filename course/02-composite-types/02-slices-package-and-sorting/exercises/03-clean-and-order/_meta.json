@@ -1,0 +1,9 @@
+{
+  "title": "Clean and order",
+  "difficulty": "easy",
+  "hints": [
+    "`DeleteFunc`, `Reverse` and `Sort` all work **in place**, on the caller's backing array. Make a copy first: `out := slices.Clone(nums)`, then work on `out` and return it.",
+    "`slices.DeleteFunc(out, func(n int) bool { return n < 0 })` returns the shortened slice: return (or assign) that result. `slices.Reverse(out)` returns nothing; it just reverses.",
+    "Descending, option 1: `slices.Sort(out); slices.Reverse(out)`. Option 2: `slices.SortFunc(out, func(a, b int) int { return cmp.Compare(b, a) })` (note `b, a`) with `import \"cmp\"`."
+  ]
+}

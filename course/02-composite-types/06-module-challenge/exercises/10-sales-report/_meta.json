@@ -1,0 +1,9 @@
+{
+  "title": "Sales report",
+  "difficulty": "hard",
+  "hints": [
+    "Split the work: `parsePrice(s) (int64, error)` (use `strings.Cut(s, \".\")` and a small `allDigits` check, scaling a 1-digit fraction by 10), `parseLine(line) (Record, error)`, and `Parse` which loops, skips blank/comment lines and wraps errors with `fmt.Errorf(\"sales: line %d: %w\", i+1, err)`.",
+    "For `Summarize`, group with `map[string]*RegionSummary` so you can update fields through the pointer, plus a nested `map[string]map[string]int64` for revenue per product (create the inner map the first time you see a region).",
+    "Pick `Top` by iterating `slices.Sorted(maps.Keys(products))` and keeping the first strictly greater revenue — that resolves ties alphabetically. Copy `*s` into the result slice and sort with `cmp.Or(cmp.Compare(b.Revenue, a.Revenue), cmp.Compare(a.Region, b.Region))`. In `ToJSON`, replace a nil slice with `[]RegionSummary{}` before `json.Marshal`."
+  ]
+}

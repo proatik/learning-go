@@ -1,0 +1,9 @@
+{
+  "title": "Top-K and k-th smallest",
+  "difficulty": "medium",
+  "hints": [
+    "Every function starts the same way: `sorted := slices.Clone(nums)` and then sorts `sorted`. The clone is also what keeps `TopK`'s result from sharing memory with `nums`.",
+    "`TopK`: sort descending with `slices.SortFunc(sorted, func(a, b int) int { return cmp.Compare(b, a) })`, clamp `k = max(0, min(k, len(sorted)))` and return `sorted[:k]`.",
+    "`KthSmallest`: check `k < 1 || k > len(nums)` first, then `sorted[k-1]`. `KthLargestDistinct`: `distinct := slices.Compact(sorted)` after an ascending sort, check `k` against `len(distinct)`, and return `distinct[len(distinct)-k]`."
+  ]
+}

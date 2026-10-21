@@ -1,0 +1,9 @@
+{
+  "title": "Stack on a slice pointer",
+  "difficulty": "medium",
+  "hints": [
+    "`*s` is the caller's slice. `Push` is one line: `*s = append(*s, v)`. `PushAll` loops over `vs` and calls `Push(s, v)` (pass `s` itself, it's already a pointer).",
+    "In `Pop`, read `n := len(*s)` and return `0, false` when it is 0. Parentheses matter: `(*s)[n-1]`, because `*s[n-1]` would try to index the pointer.",
+    "Save `top := (*s)[n-1]`, shrink with `*s = (*s)[:n-1]`, then `return top, true`. `Peek` takes a plain slice: `return s[len(s)-1], true` after the empty check."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Median and spread",
+  "difficulty": "easy",
+  "hints": [
+    "Handle the empty case first: `if len(nums) == 0 { return 0, errors.New(\"empty slice\") }`.",
+    "`slices.Sort(nums)` would reorder the caller's data (same backing array). Sort a copy instead: `sorted := slices.Clone(nums)` then `slices.Sort(sorted)`.",
+    "With `mid := len(sorted) / 2`: an odd length returns `sorted[mid]`; an even length returns `(sorted[mid-1] + sorted[mid]) / 2`. `Spread` is `slices.Max(nums) - slices.Min(nums)`: neither changes `nums`."
+  ]
+}

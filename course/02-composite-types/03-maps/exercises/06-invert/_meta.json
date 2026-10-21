@@ -1,0 +1,9 @@
+{
+  "title": "Map of slices: positions and invert",
+  "difficulty": "medium",
+  "hints": [
+    "Start each result with an empty literal: `out := map[string][]int{}` / `map[int][]string{}`. A missing key reads as a nil slice, and `append` on a nil slice allocates one.",
+    "`Positions`: `for i, w := range words { pos[w] = append(pos[w], i) }`. Indices come out increasing because you walk the slice in order. `Invert`: `for k, v := range m { out[v] = append(out[v], k) }`.",
+    "Map order is random, so sort `Invert`'s groups afterwards: `for _, keys := range out { slices.Sort(keys) }`. Sorting in place works because each value shares its backing array with the slice stored in the map."
+  ]
+}

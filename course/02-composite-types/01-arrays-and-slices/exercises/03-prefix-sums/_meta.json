@@ -1,0 +1,9 @@
+{
+  "title": "Running prefix sums",
+  "difficulty": "easy",
+  "hints": [
+    "Keep a running `total` while you walk `s`; after adding `s[i]`, `total` is exactly `p[i]`. Write into a new slice, not into `s`.",
+    "`p := make([]int, len(s))` gives you `len(s)` zeroed slots you can index directly: `p[i] = total`. For `RangeSum`, the sum of `s[0:hi]` is `prefix[hi-1]`.",
+    "`RangeSum`: return `0` if `lo == hi`; otherwise start with `prefix[hi-1]` and, if `lo > 0`, subtract `prefix[lo-1]`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Remove and insert by hand",
+  "difficulty": "medium",
+  "hints": [
+    "Removing index `i` means: keep `s[:i]`, then put `s[i+1:]` right after it. Inserting means: grow by one, shift the tail right by one, write `v` into the gap.",
+    "`append(a, b...)` appends all of `b`. Since `s[:i]` shares the array with `s`, appending to it overwrites in place. For the unordered version, overwrite `s[i]` with the last element and drop the last slot. `copy(dst, src)` handles overlapping slices.",
+    "`RemoveAt`: `return append(s[:i], s[i+1:]...)`. `RemoveUnordered`: `s[i] = s[len(s)-1]; return s[:len(s)-1]`. `InsertAt`: `s = append(s, 0); copy(s[i+1:], s[i:]); s[i] = v; return s`."
+  ]
+}

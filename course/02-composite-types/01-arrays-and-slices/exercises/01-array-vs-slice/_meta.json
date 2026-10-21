@@ -1,0 +1,9 @@
+{
+  "title": "Sum and largest: array vs slice",
+  "difficulty": "easy",
+  "hints": [
+    "`for _, v := range x { ... }` works the same way over an array and a slice. Ranging over a nil slice simply runs zero times.",
+    "Keep a running `total := 0` and add each `v`. For `Largest`, handle `len(s) == 0` first, then use `s[0]` as the starting value.",
+    "`largest = s[0]`, then `for _, v := range s[1:] { if v > largest { largest = v } }` and `return largest, true`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Chunk a slice",
+  "difficulty": "medium",
+  "hints": [
+    "Walk the start index `lo` in steps of `size`: `for lo := 0; lo < len(s); lo += size`. Each chunk ends at `lo+size`, except the last one, which must stop at `len(s)`.",
+    "The number of chunks is `len(s)/size` rounded up: `(len(s) + size - 1) / size`. Use it for `make([][]int, 0, n)`. The built-in `min` clamps the end: `hi := min(lo+size, len(s))`.",
+    "Append `s[lo:hi:hi]` (the third index sets cap = hi-lo). Return `nil` first if `size <= 0`."
+  ]
+}

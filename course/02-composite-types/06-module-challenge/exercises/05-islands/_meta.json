@@ -1,0 +1,9 @@
+{
+  "title": "Islands and flood fill",
+  "difficulty": "hard",
+  "hints": [
+    "Define `type cell struct{ r, c int }` — a comparable struct, so it works as a map key: `visited := map[cell]bool{}`. A single bounds check handles ragged rows: `r >= 0 && r < len(grid) && c >= 0 && c < len(grid[r])`.",
+    "Scan every cell; when you find unvisited land, run a search from it and count the cells you reach. A slice works as a stack: push with `stack = append(stack, n)`, pop with `p := stack[len(stack)-1]; stack = stack[:len(stack)-1]`. Mark cells visited when you push them.",
+    "Sort sizes descending with `slices.Sort` then `slices.Reverse` (or `slices.SortFunc` with `cmp.Compare(b, a)`). In FloodFill, remember the original byte first and return 0 if it equals `fill`; painting a cell is your visited mark."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Unique values & anagrams",
+  "difficulty": "medium",
+  "hints": [
+    "`slices.Compact` only removes **adjacent** duplicates. Sort first so equal values become neighbours: `out := slices.Clone(nums); slices.Sort(out); return slices.Compact(out)`.",
+    "`CountDistinct` is the same recipe on `[]string`; return `len(...)` of the compacted slice.",
+    "`r := []rune(s)` gives a fresh slice of runes; `slices.Sort(r)` then `string(r)`. Two words are anagrams exactly when `SortedLetters(a) == SortedLetters(b)`."
+  ]
+}

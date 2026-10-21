@@ -1,0 +1,9 @@
+{
+  "title": "Find, insert & delete in a linked list",
+  "difficulty": "medium",
+  "hints": [
+    "`Find` is the standard traversal with an early `return n`. `InsertAfter` is one assignment after the nil check: `n.Next = &Node{Val: v, Next: n.Next}`.",
+    "To unlink a node you need the node **before** it: `prev.Next = prev.Next.Next`. The first node has no predecessor, so handle `head.Val == v` separately by returning `head.Next`.",
+    "`DeleteAll`: first `for head != nil && head.Val == v { head = head.Next }`. Then walk with `prev := head` and `for prev.Next != nil`: unlink when `prev.Next.Val == v`, otherwise advance `prev` (don't advance after unlinking, or you skip a node)."
+  ]
+}

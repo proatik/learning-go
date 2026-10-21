@@ -1,0 +1,9 @@
+{
+  "title": "Sort by length, then alphabetically",
+  "difficulty": "medium",
+  "hints": [
+    "A comparator has the shape `func(a, b string) int`. The first key is `cmp.Compare(utf8.RuneCountInString(a), utf8.RuneCountInString(b))`; the tie-breaker is `strings.Compare(a, b)`.",
+    "Chain them with `cmp.Or(key1, key2)`: it returns the first non-zero result, so the second key only matters when the lengths tie. For longest-first, swap the arguments in the length key only: `cmp.Compare(lenB, lenA)`.",
+    "`Shortest`: `sorted := slices.Clone(words)`, call `SortByLength(sorted)`, clamp `n` with the built-ins `n = max(0, min(n, len(sorted)))`, then `return sorted[:n]`."
+  ]
+}

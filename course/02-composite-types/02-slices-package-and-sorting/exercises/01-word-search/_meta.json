@@ -1,0 +1,9 @@
+{
+  "title": "Word search drills",
+  "difficulty": "easy",
+  "hints": [
+    "Add `import \"slices\"`. `slices.Contains(words, w)` and `slices.Index(words, w)` are the whole answers for the first two functions.",
+    "`IndexFunc` and `ContainsFunc` take a function `func(string) bool`. Write it inline: `slices.IndexFunc(words, func(w string) bool { return len(w) > n })`. The literal can use `n` because closures capture surrounding variables.",
+    "`SameWords` is `slices.Equal(a, b)`. A nil slice and an empty slice both have length 0, so `Equal` treats them as equal."
+  ]
+}

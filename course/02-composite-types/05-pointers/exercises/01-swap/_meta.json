@@ -1,0 +1,9 @@
+{
+  "title": "Swap through pointers",
+  "difficulty": "easy",
+  "hints": [
+    "`a` and `b` are addresses. `*a` is the caller's variable itself: reading it gives the value, assigning to it changes the caller's variable.",
+    "A tuple assignment evaluates the whole right side first: `*a, *b = *b, *a` swaps without a temporary.",
+    "In `SwapIfGreater`, return `false` early when `*a <= *b`; otherwise call `Swap(a, b)` (no `&`: they are already pointers) and return `true`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Independent copies (beat aliasing)",
+  "difficulty": "medium",
+  "hints": [
+    "Independence requires a **new backing array**. Only `make` (or an `append` that runs out of capacity) gives you one; re-slicing and assigning never do.",
+    "`c := make([]int, len(s)); copy(c, s)` is a full copy (check `s == nil` first to keep nil-ness). For `WithAppended`, `append(s, v)` alone is unsafe when `cap(s) > len(s)`: build a fresh slice with room for one more, copy, then append. A deep 2D copy clones every row.",
+    "`WithAppended`: `out := make([]int, len(s), len(s)+1); copy(out, s); return append(out, v)`. `Clone2D`: return nil for nil, else `out := make([][]int, len(m))` and `out[i] = Clone(row)` in a range loop."
+  ]
+}

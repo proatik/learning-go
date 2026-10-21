@@ -1,0 +1,9 @@
+{
+  "title": "Graph shortest path (BFS)",
+  "difficulty": "hard",
+  "hints": [
+    "`AddEdge`: `if !slices.Contains(g[from], to) { g[from] = append(g[from], to) }` — reading a missing key gives a nil slice, which `append` handles. Then add `g[to] = []string{}` only if `to` is not already a key (comma-ok).",
+    "BFS uses a slice as a queue (`cur := queue[0]; queue = queue[1:]`) and a `dist map[string]int` that doubles as the visited set. Record `prev[n] = cur` when a node is first discovered.",
+    "To rebuild the path, start at `to` and follow `prev` until you reach `from`, appending each node; then `slices.Reverse(path)`. Wrap sentinels with `fmt.Errorf(\"%w: %q\", ErrUnknownNode, n)` so `errors.Is` still matches."
+  ]
+}

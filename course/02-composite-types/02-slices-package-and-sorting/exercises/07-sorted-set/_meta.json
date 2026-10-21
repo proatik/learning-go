@@ -1,0 +1,9 @@
+{
+  "title": "A sorted set of ints",
+  "difficulty": "medium",
+  "hints": [
+    "`i, found := slices.BinarySearch(set, v)`: `found` answers `Has`, and `i` is where `v` is, or where it **would** go. Use `_` for the result you don't need.",
+    "Insert at the returned position: `return slices.Insert(s, i, v)`. In `Add`, return `set, false` early when `found` is true.",
+    "In `Remove`, if `found`, delete the single element at `i` with `slices.Delete(set, i, i+1)`: the range is half-open, like `s[i:j]`."
+  ]
+}

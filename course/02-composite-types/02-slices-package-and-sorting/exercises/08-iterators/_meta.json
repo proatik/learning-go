@@ -1,0 +1,9 @@
+{
+  "title": "Ranging over iterators",
+  "difficulty": "medium",
+  "hints": [
+    "`slices.Values(nums)` is an `iter.Seq[int]`: range over it with **one** variable, `for v := range slices.Values(nums) { ... }`, and `append` the even ones to a `var out []int`.",
+    "`slices.Backward(words)` is an `iter.Seq2[int, string]` yielding `(index, value)` from the last element to the first. `return i` on the first match; after the loop, `return -1`.",
+    "`ChunkSums`: return early when `n < 1`, then `for chunk := range slices.Chunk(nums, n)`; each `chunk` is an ordinary `[]int` you can sum with an inner `range`. `SortedFields` is one line: `slices.Sorted(strings.FieldsSeq(s))`."
+  ]
+}

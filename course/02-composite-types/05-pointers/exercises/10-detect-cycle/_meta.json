@@ -1,0 +1,9 @@
+{
+  "title": "Detect a cycle (Floyd)",
+  "difficulty": "hard",
+  "hints": [
+    "Write a helper `meet(head *Node) *Node`: start `slow, fast := head, head`; loop `for fast != nil && fast.Next != nil` moving `slow = slow.Next` and `fast = fast.Next.Next`; return `slow` as soon as `slow == fast`, and `nil` after the loop. `HasCycle` is `meet(head) != nil`.",
+    "`CycleStart`: with `m := meet(head)` non-nil, set `a, b := head, m` and step both one node at a time `for a != b`. They meet exactly at the first node of the cycle.",
+    "`CycleLen`: from `m`, count `n := 1` and walk `for p := m.Next; p != m; p = p.Next { n++ }`. Return `0` when `meet` returned nil."
+  ]
+}

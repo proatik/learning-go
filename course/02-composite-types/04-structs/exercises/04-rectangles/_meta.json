@@ -1,0 +1,9 @@
+{
+  "title": "Rectangles",
+  "difficulty": "medium",
+  "hints": [
+    "Chain selectors through the nested structs: the width is `r.Max.X - r.Min.X`, the height `r.Max.Y - r.Min.Y`. `Contains` is one boolean expression with `<=` on the Min side and `<` on the Max side.",
+    "The overlap of two rects starts at the larger of the two Mins and ends at the smaller of the two Maxes, per axis. The built-ins `max` and `min` work on ints: `Point{X: max(a.Min.X, b.Min.X), Y: max(a.Min.Y, b.Min.Y)}`.",
+    "In `Intersect`, if `r.Min.X >= r.Max.X || r.Min.Y >= r.Max.Y` the overlap is empty: return `Rect{}, false`. In `Bounds`, start with `b := rs[0]` (a copy) and widen it with `min`/`max` for each remaining rect."
+  ]
+}
