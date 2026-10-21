@@ -1,0 +1,9 @@
+{
+  "title": "Print a profile with Printf",
+  "difficulty": "easy",
+  "hints": [
+    "`fmt.Printf(format, args...)` replaces each verb in `format` with the next argument, in order.",
+    "Each line needs its own `\n`: `fmt.Printf(\"Name:   %s\n\", name)`.",
+    "Three calls: `%s` for name, `%d` for year, `%t` for active. Count the spaces after each colon: `Name:` + 3 spaces, `Born:` + 3 spaces, `Active:` + 1 space."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Palindromes",
+  "difficulty": "medium",
+  "hints": [
+    "Do it in two steps: first keep only the lower-cased letters and digits, then check whether that cleaned-up text is symmetric.",
+    "Build the cleaned text with a `strings.Builder` (`WriteRune(unicode.ToLower(r))` for each letter or digit), then convert it with `[]rune(b.String())`.",
+    "With `r := []rune(...)`, loop `for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1` and `return false` as soon as `r[i] != r[j]`. If the loop finishes, `return true`."
+  ]
+}

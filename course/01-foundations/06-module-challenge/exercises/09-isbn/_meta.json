@@ -1,0 +1,9 @@
+{
+  "title": "ISBN-10 check and convert",
+  "difficulty": "hard",
+  "hints": [
+    "Normalize first: `s := strings.ReplaceAll(isbn, \"-\", \"\")`. Now `len(s) != 10` is an immediate `false`, and every remaining byte must be checked.",
+    "Loop `for i := range len(s)` and turn each byte into a value `d`: a digit is `int(c - '0')`; `'X'` is `10` **only when `i == 9`**; anything else returns `false`. Accumulate `sum += d * (10 - i)` and finish with `sum%11 == 0`.",
+    "`ToISBN13`: return an error when `!IsValid(isbn)`; otherwise `body := \"978\" + s[:9]`. Sum the 12 digits with weight 3 on odd indexes (`i%2 == 1`) and 1 on even ones, then `check := (10 - sum%10) % 10` and return `body + string(rune('0'+check))`."
+  ]
+}

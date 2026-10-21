@@ -1,0 +1,9 @@
+{
+  "title": "Calendar switches",
+  "difficulty": "easy",
+  "hints": [
+    "A value switch compares one expression against each case: `switch day { case \"Sat\", \"Sun\": ... }`. Commas list several matching values.",
+    "In `DaysInMonth`, group the months: one case for the seven 31-day months, one for the four 30-day months, one for `2`, and `default` for everything else.",
+    "Inside `case 2:` use an ordinary `if`: `if year%4 == 0 && (year%100 != 0 || year%400 == 0) { return 29 }` then `return 28`."
+  ]
+}

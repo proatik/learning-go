@@ -1,0 +1,9 @@
+{
+  "title": "Hello, function",
+  "difficulty": "easy",
+  "hints": [
+    "A function's result type comes after the parameter list: `func Hello() string`.",
+    "Use a `return` statement with a string literal. String literals use double quotes.",
+    "`return \"Hello, Go!\"` — check punctuation and capitalisation exactly; tests compare strings byte by byte."
+  ]
+}

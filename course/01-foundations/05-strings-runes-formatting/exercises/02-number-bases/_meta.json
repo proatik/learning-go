@@ -1,0 +1,9 @@
+{
+  "title": "Number bases",
+  "difficulty": "easy",
+  "hints": [
+    "`strconv.FormatInt` and `strconv.ParseInt` work with `int64`, so you need conversions: `int64(n)` going in, `int(v)` coming out.",
+    "`v, err := strconv.ParseInt(s, base, 64)`; if `err != nil`, return `0, err`. Otherwise return `int(v), nil`.",
+    "`fmt.Sprintf(\"%[1]d = 0b%[1]b = 0o%[1]o = 0x%[1]X\", n)` reuses the first argument for every verb."
+  ]
+}

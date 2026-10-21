@@ -1,0 +1,9 @@
+{
+  "title": "Human-readable duration",
+  "difficulty": "medium",
+  "hints": [
+    "Handle the two special cases first: `0` returns `\"0s\"`, and a negative input means \"write `-`, then work with `-seconds`\".",
+    "Integer division and `%` split the value into parts: `days := s / 86400`, `hours := s % 86400 / 3600`, `minutes := s % 3600 / 60`, `secs := s % 60`. Build the result with a `strings.Builder`.",
+    "Write a small closure `add := func(n int, unit string)` that does nothing when `n == 0`, otherwise writes a space (only if a part was already written) followed by `strconv.Itoa(n) + unit`. Call it four times, largest unit first."
+  ]
+}

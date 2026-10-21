@@ -1,0 +1,9 @@
+{
+  "title": "Detect integer overflow",
+  "difficulty": "medium",
+  "hints": [
+    "Adding two `int8`s gives an `int8`, which has already wrapped. Do the addition in a type big enough for the true result.",
+    "`wide := int16(a) + int16(b)` is exact. The wrapped sum is `int8(wide)`; it overflowed if `wide > math.MaxInt8 || wide < math.MinInt8`.",
+    "For `SaturatingAdd`: `int8(max(math.MinInt8, min(math.MaxInt8, wide)))`. `min` caps the top, `max` lifts the bottom, and the untyped constants become `int16`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Convert to any base",
+  "difficulty": "hard",
+  "hints": [
+    "Repeated division: `n % base` is the last digit and `n / base` is what remains. Repeat until nothing remains. The digits come out **right to left**.",
+    "Keep `const digits = \"0123456789abcdefghijklmnopqrstuvwxyz\"`; `digits[d]` is the byte for digit value `d`, and `string(digits[d]) + s` prepends it. Handle `base` out of range and `n == 0` first.",
+    "For negatives, don't negate the `int` (that breaks on `math.MinInt`). Use `u := uint(n); if n < 0 { u = -u }` — unsigned negation wraps to the right magnitude — then divide `u` by `uint(base)` and add the `\"-\"` at the end."
+  ]
+}

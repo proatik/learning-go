@@ -1,0 +1,9 @@
+{
+  "title": "defer: order and named results",
+  "difficulty": "hard",
+  "hints": [
+    "`defer` schedules a call for when the function returns, and deferred calls run in reverse order. Its arguments are evaluated immediately. In `ParseAge`, the named results `age` and `err` are visible to a closure declared inside the function.",
+    "`Stack`: inside `for i := range n`, print the push, then `defer fmt.Println(\"pop\", i+1)`. `ParseAge`: first `defer func() { if err != nil { ... } }()`, then do the work with plain `return` statements.",
+    "Inside the deferred closure: `age = 0` and `err = fmt.Errorf(\"ParseAge(%q): %v\", s, err)`. The body is `age, err = strconv.Atoi(s)`; `if err != nil { return 0, err }`; `if age < 0 || age > 150 { return 0, errors.New(\"age out of range\") }`; `return age, nil`."
+  ]
+}

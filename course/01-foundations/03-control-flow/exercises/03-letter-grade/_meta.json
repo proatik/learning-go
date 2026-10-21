@@ -1,0 +1,9 @@
+{
+  "title": "Letter grade",
+  "difficulty": "easy",
+  "hints": [
+    "A tagless switch is `switch { case <bool expression>: ... }`. The first true case wins and the switch ends — no `break` needed.",
+    "Handle the invalid range first with `case score < 0 || score > 100:`. After that, every remaining score is between 0 and 100.",
+    "Then go from the highest grade down: `case score >= 90: return \"A\"`, `case score >= 80: return \"B\"`, ... and `default: return \"F\"`."
+  ]
+}

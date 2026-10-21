@@ -1,0 +1,9 @@
+{
+  "title": "Working with digits",
+  "difficulty": "medium",
+  "hints": [
+    "The loop pattern for all three is the same: while `n > 0`, look at `n % 10`, then shrink `n` with `n /= 10`. Make `n` non-negative first.",
+    "To build the reversed number, start from `rev := 0` and each iteration do `rev = rev*10 + n%10`. Remember whether the input was negative (`sign := 1`, set to `-1`) and multiply at the end.",
+    "`IsPalindrome` fits in one line: `return n >= 0 && Reverse(n) == n`. `&&` short-circuits, so negatives return `false` straight away."
+  ]
+}

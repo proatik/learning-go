@@ -1,0 +1,9 @@
+{
+  "title": "Look and say",
+  "difficulty": "medium",
+  "hints": [
+    "Walk the string by **byte index** and find each run: start at `i`, move `j` forward while `s[j] == s[i]`. The run length is `j - i`.",
+    "For each run write `strconv.Itoa(j-i)` and then the digit byte (`sb.WriteByte(s[i])`) into a `strings.Builder`, then continue from `i = j`. Reject bytes outside `'0'..'9'` as you go.",
+    "`Term`: check `n < 1`, start with `s := \"1\"`, and `for range n - 1 { s, _ = Next(s) }`. Ignoring the error is safe here because every term contains only digits — say so in a comment."
+  ]
+}

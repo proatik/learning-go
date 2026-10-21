@@ -1,0 +1,9 @@
+{
+  "title": "Byte sizes with iota",
+  "difficulty": "medium",
+  "hints": [
+    "`iota` is 0 on the first line of the block. You want `KB` on the line where `iota == 1`, so put `_ = iota` first.",
+    "Write the expression once: `KB = 1 << (10 * iota)`, then `MB`, `GB`, `TB` on their own lines repeat it with iota = 2, 3, 4.",
+    "In `HumanSize`, let `f := float64(n)` and test `n >= TB`, then `GB`, `MB`, `KB`, returning `fmt.Sprintf(\"%.1f TB\", f/TB)` etc. The fallback is `fmt.Sprintf(\"%d B\", n)`. Don't forget `import \"fmt\"`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Acronym",
+  "difficulty": "easy",
+  "hints": [
+    "`strings.Fields` splits on runs of whitespace. Turn hyphens into spaces first with `strings.ReplaceAll`.",
+    "Loop over the words with `for _, word := range strings.Fields(...)`, then over each word's runes with `for _, r := range word` until you find a letter.",
+    "When `unicode.IsLetter(r)` is true: `b.WriteRune(unicode.ToUpper(r))` and `break` out of the inner loop. Return `b.String()` at the end."
+  ]
+}

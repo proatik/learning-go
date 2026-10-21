@@ -1,0 +1,9 @@
+{
+  "title": "A package in two files",
+  "difficulty": "easy",
+  "hints": [
+    "You only need to edit `convert.go`. Both files say `package temperature`, so they see each other's names.",
+    "`c*9/5 + 32` is evaluated left to right: `c*9` is a `float64`, so the division that follows is floating-point too.",
+    "`FToC` is `(f - 32) * 5 / 9`. Avoid `5/9 * (f - 32)`: `5/9` is an untyped integer constant expression equal to `0`."
+  ]
+}

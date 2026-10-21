@@ -1,0 +1,9 @@
+{
+  "title": "Recursion drills",
+  "difficulty": "medium",
+  "hints": [
+    "Write the base case first in every function: `n == 0` for `Factorial`, `exp == 0` for `Power`, `b == 0` for `GCD`, `n < 10` for `SumDigits`. Validate inputs before anything else.",
+    "`Factorial` returns two values, so the recursive call is `f, err := Factorial(n - 1)` followed by `return n * f, nil`. For `Power` with an even `exp`, compute `half := Power(base, exp/2)` once and return `half * half`.",
+    "`GCD`: `if b == 0 { return a }; return GCD(b, a%b)`. `SumDigits`: `if n < 0 { return SumDigits(-n) }; if n < 10 { return n }; return n%10 + SumDigits(n/10)`. `Power` odd case: `return base * Power(base, exp-1)`."
+  ]
+}

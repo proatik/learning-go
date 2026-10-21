@@ -1,0 +1,9 @@
+{
+  "title": "Swap and rotate",
+  "difficulty": "easy",
+  "hints": [
+    "Parameters are ordinary local variables: you may assign new values to them with `=`.",
+    "In `x, y = e1, e2` both `e1` and `e2` are evaluated **first**, then stored. So the old values are not lost halfway.",
+    "`a, b = b, a` then `return a, b`. For `Rotate`: `a, b, c = b, c, a`."
+  ]
+}

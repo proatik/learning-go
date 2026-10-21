@@ -1,0 +1,9 @@
+{
+  "title": "Temperature table",
+  "difficulty": "medium",
+  "hints": [
+    "Start with the two conversions. Arithmetic on a named type keeps the type, so `c*9/5 + 32` is a `Celsius`; convert it with `Fahrenheit(...)`. The same goes for `Kelvin(c + 273.15)`.",
+    "A width before the verb right-aligns: `%7.1f` prints `  -40.0`. Use `%7s  %10s  %7s\\n` for the header and `%7.1f  %10.1f  %7.2f\\n` for each row. `strings.Repeat(\"-\", 7)` gives the dashes.",
+    "Loop with `for c := Celsius(start); c <= end; c += step { ... }` and count with `rows++` inside the loop, then `fmt.Printf(\"%d rows\\n\", rows)`. Run `go test` and compare the diff carefully if a space is off."
+  ]
+}

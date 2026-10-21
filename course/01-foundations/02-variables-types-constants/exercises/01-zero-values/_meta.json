@@ -1,0 +1,9 @@
+{
+  "title": "Zero values",
+  "difficulty": "easy",
+  "hints": [
+    "`var i int` declares `i` and sets it to the zero value `0`. You never need to write the value yourself.",
+    "Group the declarations: `var ( i int; s string; ... )` with one per line, then print each with `fmt.Printf(\"%T = %v\\n\", i, i)`.",
+    "Eight `Printf` calls in the listed order. For the string variable use `fmt.Printf(\"%T = %q\\n\", s, s)` so it prints `string = \"\"`."
+  ]
+}

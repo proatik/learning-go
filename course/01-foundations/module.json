@@ -1,0 +1,13 @@
+{
+  "title": "Module 1 · Foundations",
+  "short": "1 · Foundations",
+  "summary": "Toolchain, program structure, variables, types, constants, control flow, functions, strings and formatting.",
+  "lessons": {
+    "01-getting-started": "Getting Started",
+    "02-variables-types-constants": "Variables & Types",
+    "03-control-flow": "Control Flow",
+    "04-functions": "Functions",
+    "05-strings-runes-formatting": "Strings & fmt",
+    "06-module-challenge": "Challenge"
+  }
+}

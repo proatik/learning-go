@@ -1,0 +1,9 @@
+{
+  "title": "Caesar cipher",
+  "difficulty": "medium",
+  "hints": [
+    "Runes are integers: `r - 'a'` is a lowercase letter's position (0–25), and `'a' + pos` turns a position back into a letter.",
+    "Normalise the shift once so it's in 0–25 even when negative: `shift = (shift%26 + 26) % 26` (Go's `%` keeps the sign of the left operand, so `-1 % 26` is `-1`).",
+    "In a `range` loop: `if r >= 'a' && r <= 'z' { r = 'a' + (r-'a'+rune(shift))%26 }`, the same for `'A'`–`'Z'`, then `b.WriteRune(r)`. `Decrypt` is just `Encrypt(s, -shift)`."
+  ]
+}

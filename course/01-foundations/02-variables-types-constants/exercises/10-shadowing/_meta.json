@@ -1,0 +1,9 @@
+{
+  "title": "Fix the shadowing bugs",
+  "difficulty": "hard",
+  "hints": [
+    "Every `{ }` block is a new scope. `x := ...` inside an `if` block always creates variables **in that block**, even if an outer `x` exists.",
+    "In `ParsePort`, the inner `port, err := strconv.Atoi(s)` creates a second `port` that disappears at the closing `}`. The outer `port` stays `8080`.",
+    "Inside the `if`, write `var err error` and change the line to `port, err = strconv.Atoi(s)` (plain `=`). Do the same with `f` in `Scale`."
+  ]
+}

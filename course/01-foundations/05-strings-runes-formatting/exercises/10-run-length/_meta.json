@@ -1,0 +1,9 @@
+{
+  "title": "Run-length encoding",
+  "difficulty": "hard",
+  "hints": [
+    "Encode: remember the current rune and how many times you've seen it in a row. When a different rune arrives, write the old one plus its count, then start counting the new one. Don't forget to write the last run after the loop.",
+    "Decode: convert to `r := []rune(s)` and walk it with an index `i`. Each step reads one symbol `r[i]` (error if it's a digit), then reads digits while `r[j] >= '0' && r[j] <= '9'`, building the number with `n = n*10 + int(r[j]-'0')`.",
+    "After reading the digits: if none were found or `n == 0`, `return \"\", fmt.Errorf(...)`. Otherwise `b.WriteString(strings.Repeat(string(sym), n))` and continue from the first rune after the digits. For Encode, the flush is `b.WriteRune(prev); b.WriteString(strconv.Itoa(count))`."
+  ]
+}

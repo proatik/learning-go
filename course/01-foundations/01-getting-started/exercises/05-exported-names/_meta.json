@@ -1,0 +1,9 @@
+{
+  "title": "Exported names",
+  "difficulty": "easy",
+  "hints": [
+    "A name is exported if it starts with an upper-case letter. `squareArea` is invisible outside the package; `SquareArea` is visible.",
+    "Rename `squareArea` → `SquareArea` and `pi` → `Pi`, then add the two missing functions. Parameters of the same type can share it: `func RectangleArea(width, height float64) float64`.",
+    "`CircleArea` is `return Pi * square(radius)`. The tests compare with a tiny tolerance (`1e-9`) because floating-point math isn't exact."
+  ]
+}

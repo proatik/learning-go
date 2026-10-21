@@ -1,0 +1,9 @@
+{
+  "title": "Nested loops with labels",
+  "difficulty": "hard",
+  "hints": [
+    "A label is a name plus a colon on the line just before a loop: `outer:` then `for a := 1; a <= limit; a++ { ... }`. `break outer` / `continue outer` then act on that loop instead of the innermost one.",
+    "`FirstPair`: declare `x, y := 0, 0` before the loops. Inner loop: `for b := a; b <= limit; b++`. When `a*b == target`, set `x, y = a, b` and `break outer`. Finish with `return x, y`.",
+    "`CountPrimes`: `candidates: for p := 2; p <= n; p++ { for d := 2; d*d <= p; d++ { if p%d == 0 { continue candidates } }; count++ }`. `count++` is only reached when no divisor was found."
+  ]
+}

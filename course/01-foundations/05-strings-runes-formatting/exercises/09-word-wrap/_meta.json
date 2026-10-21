@@ -1,0 +1,9 @@
+{
+  "title": "Word wrap",
+  "difficulty": "hard",
+  "hints": [
+    "Loop over `strings.Fields(text)` and write into one `strings.Builder`. Keep an `int` with the rune length of the line you are currently filling.",
+    "For each word (length `n := utf8.RuneCountInString(word)`): if the current line is empty, just write the word; else if `lineLen+1+n <= width`, write a space and the word; otherwise write `\"\\n\"` and start a new line with the word.",
+    "Sketch:\n```go\nlineLen := 0\nfor _, w := range strings.Fields(text) {\n\tn := utf8.RuneCountInString(w)\n\tswitch {\n\tcase lineLen == 0:\n\tcase lineLen+1+n <= width:\n\t\tb.WriteByte(' ')\n\t\tlineLen++\n\tdefault:\n\t\tb.WriteByte('\\n')\n\t\tlineLen = 0\n\t}\n\tb.WriteString(w)\n\tlineLen += n\n}\n```"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "From Roman numerals",
+  "difficulty": "hard",
+  "hints": [
+    "Write a helper `symbolValue(c byte) int` with a `switch` that returns 1, 5, 10, ... for each symbol and `0` for anything else. A `0` means \"invalid character\".",
+    "Scan left to right by byte index. If a symbol's value is smaller than the next symbol's value, subtract it; otherwise add it. `\"MCMXCIV\"` → 1000 − 100 + 1000 − 10 + 100 − 1 + 5 = 1994.",
+    "That rule also accepts junk such as `\"IIII\"` (4) or `\"IC\"` (99). Copy your `ToRoman` loop into an unexported `toRoman(n int) string` and finish with `if total < 1 || total > 3999 || toRoman(total) != s { return 0, err }`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Weekday enum with iota",
+  "difficulty": "medium",
+  "hints": [
+    "In a `const ( ... )` block, a line with only a name repeats the previous line's type and expression, and `iota` counts lines from 0.",
+    "`Sunday Weekday = iota` on the first line, then just `Monday`, `Tuesday`, …. Untyped constants like `1` and `7` mix freely with a `Weekday`: `d + 1` is a `Weekday`.",
+    "`Next`: `(d + 1) % 7`. `Prev`: `(d + 6) % 7` (adding 6 is the same as subtracting 1 when you wrap at 7, but never goes negative). `IsWeekend`: `d == Saturday || d == Sunday`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Type conversions",
+  "difficulty": "easy",
+  "hints": [
+    "`weightKg / heightCm` does not compile: `float64` and `int` are different types. Convert with `float64(heightCm)`.",
+    "Compute the height in metres in a variable first: `m := float64(heightCm) / 100`, then `weightKg / (m * m)`.",
+    "`Truncate` is just `return int(f)`. `Pixels` multiplies in `float64` and converts the result: `int(inches * float64(dpi))`."
+  ]
+}

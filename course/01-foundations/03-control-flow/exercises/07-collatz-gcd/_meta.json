@@ -1,0 +1,9 @@
+{
+  "title": "Collatz and GCD: while-style loops",
+  "difficulty": "medium",
+  "hints": [
+    "Go has no `while`: write `for n != 1 { ... }`. Guard against `n < 1` with an early `return -1` **before** the loop, or it never terminates.",
+    "Inside the Collatz loop: `if n%2 == 0 { n /= 2 } else { n = 3*n + 1 }`, then `steps++`. For GCD, first flip negative inputs: `if a < 0 { a = -a }` (same for `b`).",
+    "Euclid's loop is just `for b != 0 { a, b = b, a%b }` followed by `return a`. The tuple assignment evaluates `b` and `a%b` before changing either variable."
+  ]
+}

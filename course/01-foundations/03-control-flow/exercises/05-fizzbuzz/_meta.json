@@ -1,0 +1,9 @@
+{
+  "title": "FizzBuzz",
+  "difficulty": "medium",
+  "hints": [
+    "Order matters in a tagless switch: a multiple of 15 is also a multiple of 3, so the \"FizzBuzz\" case must come **before** the \"Fizz\" case.",
+    "Divisible by both 3 and 5 is the same as divisible by 15: `case n%15 == 0:`. Use `default: return strconv.Itoa(n)` and add `\"strconv\"` to the imports.",
+    "`for i := range n { fmt.Println(FizzBuzz(i + 1)) }` prints 1 … n. When `n <= 0` the loop body never runs, so nothing is printed."
+  ]
+}

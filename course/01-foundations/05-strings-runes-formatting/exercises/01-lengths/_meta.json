@@ -1,0 +1,9 @@
+{
+  "title": "Bytes, runes and vowels",
+  "difficulty": "easy",
+  "hints": [
+    "`len(s)` counts bytes. The `unicode/utf8` package has a function that counts runes.",
+    "`utf8.RuneCountInString(s)` gives the rune count. For vowels, loop with `for _, r := range s` and test each rune.",
+    "Inside the loop use a `switch r { case 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U': count++ }` (or `unicode.ToLower(r)` first, then list only the lowercase vowels)."
+  ]
+}

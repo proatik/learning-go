@@ -1,0 +1,9 @@
+{
+  "title": "Fibonacci generator",
+  "difficulty": "medium",
+  "hints": [
+    "The generator needs to remember the current number and the one after it. Declare `a, b := 0, 1` before returning the closure.",
+    "Inside the closure: remember `cur := a`, advance with `a, b = b, a+b`, return `cur`. In `Nth`, after checking `n < 0`, create a generator and call it the right number of times.",
+    "`next := Fibonacci(); for range n { next() }; return next(), nil`: the first `n` calls skip F(0)..F(n-1), the next call is F(n)."
+  ]
+}

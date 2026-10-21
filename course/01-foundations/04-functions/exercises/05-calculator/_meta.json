@@ -1,0 +1,9 @@
+{
+  "title": "Calculator with function values",
+  "difficulty": "medium",
+  "hints": [
+    "In `Lookup`, each `case` returns a function *value* plus `nil`: either a named function like `add` (no parentheses: you're not calling it) or a literal `func(a, b int) int { return a * b }`.",
+    "The `default` case returns `nil, fmt.Errorf(\"unknown operator %q\", op)`. In `Calc`, call `f, err := Lookup(op)` and `return 0, err` if it failed.",
+    "Before `return f(a, b), nil`, guard division: `if (op == \"/\" || op == \"%\") && b == 0 { return 0, errors.New(\"division by zero\") }`."
+  ]
+}

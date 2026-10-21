@@ -1,0 +1,9 @@
+{
+  "title": "Tower of Hanoi",
+  "difficulty": "hard",
+  "hints": [
+    "Trust the recursion: assume `Hanoi(n-1, ...)` already moves a smaller tower correctly. Your job is only the three steps in the README, plus the base case `n <= 0` returning `0`.",
+    "The peg roles rotate in the recursive calls: step 1 is `Hanoi(n-1, from, via, to, move)`, step 3 is `Hanoi(n-1, via, to, from, move)`. Pass `move` along unchanged so every level reports its moves.",
+    "`count := Hanoi(n-1, from, via, to, move)`; then `if move != nil { move(from, to) }` and `count++`; then `count += Hanoi(n-1, via, to, from, move)`; `return count`."
+  ]
+}

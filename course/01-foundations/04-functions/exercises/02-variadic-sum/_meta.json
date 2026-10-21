@@ -1,0 +1,9 @@
+{
+  "title": "Variadic sum and mean",
+  "difficulty": "easy",
+  "hints": [
+    "Inside the function `nums` is a slice (`[]int`). `len(nums)` is how many arguments were passed, and `for _, n := range nums` visits each one.",
+    "`Sum`: start with `total := 0`, add each `n`, return `total`. `Mean`: first check `len(nums) == 0` and return `0, errors.New(...)`.",
+    "`return float64(Sum(nums...)) / float64(len(nums)), nil`. The `...` passes the slice on as the variadic arguments."
+  ]
+}

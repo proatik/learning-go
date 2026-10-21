@@ -1,0 +1,9 @@
+{
+  "title": "Min and max in one pass",
+  "difficulty": "easy",
+  "hints": [
+    "`first` is a plain `int`; `rest` is a slice of the remaining arguments (possibly empty). `first` is both the smallest and the largest number seen so far.",
+    "Initialize with `lo, hi = first, first`, then `for _, n := range rest { ... }` and update `lo` or `hi` when `n` beats them.",
+    "Inside the loop: `if n < lo { lo = n }` and `if n > hi { hi = n }`. End with `return lo, hi` (or a naked `return`)."
+  ]
+}

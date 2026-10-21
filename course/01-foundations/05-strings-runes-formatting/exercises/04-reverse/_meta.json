@@ -1,0 +1,9 @@
+{
+  "title": "Reverse runes and words",
+  "difficulty": "medium",
+  "hints": [
+    "`r := []rune(s)` gives one element per character that you can modify; `string(r)` turns it back into a string.",
+    "Swap with two indexes moving toward each other: `for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 { r[i], r[j] = r[j], r[i] }`.",
+    "For words: `words := strings.Fields(s)`, then `for i := len(words) - 1; i >= 0; i--` write `words[i]` into a `strings.Builder`, adding a space before every word except the first one written."
+  ]
+}

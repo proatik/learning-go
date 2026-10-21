@@ -1,0 +1,9 @@
+{
+  "title": "Number to words",
+  "difficulty": "hard",
+  "hints": [
+    "Split the problem: `n / 1000` and `n % 1000` are both in `0..999`. If you can spell `1..999`, you can spell everything — `\"<thousands words> thousand <rest words>\"`, leaving out empty parts. Handle `0` and the range check up front.",
+    "Two lookup tables cover all the irregular words: `small := []string{\"zero\", \"one\", ..., \"nineteen\"}` (20 entries) and `tens := []string{\"\", \"\", \"twenty\", \"thirty\", ..., \"ninety\"}`.",
+    "In `spell999(n)`: hundreds is `n / 100` → `small[h] + \" hundred\"`; then for `r := n % 100` use a `switch`: `r < 20` → `small[r]`; `r%10 == 0` → `tens[r/10]`; otherwise `tens[r/10] + \"-\" + small[r%10]`. Only add a space between two non-empty parts."
+  ]
+}

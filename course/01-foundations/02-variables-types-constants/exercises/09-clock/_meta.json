@@ -1,0 +1,9 @@
+{
+  "title": "Seconds to clock time",
+  "difficulty": "hard",
+  "hints": [
+    "Hours = how many whole 3600s fit (`/`). What's left over (`%`) holds the minutes and seconds.",
+    "`h = total / 3600`, `m = total % 3600 / 60`, `s = total % 60`. In `Clock`, remember the sign in a variable (`sign := \"\"`), make `total` positive, then reuse `Split` and `fmt.Sprintf(\"%s%02d:%02d:%02d\", ...)`.",
+    "For `TimeOfDay`, a remainder that is always non-negative is `(total%day + day) % day` where `day = 86400`. Split that and format it with `%02d:%02d:%02d`."
+  ]
+}

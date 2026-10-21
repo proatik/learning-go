@@ -1,0 +1,9 @@
+{
+  "title": "Counters with closures",
+  "difficulty": "medium",
+  "hints": [
+    "Declare a local variable in the outer function, then return a function literal that reads and updates it. The variable survives because the closure still refers to it.",
+    "`Counter`: `n := 0`, and the closure does `n++` then `return n`. `CountBy` must return the *current* value before advancing, so save it in a temporary first.",
+    "`CountBy`: `next := start; return func() int { cur := next; next += step; return cur }`. `Accumulator` can capture its own parameter: `return func(x int) int { initial += x; return initial }`."
+  ]
+}

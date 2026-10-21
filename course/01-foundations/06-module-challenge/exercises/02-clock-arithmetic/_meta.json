@@ -1,0 +1,9 @@
+{
+  "title": "Clock arithmetic",
+  "difficulty": "medium",
+  "hints": [
+    "Convert everything to minutes since midnight first: `total := h*60 + m + delta`. Then the problem is just wrapping `total` into `0..1439`.",
+    "`-1 % 1440` is `-1` in Go, not `1439`. The safe wrap is `((total % n) + n) % n`. Format with `fmt.Sprintf(\"%02d:%02d\", total/60, total%60)`.",
+    "For `ParseClock`, check `len(s) != 5 || s[2] != ':'` first, then loop over the four digit bytes checking `'0' <= c && c <= '9'` and accumulating `n = n*10 + int(c-'0')`. Finish with the range check `h <= 23 && m <= 59`, returning `0, 0, err` on any failure."
+  ]
+}

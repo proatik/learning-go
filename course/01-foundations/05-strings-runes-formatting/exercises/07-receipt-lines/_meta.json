@@ -1,0 +1,9 @@
+{
+  "title": "Receipt lines",
+  "difficulty": "medium",
+  "hints": [
+    "Width pads, `-` left-aligns, and `.N` sets decimals for floats or the maximum number of runes for strings: `%-12s`, `%3d`, `%7.2f`.",
+    "`Separator` is `strings.Repeat(\"-\", 37)`. `Total` is `fmt.Sprintf(\"%-29s%8.2f\", \"TOTAL\", total)` — 12+1+3+3+7+3 = 29.",
+    "`Line`: `fmt.Sprintf(\"%-12.12s %3d x %7.2f = %8.2f\", item, qty, unit, float64(qty)*unit)`. `Header` uses the same widths with `%s` verbs: `\"%-12s %3s   %7s   %8s\"`."
+  ]
+}

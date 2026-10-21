@@ -1,0 +1,9 @@
+{
+  "title": "Let go vet find the bugs",
+  "difficulty": "easy",
+  "hints": [
+    "Run the tests and read the first lines of output. They come from vet, e.g. `Sprintf format %d has arg kind of wrong type string`.",
+    "In `Summary` the verbs are in the wrong order for the arguments. Verbs are matched to arguments left to right.",
+    "A literal percent sign in a format string is written `%%`, so the format becomes `\"%.1f%%\"`."
+  ]
+}

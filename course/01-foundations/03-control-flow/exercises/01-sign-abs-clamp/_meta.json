@@ -1,0 +1,9 @@
+{
+  "title": "Sign, Abs and Clamp",
+  "difficulty": "easy",
+  "hints": [
+    "Go's `if` has no parentheses and always needs braces: `if n < 0 { ... } else if n > 0 { ... } else { ... }`.",
+    "For `Abs`, negate with unary minus: `if n < 0 { return -n }`, then `return n` after the `if` — no `else` required.",
+    "`min(x, hi)` can never exceed `hi`; wrapping it in `max(lo, ...)` can never go below `lo`: `return max(lo, min(x, hi))`."
+  ]
+}

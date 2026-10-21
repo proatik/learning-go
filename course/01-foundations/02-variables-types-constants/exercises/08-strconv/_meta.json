@@ -1,0 +1,9 @@
+{
+  "title": "Numbers and strings with strconv",
+  "difficulty": "medium",
+  "hints": [
+    "Add `import \"strconv\"`. `strconv.Atoi` and `strconv.ParseFloat` return **two** values: the number and an `error` (which is `nil` on success).",
+    "Pattern: `n, err := strconv.Atoi(s)` then `if err != nil { return 0, err }`, then the happy path `return n * 2, nil`. Do the same twice in `AddStrings`.",
+    "`Label`: `\"item-\" + strconv.Itoa(n)`. `Binary`: `strconv.FormatInt(int64(n), 2)`. FormatInt wants an `int64`, so convert."
+  ]
+}

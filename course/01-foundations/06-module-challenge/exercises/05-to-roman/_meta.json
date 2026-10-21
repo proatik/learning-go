@@ -1,0 +1,9 @@
+{
+  "title": "To Roman numerals",
+  "difficulty": "hard",
+  "hints": [
+    "Validate the range first. Then think greedily: repeatedly take the largest value that still fits into `n`, write its symbol, and subtract it.",
+    "Treat the subtractive pairs as symbols of their own. Two parallel tables do it: `values := []int{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1}` and the matching `symbols := []string{\"M\", \"CM\", \"D\", ...}`.",
+    "`for i, v := range values { for n >= v { sb.WriteString(symbols[i]); n -= v } }` and finally `return sb.String(), nil`."
+  ]
+}

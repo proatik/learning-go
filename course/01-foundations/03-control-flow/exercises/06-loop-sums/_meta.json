@@ -1,0 +1,9 @@
+{
+  "title": "Loop sums",
+  "difficulty": "medium",
+  "hints": [
+    "Start each function with an accumulator (`sum := 0` or `count := 0`), update it in the loop, and return it. `for i := range n` runs zero times when `n <= 0`, so the edge cases come for free.",
+    "`range n` yields `0 … n-1`. For `SumTo` you need `1 … n`: either loop over `range n + 1` (adding 0 does nothing) or add `i + 1`. `SumOfMultiples` wants `k < limit`, which is exactly `range limit` — but skip `k == 0`.",
+    "In `SumOfMultiples`: `if k == 0 || (k%a != 0 && k%b != 0) { continue }` then `sum += k`. In `CountDivisors`: `if n%(i+1) == 0 { count++ }`."
+  ]
+}

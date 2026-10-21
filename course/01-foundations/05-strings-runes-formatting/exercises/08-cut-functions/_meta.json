@@ -1,0 +1,9 @@
+{
+  "title": "Cut, CutPrefix and CutLast",
+  "difficulty": "medium",
+  "hints": [
+    "`before, after, found := strings.Cut(s, \"=\")` splits once at the first `=`; `found` tells you whether there was one. `CutLast` has the same shape but uses the last match.",
+    "In `ParseKeyValue`: if `!found`, `return \"\", \"\", fmt.Errorf(\"missing '=' in %q\", s)`. Then `strings.TrimSpace` both parts and check for an empty key.",
+    "`StripScheme`: `if rest, ok := strings.CutPrefix(url, \"https://\"); ok { return rest, true }`, then try `\"http://\"`, else `return url, false`. `SplitExt` is a single `name, ext, _ := strings.CutLast(filename, \".\")` — when there is no dot it already returns `filename, \"\"`."
+  ]
+}

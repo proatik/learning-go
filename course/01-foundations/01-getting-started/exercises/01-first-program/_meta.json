@@ -1,0 +1,9 @@
+{
+  "title": "Your first program",
+  "difficulty": "easy",
+  "hints": [
+    "Printing lives in the `fmt` package: add `import \"fmt\"` below the package clause.",
+    "`fmt.Println` prints its arguments separated by spaces and ends with a newline: `fmt.Println(\"x\", 1)` prints `x 1`.",
+    "`fmt.Println(a, \"+\", b, \"=\", a+b)` prints `2 + 3 = 5`. `fmt.Printf(\"%d + %d = %d\n\", a, b, a+b)` works too."
+  ]
+}

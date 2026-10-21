@@ -1,0 +1,9 @@
+{
+  "title": "Higher-order functions",
+  "difficulty": "medium",
+  "hints": [
+    "A value of type `IntFunc` is called like any function: `f(x)`. To *return* a function, return a function literal: `return func(x int) int { ... }`.",
+    "`ApplyN`: loop `n` times (`for range n`) and reassign `x = f(x)` each time; ranging over `n <= 0` does nothing. `Compose`: the literal's body computes `f(g(x))`, and it can use `f` and `g` because closures capture them.",
+    "`Compose` is `return func(x int) int { return f(g(x)) }`. `Twice(f)` is just `Compose(f, f)`."
+  ]
+}

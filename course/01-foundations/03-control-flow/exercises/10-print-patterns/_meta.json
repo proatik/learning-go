@@ -1,0 +1,9 @@
+{
+  "title": "Printing patterns",
+  "difficulty": "hard",
+  "hints": [
+    "Outer loop over rows: `for i := 1; i <= n; i++ { ... fmt.Println() }`. Inside, print the row piece by piece with `fmt.Print`, which adds no newline and no spaces between string arguments.",
+    "To print something `k` times use `for range k { fmt.Print(\"*\") }`. The pyramid's row `i` is two such loops: `n - i` spaces, then `2*i - 1` stars.",
+    "For the table, the inner loop is `for j := 1; j <= n; j++ { fmt.Printf(\"%4d\", i*j) }`. `%4d` pads on the left, so no row ends in a space."
+  ]
+}

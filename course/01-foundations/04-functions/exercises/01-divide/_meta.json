@@ -1,0 +1,9 @@
+{
+  "title": "Divide with remainder",
+  "difficulty": "easy",
+  "hints": [
+    "Named results `q, r int, err error` are already variables set to `0`, `0` and `nil`. You only assign the ones you need.",
+    "Handle the failure first: `if b == 0 { err = errors.New(\"division by zero\"); return }`. Don't forget `import \"errors\"`.",
+    "After the check, assign both results at once with `q, r = a/b, a%b` and finish with a naked `return`."
+  ]
+}

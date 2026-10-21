@@ -1,0 +1,9 @@
+{
+  "title": "Greet someone",
+  "difficulty": "easy",
+  "hints": [
+    "Strings are joined with `+`: `\"a\" + \"b\"` is `\"ab\"`.",
+    "Compare with the empty string: `if name == \"\" { ... }`. Go's `if` has no parentheses around the condition, and braces are mandatory.",
+    "Parameters are ordinary variables you may reassign: set `name = \"World\"` when it's empty, then `return \"Hello, \" + name + \"!\"`."
+  ]
+}
