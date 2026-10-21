@@ -147,6 +147,7 @@ body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
 .nav-sub .nav-item { padding-left: 30px; font-size: 13px; }
 
 #main { flex: 1; overflow-y: auto; min-width: 0; }
+body:not(.ws-mode) #main { scrollbar-gutter: stable; } /* no sideways jump when a page starts scrolling */
 body.ws-mode #main { overflow: hidden; background: var(--canvas-inset); }
 .content { max-width: 1012px; margin: 0 auto; padding: 32px 32px 80px; }
 .page-title { font-size: 28px; font-weight: 600; letter-spacing: -.01em; line-height: 1.25; margin: 0 0 6px; }
@@ -716,8 +717,7 @@ function viewHome() {
 }
 
 // --- Lesson ---
-async function viewLesson(id) {
-  const { lesson, markdown } = await api('/api/lesson/' + enc(id));
+function viewLesson(id, { lesson, markdown }) {
   const mod = course.find(m => m.lessons.some(l => l.id === id));
   const exs = lesson.exercises || [];
   const passed = exs.filter(e => e.status === 'passed').length;
@@ -1035,8 +1035,7 @@ function setMarkers(owner, diags) {
 }
 
 // --- layout ---
-async function viewExercise(id) {
-  const ex = await api('/api/exercise/' + enc(id));
+async function viewExercise(id, ex) {
   prefs.set('session.lastExercise', id);
   cur = { ex, editor: null, models: {}, saved: {}, active: ex.files[0]?.name, result: ex.lastResult || null,
           viewStates: {}, leftTab: 'desc', bottomTab: 'result', openHints: new Set(), max: '' };
@@ -1477,23 +1476,35 @@ document.addEventListener('click', e => {
   navigate(a.getAttribute('href'));
 });
 
+// Load the next page's data while the current page stays on screen, then swap
+// everything at once; tearing down first caused a visible layout shift.
+let routeSeq = 0;
 async function route() {
+  const seq = ++routeSeq;
+  const r = currentPath();
+  let data = null, loadErr = null;
+  try {
+    if (r.startsWith('/lesson/')) data = await api('/api/lesson/' + enc(r.slice(8)));
+    else if (r.startsWith('/exercise/')) data = await api('/api/exercise/' + enc(r.slice(10)));
+  } catch (e) { loadErr = e; }
+  if (seq !== routeSeq) return; // a newer navigation won
+
   document.body.classList.remove('drawer-open');
   applySidebar();
   closeExercise();
   document.body.classList.remove('ws-mode');
   $('hdr-left-extra').innerHTML = ''; $('hdr-center').innerHTML = '';
   $view.className = 'content'; $view.removeAttribute('style');
-  const r = currentPath();
   renderShell();
   try {
+    if (loadErr) throw loadErr;
     let title = '';
     if (r.startsWith('/lesson/')) {
-      await viewLesson(r.slice(8));
+      viewLesson(r.slice(8), data);
       const l = course.flatMap(m => m.lessons).find(l => l.id === r.slice(8));
       title = l ? l.short || l.title : '';
     } else if (r.startsWith('/exercise/')) {
-      await viewExercise(r.slice(10));
+      await viewExercise(r.slice(10), data);
       title = cur ? `${cur.ex.index}. ${cur.ex.title}` : '';
     } else if (r === '/settings') { viewSettings(); title = 'Settings'; }
     else viewHome();
