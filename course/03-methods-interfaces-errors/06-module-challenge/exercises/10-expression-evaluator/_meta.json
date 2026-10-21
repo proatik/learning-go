@@ -1,0 +1,9 @@
+{
+  "title": "Expression evaluator",
+  "difficulty": "hard",
+  "hints": [
+    "Start with the node methods — they are short and the tests check them on hand-built trees. `Binary.Eval` evaluates both sides, returns any error as is, then switches on `b.Op`; for `'/'` with `r == 0` return `&DivisionByZeroError{Expr: b.String()}`.",
+    "Split parsing into two steps. A tokenizer turns the string into `[]token{text string; pos int}` (or returns a `*SyntaxError` for an unknown character). A `parser` struct holds the tokens, an index `i`, and `end = len(s)`, with a `peek()` method and one method per grammar rule: `expr`, `term`, `unary`, `primary`.",
+    "`expr` = `left := p.term()`, then `for` the next token is `+` or `-`: consume it, `right := p.term()`, `left = Binary{Op: tok[0], L: left, R: right}`. `term` is the same with `unary` and `* /`. A single helper `errHere()` returns `unexpected %q` for the current token or `unexpected end of input` at `p.end`. After `p.expr()` in `Parse`, any token left over is an `errHere()` too."
+  ]
+}

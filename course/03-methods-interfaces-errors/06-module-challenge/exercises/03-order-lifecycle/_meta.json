@@ -1,0 +1,9 @@
+{
+  "title": "Order lifecycle",
+  "difficulty": "medium",
+  "hints": [
+    "Put the rules in data, not `if` chains: `var allowed = map[State][]State{Created: {Paid, Cancelled}, Paid: {Shipped, Cancelled}, Shipped: {Delivered}}`. Then `CanTransition` is `slices.Contains(allowed[from], to)` — a missing key gives a nil slice, which contains nothing.",
+    "`Transition` checks `CanTransition(o.state, to)` first and returns `&TransitionError{From: o.state, To: to}` before mutating anything. The four shortcuts are one-liners: `func (o *Order) Pay() error { return o.Transition(Paid) }`.",
+    "`State.String` can index an array of names after a bounds check (`s < 0 || int(s) >= len(names)` → `fmt.Sprintf(\"State(%d)\", int(s))`). `Is` is `return target == ErrInvalidTransition`. `History` returns `slices.Clone(o.history)`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Close error capture",
+  "difficulty": "medium",
+  "hints": [
+    "`Save` has a **named** `err` result, so a deferred closure can see what the function is about to return and change it. Defer the close only **after** `open` succeeded.",
+    "`defer func() { if cerr := s.Close(); cerr != nil && err == nil { err = fmt.Errorf(\"close: %w\", cerr) } }()`. Because it's deferred it also runs when `Write` panics — and since it doesn't call `recover`, the panic continues afterwards.",
+    "`SaveBatches` must not `defer` inside its loop. Reuse `Save`, which closes before it returns: `if err := Save(func() (Store, error) { return open(i) }, lines); err != nil { return fmt.Errorf(\"batch %d: %w\", i, err) }`."
+  ]
+}

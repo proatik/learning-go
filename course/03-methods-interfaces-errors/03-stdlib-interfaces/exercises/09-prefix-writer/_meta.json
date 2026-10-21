@@ -1,0 +1,9 @@
+{
+  "title": "Prefix writer and tee logger",
+  "difficulty": "hard",
+  "hints": [
+    "A line can be split across `Write` calls, so the writer needs **memory** between calls: a field like `midLine bool` that says whether the next byte continues a line or starts a new one. That's why `Write` has a pointer receiver.",
+    "Build the output in a fresh `[]byte` (never modify `p`): loop over the bytes; if `!midLine`, append the prefix and set `midLine = true`; append the byte; if it was `'\\n'`, set `midLine = false`. Then make one `Write` to the wrapped writer.",
+    "Store the prefix as `[]byte` so you can `out = append(out, pw.prefix...)`. After the wrapped write: `if err != nil { return 0, err }`, save the new `midLine` state, `return len(p), nil`. `NewLogger` is one line: `return NewPrefixWriter(io.MultiWriter(ws...), prefix)`."
+  ]
+}

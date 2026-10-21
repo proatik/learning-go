@@ -1,0 +1,9 @@
+{
+  "title": "Nil-safe linked list",
+  "difficulty": "medium",
+  "hints": [
+    "A method on `*List` can be called on a nil pointer; it only panics if it reads `l.Val` or `l.Next` while `l == nil`. Loops like `for ; l != nil; l = l.Next { ... }` are nil-safe automatically (the receiver is a local copy of the pointer, so moving it is fine).",
+    "`Push` is one line: `return &List{Val: v, Next: l}`, which even works when `l` is nil. `FromSlice` can push the values from last to first. `Append` handles `l == nil` first, then walks to the last node and links a new one.",
+    "`Reverse`: keep `prev` (starts nil); each step save `next := l.Next`, set `l.Next = prev`, then `prev, l = l, next`; return `prev`. `RemoveAll`: first skip matching nodes at the head, then walk with `cur` and, whenever `cur.Next.Val == v`, unlink it with `cur.Next = cur.Next.Next` (without advancing)."
+  ]
+}

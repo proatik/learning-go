@@ -1,0 +1,9 @@
+{
+  "title": "Receipt writer",
+  "difficulty": "easy",
+  "hints": [
+    "`fmt.Fprintf(w, format, args...)` is `Printf` that writes to `w` instead of the terminal. It returns `(n int, err error)` — keep the `err`.",
+    "Loop over the items, keep a running `total` in cents, and write each line with `fmt.Fprintf(w, \"%s x%d = $%d.%02d\\n\", ...)`. After each write, `if err != nil { return err }`.",
+    "A small helper `dollars(c int) string { return fmt.Sprintf(\"$%d.%02d\", c/100, c%100) }` keeps it tidy. Write `(no items)` first when `len(items) == 0`, and finish with `_, err := fmt.Fprintf(w, \"TOTAL = %s\\n\", dollars(total)); return err`."
+  ]
+}

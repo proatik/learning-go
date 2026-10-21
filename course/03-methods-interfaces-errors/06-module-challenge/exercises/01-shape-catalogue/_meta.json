@@ -1,0 +1,9 @@
+{
+  "title": "Shape catalogue",
+  "difficulty": "medium",
+  "hints": [
+    "Each shape is three one-line value-receiver methods. For `Triangle`, write an unexported `valid()` helper and return `0` from `Area` and `Perimeter` when it is false.",
+    "`ByArea` is a slice type, so `Len` is `len(s)`, `Swap` is `s[i], s[j] = s[j], s[i]` and `Less` compares `s[i].Area() < s[j].Area()`. `SortByArea` converts the slice: `sort.Stable(ByArea(shapes))`.",
+    "In `Summary`, `switch s.(type) { case nil: continue; case Circle, *Circle: circles++; ... default: other++ }`, then `total += s.Area()` after the switch. In `Largest`, keep `var best Shape` and replace it when `best == nil || s.Area() > best.Area()`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "LRU cache, method edition",
+  "difficulty": "medium",
+  "hints": [
+    "Port the Module 2 helpers to methods: `func (c *LRU) unlink(n *node)` and `func (c *LRU) pushFront(n *node)`. Then `Get` is a comma-ok lookup followed by `c.unlink(n); c.pushFront(n)`, and `Peek` is the lookup alone.",
+    "A method with a pointer receiver can be called on a nil pointer — the receiver is just `nil`. So `Len`, `Keys` and `String` start with `if c == nil { return ... }` before touching any field.",
+    "In `Put`, when `len(c.items) == c.capacity`: `old := c.tail; c.unlink(old); delete(c.items, old.key)`, then `if c.OnEvict != nil { c.OnEvict(old.key, old.value) }`. For `String`, walk from `c.head` with a `strings.Builder`, writing `fmt.Fprintf(&b, \"%s:%d\", n.key, n.value)` and a space before every node except the first."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Try: panic to error",
+  "difficulty": "medium",
+  "hints": [
+    "`Try` needs a **named** `err` result and a deferred closure with `recover()`. Since Go 1.21, `r != nil` reliably means a panic happened, even for `panic(nil)`.",
+    "Write one helper `toError(r any) error`: `if e, ok := r.(error); ok { return fmt.Errorf(\"recovered: %w\", e) }`, otherwise `fmt.Errorf(\"recovered: %v\", r)`. Use it from both `Try` and `TryInt`.",
+    "`Try`: `defer func() { if r := recover(); r != nil { err = toError(r) } }()` then `f(); return nil`. `TryInt`: same, with `return f(), nil` and `n, err = 0, toError(r)`. `TryAll`: `errs := make([]error, len(jobs))` and `errs[i] = Try(job)` in a loop: each call recovers on its own."
+  ]
+}

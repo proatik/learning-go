@@ -1,0 +1,9 @@
+{
+  "title": "Short reads",
+  "difficulty": "hard",
+  "hints": [
+    "`ChunkReader` needs one more field, e.g. `pos int`, so it remembers where the next chunk starts; `Read` therefore has a pointer receiver. `ReadAllChunked` is the lesson's read loop, made bullet-proof.",
+    "Chunk: `size := max(c.Size, 1)`, `n := copy(p, c.Data[c.pos:min(c.pos+size, len(c.Data))])` (copy also stops at `len(p)`), `c.pos += n`. Return `n, io.EOF` if `EOFWithData` and `c.pos == len(c.Data)`; when `c.pos >= len(c.Data)` at the start, return `0, io.EOF`.",
+    "Loop: `n, err := r.Read(buf)`; **first** `data = append(data, buf[:n]...)`; then `if err == io.EOF { return data, nil }`, `if err != nil { return data, err }`. Keep an `empty` counter: reset it to 0 when `n > 0`, otherwise `empty++` and `if empty >= 100 { return data, io.ErrNoProgress }`."
+  ]
+}

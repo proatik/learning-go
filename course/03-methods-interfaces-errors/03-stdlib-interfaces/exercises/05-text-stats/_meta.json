@@ -1,0 +1,9 @@
+{
+  "title": "Text stats with bufio.Scanner",
+  "difficulty": "medium",
+  "hints": [
+    "`sc := bufio.NewScanner(r)` then `for sc.Scan() { ... }`. The loop ends at EOF **or** on an error; `sc.Err()` tells you which (nil means a clean end).",
+    "Lines are the default split. For words call `sc.Split(bufio.ScanWords)` before the first `Scan`. A helper `count(r io.Reader, split bufio.SplitFunc) (int, error)` can serve both counters.",
+    "For `Longest`, keep `best` and `bestLen := -1`; for each `line := sc.Text()`, `if n := utf8.RuneCountInString(line); n > bestLen { best, bestLen = line, n }` (strict `>` keeps the first on ties). Finish with `return best, sc.Err()`."
+  ]
+}

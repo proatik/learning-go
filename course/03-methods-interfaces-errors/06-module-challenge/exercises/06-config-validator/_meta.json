@@ -1,0 +1,9 @@
+{
+  "title": "Config validator",
+  "difficulty": "hard",
+  "hints": [
+    "`Unwrap` is one line: `func (e *FieldError) Unwrap() error { return e.Err }`. In `Validate`, collect into `var errs []error` with a small closure `add := func(field string, err error) { errs = append(errs, &FieldError{field, err}) }`, and finish with `return errors.Join(errs...)` — it returns `nil` for an empty slice.",
+    "Use `switch { case ...: case ...: }` blocks so each field reports at most one problem (e.g. replicas: out-of-range case first, prod case second). For tags, build the name with `\"tags[\" + strconv.Itoa(i) + \"]\"` and track earlier tags in a `map[string]bool`.",
+    "For `Fields`, write a recursive closure `var walk func(error)`. In it: return on `nil`; `if fe, ok := err.(*FieldError); ok { out = append(out, fe.Field) }`; then `switch u := err.(type) { case interface{ Unwrap() []error }: for _, e := range u.Unwrap() { walk(e) }; case interface{ Unwrap() error }: walk(u.Unwrap()) }`."
+  ]
+}

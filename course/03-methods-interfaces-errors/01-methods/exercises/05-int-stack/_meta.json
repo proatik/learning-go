@@ -1,0 +1,9 @@
+{
+  "title": "Integer stack",
+  "difficulty": "medium",
+  "hints": [
+    "The receiver `s` is a `*Stack`, a pointer to the slice. Work on the slice itself with `*s` (and `(*s)[i]` for indexing: the parentheses are required).",
+    "`Push`: `*s = append(*s, v)`. `Peek`: check `len(*s) == 0`, else return `(*s)[len(*s)-1], true`. `Pop`: reuse `Peek`, then shrink with `*s = (*s)[:len(*s)-1]`. `Values`: `slices.Clone(*s)`.",
+    "`EvalRPN`: `var s Stack`; loop over tokens with a `switch tok`. For an operator pop `b` then `a` (fail if either `ok` is false), check `b == 0` for `/`, push the result. Otherwise `n, err := strconv.Atoi(tok)` (fail on error) and push it. At the end require `s.Len() == 1` and `return s.Pop()`."
+  ]
+}

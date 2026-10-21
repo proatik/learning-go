@@ -1,0 +1,9 @@
+{
+  "title": "Method values and expressions",
+  "difficulty": "medium",
+  "hints": [
+    "`c.Add` without parentheses is a method value: a `func(int)` that remembers `c`. `(*Calc).Add` is a method expression: a `func(*Calc, int)` that takes the receiver as its first argument.",
+    "`Bound`: `return []func(int){c.Add, c.Sub, c.Mul}`. `Lookup`: a `switch name` returning `(*Calc).Add`, `(*Calc).Sub` or `(*Calc).Mul`, and `nil` after the switch.",
+    "In `RunAll`, validate first: build `ops := make([]func(*Calc, int), len(steps))` with `Lookup` and return `false` on the first nil. Only then loop over the calculators and call `op(c, steps[i].Arg)`. `Run` can be `var c Calc; ok := RunAll([]*Calc{&c}, steps)`."
+  ]
+}

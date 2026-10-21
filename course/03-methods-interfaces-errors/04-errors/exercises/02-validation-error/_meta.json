@@ -1,0 +1,9 @@
+{
+  "title": "Validation error type",
+  "difficulty": "easy",
+  "hints": [
+    "`Error()` only formats the two fields. `Validate` is a list of guard clauses, one per row of the table, each returning `&ValidationError{...}`. It ends with `return nil`.",
+    "Count characters with `utf8.RuneCountInString`, because `len` counts bytes. For the email, `user, host, ok := strings.Cut(u.Email, \"@\")` splits at the first `@`, so a second `@` is still in `host`.",
+    "Email check: `if !ok || user == \"\" || host == \"\" || strings.Contains(host, \"@\") { return &ValidationError{Field: \"email\", Reason: \"must look like user@host\"} }`. Remember the `&`: tests look for a `*ValidationError`."
+  ]
+}

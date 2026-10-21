@@ -1,0 +1,9 @@
+{
+  "title": "Key-value store",
+  "difficulty": "medium",
+  "hints": [
+    "`Store` embeds `Getter`, `Setter` and `Deleter`, so `*MemStore` satisfies it once it has all four methods with pointer receivers. Reading, `len` and `delete` all work on a nil map; only writing needs `if m.data == nil { m.data = map[string]string{} }`.",
+    "`GetOr` and `CopyKeys` take the smallest interface they need, so they only ever call `Get` / `Set`. `Keys` can be `slices.Sorted(maps.Keys(m.data))`.",
+    "For `ReadOnly`, define an unexported `type readOnly struct{ g Getter }` with one method `func (r readOnly) Get(key string) (string, bool) { return r.g.Get(key) }` and return `readOnly{g: g}`. It has no `Set`, so asserting it to `Setter` fails."
+  ]
+}

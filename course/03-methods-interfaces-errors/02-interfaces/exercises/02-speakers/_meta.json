@@ -1,0 +1,9 @@
+{
+  "title": "Speakers",
+  "difficulty": "easy",
+  "hints": [
+    "There is no `implements`: once `Dog`, `Cat` and `Robot` each have `Name() string` and `Sound() string`, they are `Speaker`s. `Greet`, `Chorus` and `CountSound` only call the two interface methods.",
+    "`Robot.Name` is `fmt.Sprintf(\"%s-v%d\", r.Model, r.Version)`. `Greet` is `s.Name() + \" says \" + s.Sound() + \"!\"`.",
+    "For `Chorus`, append `Greet(s)` for every speaker into a `[]string` and return `strings.Join(parts, \" \")` (joining an empty slice gives `\"\"`). `CountSound` is a loop with `if s.Sound() == sound { n++ }`."
+  ]
+}

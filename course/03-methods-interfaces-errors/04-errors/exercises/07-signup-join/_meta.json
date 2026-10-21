@@ -1,0 +1,9 @@
+{
+  "title": "Report every problem",
+  "difficulty": "medium",
+  "hints": [
+    "Don't return early. Start with `var errs []error`, append one error per failed check, and finish with `return errors.Join(errs...)`. Joining zero errors gives `nil`.",
+    "Use `if f.Username == \"\" { ... } else if !validUsername(f.Username) { ... }` so an empty name reports only one problem. Small helpers keep `Validate` readable. Count runes with `utf8.RuneCountInString`, and use `strings.ContainsAny(p, \"0123456789\")` for the digit check.",
+    "`Messages`: `if err == nil { return nil }`, then `joined, ok := err.(interface{ Unwrap() []error })`. If `!ok`, return `[]string{err.Error()}`. Otherwise loop over `joined.Unwrap()` and append each `e.Error()`."
+  ]
+}

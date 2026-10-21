@@ -1,0 +1,9 @@
+{
+  "title": "Rank the shapes",
+  "difficulty": "medium",
+  "hints": [
+    "`slices.SortFunc` works on a `[]Shape` like on any slice; the comparison function receives two `Shape`s and can only call `Area()` and `Name()`. Sort a `slices.Clone` so the caller's slice stays untouched.",
+    "Compare with `cmp.Or(cmp.Compare(a.Area(), b.Area()), cmp.Compare(a.Name(), b.Name()))`. For `TopN`, swap the area arguments (`cmp.Compare(b.Area(), a.Area())`) and return `out[:min(n, len(out))]` after handling `n <= 0`. Use `slices.SortStableFunc` so full ties keep their input order.",
+    "`Kind` is `switch s.(type) { case nil: return \"none\"; case Square, Rect: return \"polygon\"; case Circle: return \"round\"; default: return \"unknown\" }`."
+  ]
+}

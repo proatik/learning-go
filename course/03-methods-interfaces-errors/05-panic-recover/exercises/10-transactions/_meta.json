@@ -1,0 +1,9 @@
+{
+  "title": "Transactions",
+  "difficulty": "hard",
+  "hints": [
+    "Register **one** deferred function right after a successful `Begin`. It is the single place that decides whether to roll back, so every exit path — `return err` or panic — goes through it. A `committing := false` flag tells it when the commit path was reached.",
+    "In the deferred function: `if committing { return }`. Then `if r := recover(); r != nil { _ = tx.Rollback(); panic(r) }` (roll back, then re-panic the same value). Otherwise the callback returned an error: `if rerr := tx.Rollback(); rerr != nil { err = errors.Join(err, fmt.Errorf(\"rollback: %w\", rerr)) }` — this needs the **named** `err` result.",
+    "The body: `if err := fn(tx); err != nil { return err }`, then `committing = true` and `if err := tx.Commit(); err != nil { return fmt.Errorf(\"commit: %w\", err) }`. `ExecAll` is `return WithTx(db, func(tx Tx) error { for _, stmt := range stmts { if err := tx.Exec(stmt); err != nil { return fmt.Errorf(\"exec %q: %w\", stmt, err) } }; return nil })`."
+  ]
+}

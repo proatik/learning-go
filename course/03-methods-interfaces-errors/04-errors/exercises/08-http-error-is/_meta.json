@@ -1,0 +1,9 @@
+{
+  "title": "Error categories with Is",
+  "difficulty": "medium",
+  "hints": [
+    "For each error in the chain, `errors.Is(err, target)` first tries `==`, then calls `Is(target)` if the error has that method. Your `Is` only has to answer \"do I, this one error, match target?\"",
+    "Compare `target` against the category sentinels by identity. `switch target { case ErrClient: ...; case ErrServer: ...; case ErrRetryable: ... }` works because errors are comparable interface values. After the switch, try `target.(*HTTPError)`.",
+    "Same-code check: `t, ok := target.(*HTTPError); return ok && t != nil && t.Code == e.Code`. In `Advice`, use a `switch { case err == nil: ...; case errors.Is(err, ErrRetryable): ... }` so that 429 says \"retry later\" before it counts as a client error."
+  ]
+}

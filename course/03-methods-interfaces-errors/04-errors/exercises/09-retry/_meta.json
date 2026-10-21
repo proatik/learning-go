@@ -1,0 +1,9 @@
+{
+  "title": "Retry temporary failures",
+  "difficulty": "hard",
+  "hints": [
+    "Retry doesn't care about concrete types, only the *behaviour* `Temporary() bool`. Declare a small interface for it and let `errors.As`/`errors.AsType` find the first error in the chain that has the method.",
+    "`errors.AsType` needs a type argument that implements `error`, so embed it: `type temporary interface { error; Temporary() bool }`. Then `t, ok := errors.AsType[temporary](err); return ok && t.Temporary()`. In `Retry`, loop `for i := 1; i <= attempts; i++` and remember the last error.",
+    "Loop body: `err := f(); if err == nil { return nil }; if !IsTemporary(err) { return fmt.Errorf(\"attempt %d: %w\", i, err) }; last = err`. After the loop: `return fmt.Errorf(\"gave up after %d attempts: %w\", attempts, last)`. Put the `attempts < 1` guard before the loop."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Wrap with context",
+  "difficulty": "medium",
+  "hints": [
+    "Each layer adds only what it knows. `parse` knows about ports but not files. `LoadConfig` knows the file name, so it is the only place that adds `config \"<name>\": `.",
+    "In `parse`: `host, p, ok := strings.Cut(strings.TrimSpace(content), \":\")`. Then write guard clauses for `!ok`, `host == \"\"`, the `strconv.Atoi` error, and the range check.",
+    "Wrap the Atoi error itself: `return Config{}, fmt.Errorf(\"port %q: %w\", p, err)`. In `LoadConfig`: `cfg, err := parse(content); if err != nil { return Config{}, fmt.Errorf(\"config %q: %w\", name, err) }`, then `return cfg, nil`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Matrix",
+  "difficulty": "hard",
+  "hints": [
+    "Everything is stored in one flat slice: element `(i, j)` lives at `data[i*cols+j]`. Write `New` first (`make([]float64, rows*cols)`) and build `FromRows`, `Identity`, `Transpose`, `Add` and `Mul` on top of it.",
+    "Make `Rows` and `Cols` nil-safe (`if m == nil { return 0 }`), then a private helper `inRange(i, j)` using them serves `At` and `Set`. `Equal`: `if m == nil || o == nil { return m == o }`, then compare shapes and `slices.Equal(m.data, o.data)`.",
+    "`Mul`: check `m.cols == o.rows`, make `p := New(m.rows, o.cols)`, and for every `i`, `j` sum `m.data[i*m.cols+k] * o.data[k*o.cols+j]` over `k`. `String`: per row, format values with `strconv.FormatFloat(v, 'g', -1, 64)`, `strings.Join(vals, \" \")` wrapped in `[...]`, then join the lines with `\"\\n\"`."
+  ]
+}

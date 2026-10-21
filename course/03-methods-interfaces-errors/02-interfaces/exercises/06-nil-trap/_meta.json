@@ -1,0 +1,9 @@
+{
+  "title": "The nil interface trap",
+  "difficulty": "medium",
+  "hints": [
+    "An interface value is a (type, value) pair, and it equals `nil` only when **both** are nil. `return p` where `p` is a nil `*FieldProblem` produces `(*FieldProblem, nil)`, which is not `nil`.",
+    "Don't route the result through a `*FieldProblem` variable: `return &FieldProblem{...}` inside the `if`, and `return nil` (the literal) at the end. Once the checks are right, `Validate` and `Collect` just call them in order and test `p != nil`.",
+    "`IsNil`: `if p == nil { return true }`, then `fp, ok := p.(*FieldProblem)` and `return ok && fp == nil`. A slice `checks := []func(User) Problem{CheckName, CheckAge, CheckEmail}` keeps `Validate` and `Collect` to one loop each."
+  ]
+}

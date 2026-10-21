@@ -1,0 +1,9 @@
+{
+  "title": "Safe index, set & assert",
+  "difficulty": "easy",
+  "hints": [
+    "Each function is the same shape: a named `err` result, a deferred closure that calls `recover()`, then the plain operation (`return s[i], nil`).",
+    "Run-time panic values implement `error`. In the closure: `if e, ok := r.(error); ok { err = fmt.Errorf(\"safe index: %w\", e) }` keeps the original value inspectable with `errors.As`. A tiny helper `asError(prefix string, r any) error` avoids repeating this three times.",
+    "`StringAt`: `defer func() { if r := recover(); r != nil { s, err = \"\", asError(fmt.Sprintf(\"string at %d\", i), r) } }()` followed by `return row[i].(string), nil`. The closure can read `i` because it is a parameter of the surrounding function."
+  ]
+}

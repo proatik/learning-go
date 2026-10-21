@@ -1,0 +1,9 @@
+{
+  "title": "Unwind the stack",
+  "difficulty": "medium",
+  "hints": [
+    "During a panic, each function's deferred calls run (last deferred first) before the panic moves on to the caller. `recover` in the outermost deferred function stops it after everything else has run.",
+    "For `Unwind`, write a recursive helper `level(w io.Writer, i, depth int)` that prints `enter`, does `defer fmt.Fprintln(w, \"exit\", i)`, then panics or recurses. `Unwind` itself defers the recovering closure **before** calling `level(w, 1, depth)`.",
+    "In `Acquire`, the **first** statement is `defer func() { if r := recover(); r != nil { fmt.Fprintln(w, \"error:\", r) } }()` (deferred first ⇒ runs last). Then loop: `fmt.Fprintln(w, \"acquire\", name)`, `defer fmt.Fprintln(w, \"release\", name)`, `if i == failAt { panic(\"failed at \" + name) }`; after the loop print `all done`."
+  ]
+}

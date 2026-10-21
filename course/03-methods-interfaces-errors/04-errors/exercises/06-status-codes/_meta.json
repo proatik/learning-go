@@ -1,0 +1,9 @@
+{
+  "title": "Errors across layers",
+  "difficulty": "medium",
+  "hints": [
+    "Each layer has one job. `Find` reports the fact (`not found`) and `GetUser` says what it was doing (`get user: `). Only `StatusOf`/`Handle` decide what the error *means* to the client.",
+    "Wrap with `%w` in both lower layers so the sentinel survives two levels of wrapping. In `StatusOf`, order the checks `nil` → `errors.Is(err, ErrNotFound)` → `errors.AsType[*InputError](err)` → `500`.",
+    "`Handle`: `u, err := s.GetUser(id); status = StatusOf(err)`, then `switch status`. For 400, recover the typed error with `ie, _ := errors.AsType[*InputError](err)` and return `ie.Error()`. For 500, return the fixed text `\"internal error\"`, never `err.Error()`."
+  ]
+}

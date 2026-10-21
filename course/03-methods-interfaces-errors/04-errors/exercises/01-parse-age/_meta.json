@@ -1,0 +1,9 @@
+{
+  "title": "Parse an age",
+  "difficulty": "easy",
+  "hints": [
+    "Write three guard clauses in order: empty, not a number, out of range. Each one returns `0, <error>` right away, and the happy path ends with `return n, nil`.",
+    "`s = strings.TrimSpace(s)` first. Return `ErrEmpty` as is. For the other two, `fmt.Errorf` with the `%w` verb wraps the sentinel so `errors.Is` can find it.",
+    "`n, err := strconv.Atoi(s); if err != nil { return 0, fmt.Errorf(\"parse age %q: %w\", s, ErrNotNumber) }` and `if n < 0 || n > 150 { return 0, fmt.Errorf(\"age %d: %w\", n, ErrOutOfRange) }`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Parser with precise errors",
+  "difficulty": "hard",
+  "hints": [
+    "Columns count runes, so convert each line once with `r := []rune(line)`. Then index `i` in `r` is column `i+1`. Track **indexes** while you scan rather than slicing strings: that way you always know where you are.",
+    "For each line, find the segments by scanning `r` for `';'` and get `start`/`end` indexes. In a helper `parsePair(r, start, end, line, out) error`, skip the leading spaces to find `first`, then find the first `'='`. Walk back from `'='` over spaces to find the end of the key, then check each key rune, then check for a duplicate.",
+    "Errors come out as `&ParseError{Line: line, Col: first + 1, Err: ErrMissingEquals}`, `Col: eq + 1` for the empty key, `Col: i + 1` for a bad key rune, and `Col: first + 1` for a duplicate. Store the value with `strings.Trim(string(r[eq+1:end]), \" \\t\")`. Return `nil, err` as soon as a pair fails."
+  ]
+}

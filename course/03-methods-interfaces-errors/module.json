@@ -1,0 +1,13 @@
+{
+  "title": "Module 3 · Methods, Interfaces & Errors",
+  "short": "3 · Methods & Interfaces",
+  "summary": "Methods, interfaces, the standard library's core interfaces, idiomatic error handling, and panic/recover.",
+  "lessons": {
+    "01-methods": "Methods",
+    "02-interfaces": "Interfaces",
+    "03-stdlib-interfaces": "Std Interfaces",
+    "04-errors": "Errors",
+    "05-panic-recover": "panic & recover",
+    "06-module-challenge": "Challenge"
+  }
+}

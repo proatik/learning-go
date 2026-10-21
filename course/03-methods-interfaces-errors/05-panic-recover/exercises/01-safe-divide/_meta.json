@@ -1,0 +1,9 @@
+{
+  "title": "Safe divide",
+  "difficulty": "easy",
+  "hints": [
+    "The results are **named** (`q`, `err`) on purpose: a deferred closure can still assign them after the panic has stopped the function body.",
+    "Put `defer func() { if r := recover(); r != nil { ... } }()` at the top of the function, then simply `return a / b, nil`. When `b == 0`, the division panics, the deferred closure runs, and `recover()` returns the run-time error value.",
+    "Inside the `if`: `q, err = 0, fmt.Errorf(\"safe divide: %v\", r)`. `Average` is the same pattern: sum in a loop, then `return sum / len(nums), nil` and the prefix `\"average: \"`."
+  ]
+}

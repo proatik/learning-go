@@ -1,0 +1,9 @@
+{
+  "title": "Call tracer",
+  "difficulty": "medium",
+  "hints": [
+    "In `defer t.Enter(\"x\")()`, `t.Enter(\"x\")` is evaluated **immediately** (like any deferred call's arguments/function value); only the returned func is deferred. So `Enter` prints the enter line right away and returns a closure for the exit line.",
+    "The method needs a pointer receiver so `t.depth++` sticks. Build the indent with `strings.Repeat(\"| \", t.depth)` and print with `fmt.Fprintf(t.W, \"%s> %s\\n\", indent, name)`. The returned closure captures `t` and `name`.",
+    "`if t.W == nil { return func() {} }`. Otherwise print, `t.depth++`, and `return func() { t.depth--; fmt.Fprintf(t.W, \"%s< %s\\n\", strings.Repeat(\"| \", t.depth), name) }`. Since the closure runs from `defer`, it also runs during a panic — don't call `recover` in it."
+  ]
+}

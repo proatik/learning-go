@@ -1,0 +1,9 @@
+{
+  "title": "sort.Interface, old and new",
+  "difficulty": "medium",
+  "hints": [
+    "`ByAge` is just a slice type, so its methods index it directly: `Len` is `len(a)`, `Less` compares `a[i].Age < a[j].Age`, `Swap` is `a[i], a[j] = a[j], a[i]`.",
+    "`sort.Reverse(data)` returns an `Interface` whose `Less` is flipped. `sort.Stable` (unlike `sort.Sort`) keeps equal elements in their original order. Convert with `ByAge(ps)` — no copying, the slice shares `ps`'s array.",
+    "`SortOldestFirst`: `sort.Stable(sort.Reverse(ByAge(ps)))`. `SortAgeThenName`: `slices.SortFunc(ps, func(a, b Person) int { return cmp.Or(cmp.Compare(a.Age, b.Age), cmp.Compare(a.Name, b.Name)) })`."
+  ]
+}

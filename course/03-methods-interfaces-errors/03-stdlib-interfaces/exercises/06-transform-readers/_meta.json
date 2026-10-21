@@ -1,0 +1,9 @@
+{
+  "title": "Transforming readers",
+  "difficulty": "medium",
+  "hints": [
+    "Your `Read` doesn't produce bytes itself: let the wrapped reader fill the caller's buffer with `n, err := u.R.Read(p)`, then fix up the bytes in place.",
+    "Loop over `p[:n]` only (the rest of `p` is not data). Change the byte, then `return n, err` exactly as you got them — don't swallow `io.EOF` or other errors.",
+    "Upper: `if 'a' <= c && c <= 'z' { p[i] = c - ('a' - 'A') }`. ROT13: for lower case `'a' + (c-'a'+13)%26`, for upper case `'A' + (c-'A'+13)%26`, otherwise unchanged."
+  ]
+}

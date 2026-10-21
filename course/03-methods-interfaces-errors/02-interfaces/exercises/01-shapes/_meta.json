@@ -1,0 +1,9 @@
+{
+  "title": "Shapes",
+  "difficulty": "easy",
+  "hints": [
+    "Each method is one line on its receiver, e.g. `func (r Rect) Area() float64 { return r.W * r.H }`. The functions only call `s.Area()`: they never need to know the concrete type.",
+    "For the triangle, compute `s := t.Perimeter() / 2` and return `math.Sqrt(s * (s - t.A) * (s - t.B) * (s - t.C))`. `TotalArea` is a `range` loop that adds `s.Area()`.",
+    "In `Largest`, return `nil, false` when `len(shapes) == 0`. Otherwise start with `best := shapes[0]` and loop over `shapes[1:]`, replacing `best` only when `s.Area() > best.Area()` (strictly greater keeps the first on a tie)."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Mixed sum",
+  "difficulty": "medium",
+  "hints": [
+    "Loop over `vals` and use `switch x := v.(type)`. Each numeric type needs its **own** case: in `case int, int64:` the variable `x` would be an `any`, and `float64(x)` doesn't compile.",
+    "Cases: `int`, `int64`, `float32` → `total += float64(x)`; `float64` → `total += x`; `*int` → check `x == nil` first (a nil `*int` inside an `any` is not the `nil` case!); `Valuer` → `total += x.Value()`; `default` → `skipped++`.",
+    "For `Strings`: `var out []string`, then `if s, ok := v.(string); ok { out = append(out, s) }` for every element, and `return out`."
+  ]
+}

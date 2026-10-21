@@ -1,0 +1,9 @@
+{
+  "title": "Money type",
+  "difficulty": "hard",
+  "hints": [
+    "`Money` is a named `int64`, so `m + o`, `m * Money(n)` and `-m` all work and stay `Money`. In `String`, never format `m` itself with `%v` (it would call `String` again): work with `c := int64(m.Abs())`.",
+    "`String`: format the dollars `c/100` with `strconv.FormatInt`, then insert commas by walking the digit string and writing `,` before position `i > 0` whenever `(len(digits)-i)%3 == 0`. Finish with `fmt.Sprintf(\"%s$%s.%02d\", sign, grouped, c%100)`.",
+    "`Parse`: peel off parts with `s, neg := strings.CutPrefix(s, \"-\")`, `s, ok := strings.CutPrefix(s, \"$\")` and `whole, frac, hasFrac := strings.Cut(s, \".\")`. Check `frac` is exactly 2 digits. Then `groups := strings.Split(whole, \",\")`: the first must be 1+ digits (at most 3 when there are commas), every later one exactly 3. Join the groups, check they're all ASCII digits, and `strconv.ParseInt` them."
+  ]
+}

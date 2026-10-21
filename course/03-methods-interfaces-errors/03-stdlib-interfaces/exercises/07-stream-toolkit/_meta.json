@@ -1,0 +1,9 @@
+{
+  "title": "Stream toolkit",
+  "difficulty": "medium",
+  "hints": [
+    "Every function is two or three lines: build a composed reader/writer with an `io` helper, then hand it to `io.ReadAll` or `io.WriteString`. Check the helper table in the lesson.",
+    "`Head`: `io.ReadAll(io.LimitReader(r, n))`. `ReadAndLog`: `io.ReadAll(io.TeeReader(r, log))`. `Broadcast`: `io.WriteString(io.MultiWriter(ws...), msg)`. `Join`: build a `[]io.Reader` with `strings.NewReader(sep)` between the parts and return `io.MultiReader(rs...)`.",
+    "`WriteLines`: `bw := bufio.NewWriter(w)`; for each line `bw.WriteString(line)` and `bw.WriteByte('\\n')`; finish with `return bw.Flush()`. Without `Flush` the data never leaves the buffer; `bufio.Writer` errors are sticky, so `Flush` reports any earlier failure."
+  ]
+}

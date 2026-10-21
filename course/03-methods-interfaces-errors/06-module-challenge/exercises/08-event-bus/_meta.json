@@ -1,0 +1,9 @@
+{
+  "title": "Event bus",
+  "difficulty": "hard",
+  "hints": [
+    "`func (f SubscriberFunc) Notify(e Event) error { return f(e) }`. `NewBus` can return `&Bus{}` — appending to a nil slice works. `Subscribe` increments `b.nextID` only after the empty-topic / nil checks; `Unsubscribe` can use `slices.DeleteFunc` and compare lengths.",
+    "Isolate each call in its own function so `recover` can catch it: `func notify(s subscription, e Event) (err error)` with `defer func() { if r := recover(); r != nil { err = &PanicError{ID: s.id, Value: r} } }()` at the top. The named result lets the deferred function replace the return value.",
+    "In `Publish`, loop over `slices.Clone(b.subs)`, skip non-matching topics, collect failures in `var errs []error`, count the rest, and `return delivered, errors.Join(errs...)`. `PanicError.Unwrap` is `err, _ := e.Value.(error); return err` — the comma-ok form yields `nil` when the value is not an error."
+  ]
+}

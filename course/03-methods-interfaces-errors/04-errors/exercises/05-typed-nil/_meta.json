@@ -1,0 +1,9 @@
+{
+  "title": "Fix the typed-nil trap",
+  "difficulty": "medium",
+  "hints": [
+    "An `error` is nil only if it has **no dynamic type**. A `*CheckError` variable that holds `nil` becomes a non-nil `error` the moment you return it as one. Look for every place a `*CheckError` value is returned through `error`.",
+    "There are three culprits. In `CheckHost` and `FirstFailure`, a `var x *CheckError` is returned at the end. `CheckPort` returns the result of a helper whose result type is `*CheckError`. `CheckAll` is fine once the others are fixed.",
+    "Return `&CheckError{...}` directly from inside the `if`, and finish with a literal `return nil`. In `FirstFailure`, `return r` inside the loop. Change `checkPort`'s result type to `error`."
+  ]
+}

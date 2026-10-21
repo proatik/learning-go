@@ -1,0 +1,9 @@
+{
+  "title": "Rectangle methods",
+  "difficulty": "easy",
+  "hints": [
+    "Inside a method the receiver is just a parameter: read the sides with `r.W` and `r.H`.",
+    "`Area`, `Perimeter` and `IsSquare` only read, so value receivers are fine. `Scale` and `Grow` already have pointer receivers `(r *Rect)`, so assigning `r.W = ...` changes the caller's rectangle.",
+    "`Scale`: `r.W *= k; r.H *= k`. `Grow`: `r.W = max(r.W+dw, 0)` and the same for `H` (the built-in `max` clamps to zero)."
+  ]
+}

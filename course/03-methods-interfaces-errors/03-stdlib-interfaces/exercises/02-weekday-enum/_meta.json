@@ -1,0 +1,9 @@
+{
+  "title": "Weekday enum",
+  "difficulty": "easy",
+  "hints": [
+    "Store the seven names in an array indexed by the day: `var names = [...]string{\"Sunday\", \"Monday\", ...}`. A helper `valid()` that checks `0 <= d && d <= 6` keeps all three methods short.",
+    "For an invalid day, format the **underlying int**: `fmt.Sprintf(\"Weekday(%d)\", int(d))`. Using `%v` with `d` would call `d.String()` again, forever. `Short` can slice the full name: `names[d][:3]`.",
+    "`Next`: `if !d.valid() { return d }; return (d + 1) % 7`. The modulo wraps Saturday (6) back to Sunday (0)."
+  ]
+}

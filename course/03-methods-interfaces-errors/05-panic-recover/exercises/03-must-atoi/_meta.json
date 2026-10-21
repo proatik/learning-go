@@ -1,0 +1,9 @@
+{
+  "title": "MustAtoi",
+  "difficulty": "easy",
+  "hints": [
+    "A `Must` helper is the mirror image of normal error handling: where you would `return 0, err`, you `panic(...)` instead.",
+    "`Must` is three lines: `if err != nil { panic(err) }` then `return n`. In `MustAtoi`, call `strconv.Atoi(s)` and panic with an error built by `fmt.Errorf` using `%q` for the input and `%w` for the strconv error.",
+    "`panic(fmt.Errorf(\"MustAtoi(%q): %w\", s, err))`. `MustPort`: `n := MustAtoi(s)` (don't recover: its panic should pass through), then `if n < 1 || n > 65535 { panic(fmt.Errorf(\"MustPort(%q): %w\", s, ErrPortRange)) }`."
+  ]
+}

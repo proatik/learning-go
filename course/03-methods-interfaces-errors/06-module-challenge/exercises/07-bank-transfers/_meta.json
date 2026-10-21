@@ -1,0 +1,9 @@
+{
+  "title": "Bank transfers",
+  "difficulty": "hard",
+  "hints": [
+    "Write two unexported helpers that do all the checks and record an entry: `func (a *Account) credit(amt Money, desc string) error` and `debit(...)`. Then `Deposit` is `a.credit(amt, \"deposit\")` and `Transfer` reuses them with its own descriptions.",
+    "Wrap all errors once with a deferred closure at the top of `Transfer`: `defer func() { if err != nil { err = fmt.Errorf(\"transfer %s -> %s: %w\", from, to, err) } }()`. It works because `err` is a named result.",
+    "After a successful `src.debit(...)`, remember `n := len(src.entries) - 1` and register `defer func() { if err != nil { src.balance += amt; src.entries = src.entries[:n] } }()`, then `return dst.credit(amt, \"transfer from \"+from)`. Deferred calls run in LIFO order, so the rollback runs before the wrapping. For `Money.String`, negate `u := uint64(m)` rather than `m`."
+  ]
+}

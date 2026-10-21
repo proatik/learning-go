@@ -1,0 +1,9 @@
+{
+  "title": "Insufficient funds",
+  "difficulty": "easy",
+  "hints": [
+    "`Error()` is a single `fmt.Sprintf`. In `Withdraw`, check every failure **before** you touch `a.Balance`. That way an error never leaves a half-done change.",
+    "Two guard clauses: `amount <= 0` returns the wrapped sentinel, and `amount > a.Balance` returns `&InsufficientFundsError{Need: amount, Have: a.Balance}`. After them, `a.Balance -= amount; return nil`.",
+    "`Transfer`: `if err := a.Withdraw(amount); err != nil { return fmt.Errorf(\"transfer: %w\", err) }` then `to.Balance += amount; return nil`."
+  ]
+}

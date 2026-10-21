@@ -1,0 +1,9 @@
+{
+  "title": "Describe anything",
+  "difficulty": "medium",
+  "hints": [
+    "Write `switch x := v.(type) { ... }`. In a case with a single type, `x` has that type (`len(x)` works for `[]int`); in a case listing several types, `x` stays an `any`, which `%v` still prints fine.",
+    "Follow the rules table top to bottom: `case nil:` first, then `case int:`, `case int8, int16, int32, int64:`, … and `case fmt.Stringer:` near the end so concrete types are matched first. `default:` handles the rest with `fmt.Sprintf(\"unknown %T\", x)`.",
+    "The string case is `fmt.Sprintf(\"string %q with %d runes\", x, utf8.RuneCountInString(x))`. A nil `[]int` stored in an `any` has a type, so it reaches `case []int:` and `len(x)` is 0. The Stringer case is `return \"stringer \" + x.String()`."
+  ]
+}

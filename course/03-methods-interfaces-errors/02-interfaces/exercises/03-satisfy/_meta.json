@@ -1,0 +1,9 @@
+{
+  "title": "Satisfy the contract",
+  "difficulty": "easy",
+  "hints": [
+    "A type satisfies an interface only when its method set has every method with the **exact** name and signature. Check each starter method against the interface: capitalisation, receiver kind and result type all matter.",
+    "`Tag{}` (a value) only has value-receiver methods, so `Name` and `Label` need `(t Tag)` receivers. `Inc` mutates, so it needs `(t *Tally)`; that's why the interface is satisfied by `*Tally`, not `Tally`.",
+    "Fixes: rename `name` → `Name`; `func (t Tag) Label()`; `func (t *Tally) Inc() { t.n++ }`; `func (t *Tally) Count() int { return t.n }`; add `func (t *Tally) Reset() { t.n = 0 }` and `func (c Celsius) Label() string { return fmt.Sprintf(\"%.1f°C\", float64(c)) }`. Then paste the `var ( _ Namer = Tag{} ... )` block."
+  ]
+}

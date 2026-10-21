@@ -1,0 +1,9 @@
+{
+  "title": "Mini logging library",
+  "difficulty": "hard",
+  "hints": [
+    "Keep the level names in an array `[...]string{\"DEBUG\", \"INFO\", \"WARN\", \"ERROR\"}`: `String` indexes it after a bounds check, and `ParseLevel` loops over it comparing with `strings.ToUpper(strings.TrimSpace(s))`.",
+    "`TextLogger.Log` is a single `fmt.Fprintf(l.w, \"%s%-5s %s\\n\", l.prefix, level, msg)` — `%-5s` calls your `String` method because `Level` is a `fmt.Stringer`. `With` returns `&TextLogger{w: l.w, prefix: l.prefix + prefix}`.",
+    "`MultiLogger` is a slice type, so its method ranges over the receiver: skip `nil`, append each non-nil error to `var errs []error`, `return errors.Join(errs...)`. `LevelFilter.Log`: `if level < f.Min || f.Next == nil { return nil }; return f.Next.Log(level, msg)`."
+  ]
+}

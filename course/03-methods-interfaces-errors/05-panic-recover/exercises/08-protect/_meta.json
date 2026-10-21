@@ -1,0 +1,9 @@
+{
+  "title": "Protect middleware",
+  "difficulty": "medium",
+  "hints": [
+    "`Protect` returns a **closure**. Give that closure named results, `func(input string) (out string, err error)`, so its deferred `recover` can set them.",
+    "In the deferred function: `r := recover(); if r == nil { return }`. Then check for the abort: `if e, ok := r.(error); ok && errors.Is(e, ErrAbort) { panic(r) }`. Otherwise `out, err = \"\", &PanicError{Input: input, Value: r}`. `Unwrap` is just `err, _ := e.Value.(error); return err`.",
+    "`Pipeline`: `out := input`, then for each step `next, err := Protect(step)(out)`; on error `return \"\", fmt.Errorf(\"step %d: %w\", i, err)`; else `out = next`. The abort panic needs no special code here: `Protect` re-panics and `Pipeline` doesn't recover."
+  ]
+}

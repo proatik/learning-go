@@ -1,0 +1,9 @@
+{
+  "title": "Stack VM",
+  "difficulty": "hard",
+  "hints": [
+    "Keep the happy path free of error checks: a private `machine` struct with `push(v int)` and `pop() int` methods that `panic(ErrStackOverflow)` / `panic(ErrStackUnderflow)`, and an `exec(instr string)` method with a `switch` that panics with `ErrBadInstruction` for anything unknown.",
+    "`Run` tracks the current position in variables declared **before** its deferred function (`index, instr := 0, \"\"`) and updates them in the loop (`for index, instr = range program`), so the deferred `recover` knows where the panic happened. After the loop set `index, instr = len(program), \"end\"` and `return m.pop(), nil`.",
+    "The deferred function: `r := recover(); if r == nil { return }`; `cause, ok := r.(error); if !ok { panic(r) }`; `result, err = 0, &VMError{Index: index, Instr: instr, Err: cause}`. Sentinels and run-time panics (`a / b` with `b == 0`) are both `error`s, so one branch handles them all. In `exec`, use `strings.Fields`: `len(f) == 2 && f[0] == \"push\"` parses with `strconv.Atoi`, otherwise require `len(f) == 1`."
+  ]
+}

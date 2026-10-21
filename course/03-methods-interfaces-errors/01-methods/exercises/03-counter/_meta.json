@@ -1,0 +1,9 @@
+{
+  "title": "Counter",
+  "difficulty": "easy",
+  "hints": [
+    "Because every method has a pointer receiver `(c *Counter)`, writing `c.n++` changes the caller's counter.",
+    "Implement `Add` once with clamping (`c.n = max(c.n+delta, 0)`) and let `Dec` reuse it: `c.Add(-1)`. A method can call other methods on its receiver.",
+    "In `CountWords`, start with `counts := make(map[string]*Counter)`. For each word: `c, ok := counts[w]`; if `!ok`, set `c = &Counter{}` and store it; then `c.Inc()`. Storing pointers is what lets you call `Inc` on map elements."
+  ]
+}

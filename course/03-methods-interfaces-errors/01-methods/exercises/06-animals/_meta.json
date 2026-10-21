@@ -1,0 +1,9 @@
+{
+  "title": "Animals and embedding",
+  "difficulty": "medium",
+  "hints": [
+    "Inside `Dog` methods, `d.Name` is the promoted field `d.Animal.Name`. You don't need to write `Speak` or `Rename` for `Dog` or `GuideDog`: embedding promotes them.",
+    "`NewDog` builds a nested keyed literal: `Dog{Animal: Animal{Name: name, Sound: \"woof\"}, Breed: breed}`. In `Dog.Describe`, default the breed to `\"dog\"` when it's empty.",
+    "`GuideDog.Describe` calls the shadowed method explicitly: `s := g.Dog.Describe()`, then `if g.Handler != \"\" { s += \" guiding \" + g.Handler }`. Calling `g.Describe()` inside it would recurse forever."
+  ]
+}

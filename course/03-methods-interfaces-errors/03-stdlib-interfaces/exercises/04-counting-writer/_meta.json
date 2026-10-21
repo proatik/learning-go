@@ -1,0 +1,9 @@
+{
+  "title": "Counting writer",
+  "difficulty": "medium",
+  "hints": [
+    "A decorator does the real work by calling the wrapped value: `n, err := c.W.Write(p)`. Your job is only to remember `n`.",
+    "Add `int64(n)` to `c.N` **before** looking at `err`, then return `n, err` unchanged. Handle `c.W == nil` first: count `len(p)` and return `len(p), nil`.",
+    "`Measure`: `cw := &CountingWriter{W: w}; err := write(cw); return cw.N, err`. Pass the pointer: only `*CountingWriter` has the `Write` method."
+  ]
+}

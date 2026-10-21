@@ -1,0 +1,9 @@
+{
+  "title": "Text pipeline",
+  "difficulty": "hard",
+  "hints": [
+    "`Upper` and `Rot13` only differ in the byte mapping, so write one type for both: `type mapReader struct { r io.Reader; f func(byte) byte }`. Its `Read` calls `n, err := m.r.Read(p)`, maps `p[:n]` in place, and returns `n, err`.",
+    "`StripDigits` changes the length. In its `Read`, read into `p`, then compact the non-digits to the front with a write index `k`. If `k > 0 || err != nil`, return `k, err`; otherwise loop and read again. Return `0, nil` straight away only when `len(p) == 0`.",
+    "`CountingWriter.Write`: start with `n, err := len(p), error(nil)`; if `c.W != nil` replace them with `c.W.Write(p)`; then `c.Bytes += int64(n)` and `c.Lines += bytes.Count(p[:n], []byte{'\\n'})`. `Run` is `r := src; for _, st := range stages { if st != nil { r = st(r) } }; return io.Copy(dst, r)`."
+  ]
+}

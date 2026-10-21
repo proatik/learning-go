@@ -1,0 +1,9 @@
+{
+  "title": "IP addresses and colors",
+  "difficulty": "easy",
+  "hints": [
+    "`fmt` calls `String()` automatically for `Print`, `Println`, `%v` and `%s`. You just need to build the right string with `fmt.Sprintf`.",
+    "An `IPAddr` is an array: index it with `ip[0]` … `ip[3]` and format each byte with `%d`. For hex, the verb `%02x` prints a number as two lowercase hex digits, padded with a zero.",
+    "`return fmt.Sprintf(\"%d.%d.%d.%d\", ip[0], ip[1], ip[2], ip[3])` and `return fmt.Sprintf(\"#%02x%02x%02x\", c.R, c.G, c.B)`."
+  ]
+}

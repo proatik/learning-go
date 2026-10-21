@@ -1,0 +1,9 @@
+{
+  "title": "Command registry",
+  "difficulty": "hard",
+  "hints": [
+    "`HandlerFunc` is a function type with a method, so any `func([]string) string` becomes a `Handler` with a conversion: `HandlerFunc(f)`. `Upper` can return exactly that: `HandlerFunc(func(args []string) string { return strings.ToUpper(h.Handle(args)) })`.",
+    "In `Register`, `h == nil` only catches a nil **interface**. `HandlerFunc(nil)` and `(*Counter)(nil)` arrive as (type, nil) pairs: use a type switch with `case nil`, `case HandlerFunc: return x == nil` and `case *Counter: return x == nil`. Create the map lazily so the zero `Registry` works.",
+    "`Dispatch`: `fields := strings.Fields(line)`; return `\"\"` when empty; `name, args := fields[0], fields[1:]` (`fields[1:]` is empty but non-nil). Look up `r.handlers[name]` first, then handle `help`, then return `\"unknown command: \" + name`. `Names` is `slices.Sorted(maps.Keys(r.handlers))`."
+  ]
+}

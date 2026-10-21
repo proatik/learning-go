@@ -1,0 +1,9 @@
+{
+  "title": "Bank account",
+  "difficulty": "medium",
+  "hints": [
+    "The fields are unexported, so only methods in package `bank` can touch them. Each method guards its input first, then changes `a.balance`.",
+    "Use guard clauses: `if amount <= 0 || amount > a.balance { return false }`. `NewAccount` can clamp with `max(initial, 0)` inside `&Account{owner: owner, balance: ...}`.",
+    "`Transfer`: return `false` if `to == nil || to == a` (pointers compare by address). Then reuse `a.Withdraw(amount)`: only if it succeeds, add `amount` to `to.balance` and return `true`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Expression tree",
+  "difficulty": "hard",
+  "hints": [
+    "Every node type gets `Eval` and `String`; composite nodes just call the same methods on their children (`a.L.Eval(env) + a.R.Eval(env)`), so dynamic dispatch does the recursion. `env[string(v)]` already returns 0 for a missing key or a nil map.",
+    "`Simplify`, `Vars` and `Size` are recursive functions built around `switch x := e.(type)` with cases `Add`, `Mul`, `Neg` and a `default`. In `Simplify`, first compute `l, r := Simplify(x.L), Simplify(x.R)`, then test them with comma-ok assertions like `a, ok := l.(Num)`.",
+    "Helper: `func isNum(e Expr, v float64) bool { n, ok := e.(Num); return ok && float64(n) == v }`. For `Neg`: `switch in := Simplify(x.X).(type) { case Num: return -in; case Neg: return in.X; default: return Neg{in} }`. For `Vars`, fill a `map[string]bool` in a recursive helper, then `slices.Sorted(maps.Keys(seen))`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Cached key-value store",
+  "difficulty": "medium",
+  "hints": [
+    "Both constructors must create their maps: `&MemoryStore{data: make(map[string]string)}` and `&CachedStore{backend: backend, cache: make(map[string]string)}`. Add `var _ Store = (*CachedStore)(nil)` to get a compile error if a method is missing.",
+    "Every method starts with `if key == \"\" { return ..., ErrEmptyKey }`. In `MemoryStore.Get`, use comma-ok and return `fmt.Errorf(\"get %q: %w\", key, ErrNotFound)` when the key is missing.",
+    "`CachedStore.Get`: `if v, ok := c.cache[key]; ok { c.hits++; return v, nil }`, then `c.misses++`, `v, err := c.backend.Get(key)`; on error `return \"\", fmt.Errorf(\"cache: %w\", err)`, else `c.cache[key] = v`. `Set` calls the backend first and only then writes the cache; `Delete` does `delete(c.cache, key)` before calling the backend."
+  ]
+}
