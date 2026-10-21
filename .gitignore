@@ -1,0 +1,9 @@
+# Your code and progress
+workspace/
+
+# Local-only
+docs/
+.staging/
+
+# Build output
+*.exe

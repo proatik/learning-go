@@ -1,0 +1,17 @@
+{
+  "files.exclude": {
+    "**/_solution": true,
+    "**/_meta.json": true
+  },
+  "search.exclude": {
+    "**/_solution": true,
+    "**/_meta.json": true
+  },
+  // starter templates fail on purpose; learner code is in workspace/
+  "gopls": {
+    "build.directoryFilters": ["-course"]
+  },
+  "[go]": {
+    "editor.formatOnSave": true
+  }
+}
