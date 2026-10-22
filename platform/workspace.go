@@ -6,7 +6,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 // workspace/ keeps learner code out of course/ so the repo only holds content.
@@ -65,27 +64,20 @@ func (w *Workspace) EnsureExercise(ex *Exercise) error {
 		return err
 	}
 	for _, f := range ex.Files {
-		src, err := os.ReadFile(filepath.Join(ex.Dir, f))
+		src, err := os.ReadFile(fromSlash(ex.Dir, f))
 		if err != nil {
 			return err
 		}
-		if err := writeIfMissing(filepath.Join(dst, f), src); err != nil {
+		if err := writeIfMissing(fromSlash(dst, f), src); err != nil {
 			return err
 		}
 	}
-	files, err := goFiles(ex.Dir)
-	if err != nil {
-		return err
-	}
-	for _, f := range files {
-		if !strings.HasSuffix(f, "_test.go") {
-			continue
-		}
-		b, err := os.ReadFile(filepath.Join(ex.Dir, f))
+	for _, f := range ex.Checkers {
+		b, err := os.ReadFile(fromSlash(ex.Dir, f))
 		if err != nil {
 			return err
 		}
-		if err := writeIfChanged(filepath.Join(dst, f), b); err != nil {
+		if err := writeIfChanged(fromSlash(dst, f), b); err != nil {
 			return err
 		}
 	}
@@ -97,7 +89,7 @@ func (w *Workspace) ResetExercise(ex *Exercise) error {
 		return err
 	}
 	for _, f := range ex.Files {
-		if err := copyFile(filepath.Join(ex.Dir, f), filepath.Join(w.exDir(ex), f)); err != nil {
+		if err := copyFile(fromSlash(ex.Dir, f), fromSlash(w.exDir(ex), f)); err != nil {
 			return err
 		}
 	}
@@ -110,12 +102,20 @@ func writeIfMissing(path string, b []byte) error {
 	} else if !errors.Is(err, fs.ErrNotExist) {
 		return err
 	}
-	return os.WriteFile(path, b, 0o644)
+	return writeFile(path, b)
 }
 
 func writeIfChanged(path string, b []byte) error {
 	if cur, err := os.ReadFile(path); err == nil && bytes.Equal(cur, b) {
 		return nil
+	}
+	return writeFile(path, b)
+}
+
+// writeFile creates parent directories first (exercises can have sub-packages).
+func writeFile(path string, b []byte) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
 	}
 	return os.WriteFile(path, b, 0o644)
 }

@@ -1026,7 +1026,7 @@ function diagnosticsFromResult(r) {
 function setMarkers(owner, diags) {
   if (!cur || !window.monaco) return;
   for (const [name, model] of Object.entries(cur.models)) {
-    monaco.editor.setModelMarkers(model, owner, diags.filter(d => d.file === name).map(d => ({
+    monaco.editor.setModelMarkers(model, owner, diags.filter(d => sameFile(name, d.file)).map(d => ({
       startLineNumber: d.line, startColumn: d.col, endLineNumber: d.line,
       endColumn: model.getLineMaxColumn(Math.min(d.line, model.getLineCount())),
       message: d.msg, severity: monaco.MarkerSeverity.Error,
@@ -1346,8 +1346,12 @@ function caseHTML(tc) {
   }
   return html || `<div class="hint-line">This test failed without a message — see the Output tab.</div>`;
 }
+// Compiler errors name files by base name; editor files may be nested (internal/geom/geom.go).
+const sameFile = (path, reported) => path === reported || path.endsWith('/' + reported);
 function jumpTo(file, line, col) {
-  if (!cur || !cur.editor || !cur.models[file]) return;
+  if (!cur || !cur.editor) return;
+  file = Object.keys(cur.models).find(name => sameFile(name, file));
+  if (!file) return;
   if (cur.active !== file) document.querySelector(`#code-tabs .ptab[data-file="${CSS.escape(file)}"]`)?.click();
   cur.editor.revealLineInCenter(line);
   cur.editor.setPosition({ lineNumber: line, column: col || 1 });

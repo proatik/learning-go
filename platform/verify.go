@@ -60,7 +60,9 @@ func verifyCourse(root string, c *Course, filter string) bool {
 			fmt.Println("      ", strings.ReplaceAll(p, "\n", "\n       "))
 		}
 	}
-	if problems := verifyReadme(root, c); len(problems) > 0 {
+	if filter != "" {
+		// a partial run (-only) can't judge the README's whole-course totals
+	} else if problems := verifyReadme(root, c); len(problems) > 0 {
 		ok = false
 		fmt.Println("FAIL   README.md")
 		for _, p := range problems {
@@ -135,34 +137,30 @@ func runInTemp(goMod string, ex *Exercise, srcSub string) (string, error) {
 	if err := os.MkdirAll(tmp, 0o755); err != nil {
 		return "", err
 	}
-	files, err := goFiles(ex.Dir)
-	if err != nil {
-		return "", err
-	}
-	for _, f := range files {
-		if strings.HasSuffix(f, "_test.go") {
-			if err := copyFile(filepath.Join(ex.Dir, f), filepath.Join(tmp, f)); err != nil {
-				return "", err
-			}
+	for _, f := range ex.Checkers {
+		if err := copyFile(fromSlash(ex.Dir, f), fromSlash(tmp, f)); err != nil {
+			return "", err
 		}
 	}
-	srcDir := filepath.Join(ex.Dir, srcSub)
-	src, err := goFiles(srcDir)
-	if err != nil {
-		return "", err
+	// "." means the starter templates; otherwise every file in _solution/,
+	// which mirrors the exercise layout (nested packages, editable tests).
+	srcDir, src := ex.Dir, ex.Files
+	if srcSub != "." {
+		srcDir = filepath.Join(ex.Dir, srcSub)
+		var err error
+		if src, err = walkGo(srcDir); err != nil {
+			return "", err
+		}
 	}
 	for _, f := range src {
-		if srcSub == "." && strings.HasSuffix(f, "_test.go") {
-			continue
-		}
-		if err := copyFile(filepath.Join(srcDir, f), filepath.Join(tmp, f)); err != nil {
+		if err := copyFile(fromSlash(srcDir, f), fromSlash(tmp, f)); err != nil {
 			return "", err
 		}
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), testTimeout)
 	defer cancel()
-	cmd := exec.CommandContext(ctx, "go", "test", "-count=1", "./"+ex.RelDir+"/")
+	cmd := exec.CommandContext(ctx, "go", "test", "-count=1", "./"+ex.RelDir+"/...")
 	cmd.Dir = tmpRoot
 	out, err := cmd.CombinedOutput()
 	return string(out), err

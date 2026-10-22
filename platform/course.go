@@ -44,7 +44,8 @@ type Exercise struct {
 	Dir        string   `json:"-"`
 	RelDir     string   `json:"-"` // slash-separated, relative to the repo root
 	Hints      []string `json:"-"`
-	Files      []string `json:"-"` // starter files the learner edits
+	Files      []string `json:"-"` // learner-editable files, slash paths relative to Dir
+	Checkers   []string `json:"-"` // read-only *_test.go files that judge the solution
 	LessonID   string   `json:"-"`
 }
 
@@ -52,6 +53,7 @@ type exerciseMeta struct {
 	Title      string   `json:"title"`
 	Difficulty string   `json:"difficulty"`
 	Hints      []string `json:"hints"`
+	Editable   []string `json:"editable"` // test files the learner writes (testing lessons)
 }
 
 type moduleMeta struct {
@@ -133,14 +135,20 @@ func loadExercise(root, dir, id string) (*Exercise, error) {
 		RelDir:     filepath.ToSlash(rel),
 		Hints:      meta.Hints,
 	}
-	entries, err := os.ReadDir(dir)
+	files, err := walkGo(dir)
 	if err != nil {
 		return nil, err
 	}
-	for _, e := range entries {
-		name := e.Name()
-		if !e.IsDir() && strings.HasSuffix(name, ".go") && !strings.HasSuffix(name, "_test.go") {
-			ex.Files = append(ex.Files, name)
+	for _, f := range files {
+		if strings.HasSuffix(f, "_test.go") && !slices.Contains(meta.Editable, f) {
+			ex.Checkers = append(ex.Checkers, f)
+		} else {
+			ex.Files = append(ex.Files, f)
+		}
+	}
+	for _, f := range meta.Editable {
+		if !slices.Contains(files, f) {
+			return nil, errors.New("_meta.json: editable file not found: " + f)
 		}
 	}
 	return ex, nil
@@ -192,19 +200,38 @@ func copyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
+	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
+		return err
+	}
 	return os.WriteFile(dst, b, 0o644)
 }
 
-func goFiles(dir string) ([]string, error) {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return nil, err
-	}
+// walkGo lists .go files under dir as sorted slash paths, including nested
+// packages but skipping "_" and "." directories (_solution/ etc.).
+func walkGo(dir string) ([]string, error) {
 	var out []string
-	for _, e := range entries {
-		if !e.IsDir() && strings.HasSuffix(e.Name(), ".go") {
-			out = append(out, e.Name())
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
 		}
-	}
-	return out, nil
+		if d.IsDir() {
+			if path != dir && (strings.HasPrefix(d.Name(), "_") || strings.HasPrefix(d.Name(), ".")) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if strings.HasSuffix(d.Name(), ".go") {
+			rel, err := filepath.Rel(dir, path)
+			if err != nil {
+				return err
+			}
+			out = append(out, filepath.ToSlash(rel))
+		}
+		return nil
+	})
+	slices.Sort(out)
+	return out, err
 }
+
+// fromSlash joins a slash path from walkGo onto base.
+func fromSlash(base, rel string) string { return filepath.Join(base, filepath.FromSlash(rel)) }

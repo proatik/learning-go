@@ -48,7 +48,12 @@ func (s *server) handleSave(w http.ResponseWriter, r *http.Request) {
 				resp.FormatErrors[name] = err.Error()
 			}
 		}
-		if err := os.WriteFile(filepath.Join(s.ws.exDir(ex), name), src, 0o644); err != nil {
+		dst := fromSlash(s.ws.exDir(ex), name) // name was checked against ex.Files above
+		if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
+			httpError(w, err)
+			return
+		}
+		if err := os.WriteFile(dst, src, 0o644); err != nil {
 			httpError(w, err)
 			return
 		}

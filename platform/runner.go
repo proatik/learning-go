@@ -20,7 +20,7 @@ type TestResult struct {
 
 // testCommand is the command shown to the learner (plain text output).
 func testCommand(ex *Exercise) []string {
-	return []string{"go", "test", "-count=1", "-v", "./" + ex.RelDir + "/"}
+	return []string{"go", "test", "-count=1", "-v", "./" + ex.RelDir + "/..."}
 }
 
 func joinCmd(args []string) string { return strings.Join(args, " ") }
@@ -31,7 +31,7 @@ func runTests(ctx context.Context, root string, ex *Exercise) TestResult {
 
 	// Run with -json so the result can be shown case by case.
 	args := testCommand(ex)
-	cmd := exec.CommandContext(ctx, "go", "test", "-count=1", "-json", "./"+ex.RelDir+"/")
+	cmd := exec.CommandContext(ctx, "go", "test", "-count=1", "-json", "./"+ex.RelDir+"/...") // /... includes nested packages
 	cmd.Dir = root
 
 	start := time.Now()

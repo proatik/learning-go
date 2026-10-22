@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 )
@@ -231,22 +230,15 @@ func (s *server) detail(c *Course, ex *Exercise) (exerciseDetail, error) {
 		SolutionShown: p.SolutionShown,
 	}
 	for _, f := range ex.Files {
-		path := filepath.Join(s.ws.exDir(ex), f) // the learner's copy
+		path := fromSlash(s.ws.exDir(ex), f) // the learner's copy
 		content, err := os.ReadFile(path)
 		if err != nil {
 			return exerciseDetail{}, err
 		}
 		d.Files = append(d.Files, fileInfo{Name: f, Path: filepath.ToSlash(path), Content: string(content)})
 	}
-	all, err := goFiles(ex.Dir)
-	if err != nil {
-		return exerciseDetail{}, err
-	}
-	for _, f := range all {
-		if !strings.HasSuffix(f, "_test.go") {
-			continue
-		}
-		content, err := os.ReadFile(filepath.Join(ex.Dir, f))
+	for _, f := range ex.Checkers {
+		content, err := os.ReadFile(fromSlash(ex.Dir, f))
 		if err != nil {
 			return exerciseDetail{}, err
 		}
@@ -263,12 +255,12 @@ func (s *server) detail(c *Course, ex *Exercise) (exerciseDetail, error) {
 	if p.SolutionShown {
 		d.Solution = map[string]string{}
 		dir := filepath.Join(ex.Dir, "_solution")
-		files, err := goFiles(dir)
+		files, err := walkGo(dir)
 		if err != nil {
 			return exerciseDetail{}, err
 		}
 		for _, f := range files {
-			b, err := os.ReadFile(filepath.Join(dir, f))
+			b, err := os.ReadFile(fromSlash(dir, f))
 			if err != nil {
 				return exerciseDetail{}, err
 			}
