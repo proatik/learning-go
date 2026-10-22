@@ -228,6 +228,20 @@ body.ws-mode #main { overflow: hidden; background: var(--canvas-inset); }
 .stepper button { width: 32px; height: 30px; border: 0; background: var(--btn-bg); cursor: pointer; font-size: 16px; }
 .stepper button:hover { background: var(--btn-hover); }
 .stepper span { width: 44px; text-align: center; font: 500 13px var(--mono); }
+/* Primer-style action menu */
+.select { position: relative; flex-shrink: 0; }
+.select-btn { min-width: 120px; justify-content: space-between; }
+.select-btn .oct { transition: transform .15s; }
+.select-btn[aria-expanded="true"] .oct { transform: rotate(180deg); }
+.select-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 50; width: 340px; padding: 6px; background: var(--overlay); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); animation: menuIn .12s ease; }
+.select-menu[hidden] { display: none; }
+@keyframes menuIn { from { opacity: 0; transform: translateY(-4px); } }
+.select-menu button { display: flex; gap: 8px; width: 100%; padding: 7px 8px; border: 0; border-radius: 6px; background: none; color: var(--fg); text-align: left; cursor: pointer; font: inherit; }
+.select-menu button:hover, .select-menu button:focus-visible { background: var(--btn-hover); outline: none; }
+.select-menu .tick { width: 16px; flex-shrink: 0; padding-top: 2px; color: var(--fg); visibility: hidden; }
+.select-menu [aria-selected="true"] .tick { visibility: visible; }
+.select-menu b { display: block; font-weight: 500; font-size: 14px; }
+.select-menu span.d { display: block; font-size: 12px; color: var(--fg-muted); margin-top: 1px; line-height: 1.4; }
 
 /* --- Markdown (GitHub markdown-body) --- */
 .markdown-body { font-size: 15px; line-height: 1.6; word-wrap: break-word; }
@@ -324,6 +338,9 @@ body.resizing #editor { pointer-events: none; }
 .save-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); display: inline-block; }
 .save-dot.dirty { background: var(--attention); }
 .save-dot.saving { background: var(--accent); animation: pulse 1s ease infinite; }
+#suggest-state { display: inline-flex; align-items: center; gap: 7px; }
+#suggest-state:empty { display: none; }
+.save-dot.off { background: var(--fg-muted); }
 @keyframes pulse { 50% { opacity: .3; } }
 .ptab .dirty { width: 7px; height: 7px; border-radius: 50%; background: var(--fg-muted); display: none; }
 .ptab.is-dirty .dirty { display: inline-block; }
@@ -479,7 +496,7 @@ const PREFS_KEY = 'learngo.prefs';
 const PREFS_VERSION = 1;
 const PREFS_DEFAULTS = {
   version: PREFS_VERSION,
-  editor: { fontSize: 14, ligatures: true },
+  editor: { fontSize: 14, ligatures: true, suggestions: 'off' }, // suggestions: off | basic | full
   layout: {
     sidebar: { reading: 'open', exercise: 'collapsed' },
     collapsedModules: [],
@@ -749,6 +766,39 @@ func Clamp(x, lo, hi int) int {
 	return x
 }`;
 
+const SUGGEST_MODES = [
+  ['off', 'Off', 'Nothing pops up. Best for muscle memory.'],
+  ['basic', 'Basic', 'Go keywords, built-ins and snippets.'],
+  ['full', 'Full', 'gopls completions, auto-imports, docs and live errors.'],
+];
+
+// bindSelect wires a .select menu: click or Enter opens it, arrows move, Esc or an outside click closes.
+function bindSelect(root, value, onChange) {
+  const btn = root.querySelector('.select-btn'), menu = root.querySelector('.select-menu');
+  const opts = [...menu.querySelectorAll('[role="option"]')];
+  const show = v => {
+    opts.forEach(o => o.setAttribute('aria-selected', o.dataset.v === v));
+    btn.querySelector('span').textContent = opts.find(o => o.dataset.v === v).querySelector('b').textContent;
+  };
+  const open = on => {
+    menu.hidden = !on; btn.setAttribute('aria-expanded', on);
+    if (on) (opts.find(o => o.getAttribute('aria-selected') === 'true') || opts[0]).focus();
+  };
+  show(value);
+  btn.onclick = () => open(menu.hidden);
+  opts.forEach(o => o.onclick = () => { show(o.dataset.v); open(false); btn.focus(); onChange(o.dataset.v); });
+  menu.onkeydown = e => {
+    const i = opts.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); opts[(i + (e.key === 'ArrowDown' ? 1 : opts.length - 1)) % opts.length].focus(); }
+    if (e.key === 'Escape' || e.key === 'Tab') { open(false); btn.focus(); }
+  };
+  const outside = e => {
+    if (!root.isConnected) return document.removeEventListener('mousedown', outside);
+    if (!root.contains(e.target)) open(false);
+  };
+  document.addEventListener('mousedown', outside);
+}
+
 function viewSettings() {
   const size = prefs.get('editor.fontSize');
   const lig = prefs.get('editor.ligatures');
@@ -770,6 +820,12 @@ function viewSettings() {
               <div class="stepper"><button id="fs-dec" aria-label="Smaller">−</button><span id="fs-val">${size}px</span><button id="fs-inc" aria-label="Bigger">+</button></div></div>
             <div class="setting-row"><div class="grow"><b>Font ligatures</b><div class="desc">Draw <span class="mono" style="font-variant-ligatures:none">:= != &lt;= &gt;=</span> as single symbols.</div></div>
               ${sw('lig-toggle', lig, 'Font ligatures')}</div>
+            <div class="setting-row"><div class="grow"><b>Code suggestions</b><div class="desc">Help while you type. Keep it off to build muscle memory.</div></div>
+              <div class="select" id="sug-select">
+                <button class="btn btn-sm select-btn" aria-haspopup="listbox" aria-expanded="false"><span></span>${icon('chevDown')}</button>
+                <div class="select-menu" role="listbox" aria-label="Code suggestions" hidden>${SUGGEST_MODES.map(([v, t, d]) =>
+                  `<button role="option" data-v="${v}"><span class="tick">${icon('check')}</span><span><b>${t}</b><span class="d">${d}</span></span></button>`).join('')}</div>
+              </div></div>
             <div class="preview"><div class="preview-cap"><span>Preview</span><span class="lang-pill">Go</span></div><div id="preview"></div></div>
           </div>
         </section>
@@ -816,7 +872,7 @@ function viewSettings() {
           </div>
             <div class="setting-row"><span class="data-ic">${icon('code')}</span><div class="grow"><b>Your code</b><div class="desc">One folder per exercise, ignored by git.</div></div><span class="path-pill">workspace/course/</span></div>
             <div class="setting-row"><span class="data-ic">${icon('checkCircle')}</span><div class="grow"><b>Progress</b><div class="desc">Solved exercises, revealed hints, unlocked solutions.</div></div><span class="path-pill">workspace/progress.json</span></div>
-            <div class="setting-row"><span class="data-ic">${icon('gear')}</span><div class="grow"><b>Preferences</b><div class="desc">Font, layout and the last exercise you opened.</div></div><span class="path-pill">this browser</span></div>
+            <div class="setting-row"><span class="data-ic">${icon('gear')}</span><div class="grow"><b>Preferences</b><div class="desc">Editor, layout and the last exercise you opened.</div></div><span class="path-pill">this browser</span></div>
           </div>
         </section>
 
@@ -847,6 +903,7 @@ function viewSettings() {
   $('fs-inc').onclick = () => setSize(1);
   const toggle = (el, fn) => el.onclick = () => { const on = el.getAttribute('aria-checked') !== 'true'; el.setAttribute('aria-checked', on); fn(on); };
   toggle($('lig-toggle'), on => { prefs.set('editor.ligatures', on); renderPreview(); });
+  bindSelect($('sug-select'), prefs.get('editor.suggestions'), v => { prefs.set('editor.suggestions', v); suggestWarmup(); });
   toggle($('sb-read-set'), on => { prefs.set('layout.sidebar.reading', on ? 'open' : 'collapsed'); document.body.classList.toggle('sb-collapsed', !on); });
   toggle($('sb-ws-set'), on => prefs.set('layout.sidebar.exercise', on ? 'open' : 'collapsed'));
   $('reset-layout').onclick = () => { prefs.reset('layout.workspace'); toast('Panel sizes restored', 'ok'); };
@@ -1005,6 +1062,7 @@ function closeExercise() {
     for (const [name, m] of Object.entries(old.models)) files[name] = m.getValue();
     fetch('/api/save/' + enc(old.ex.id), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ files, format: false }), keepalive: true });
   }
+  closeSuggestions(old);
   if (old.editor) old.editor.dispose();
   Object.values(old.models).forEach(m => m.dispose());
   cur = null;
@@ -1032,6 +1090,177 @@ function setMarkers(owner, diags) {
       message: d.msg, severity: monaco.MarkerSeverity.Error,
     })));
   }
+}
+
+// --- code suggestions ---
+// off: nothing pops up. basic: keywords, snippets, words. full: gopls through /api/lsp, falling back to basic.
+const suggest = { state: 'off', error: '', registered: false, timers: {}, poll: null, warned: false };
+const GO_WORDS = ('break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var ' +
+  'any bool byte comparable complex64 complex128 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr ' +
+  'true false iota nil append cap clear close complex copy delete imag len make max min new panic print println real recover').split(' ');
+const GO_SNIPPETS = [
+  ['func', 'func ${1:name}(${2}) ${3}{\n\t$0\n}', 'Function'],
+  ['meth', 'func (${1:r} ${2:Type}) ${3:Name}(${4}) ${5}{\n\t$0\n}', 'Method'],
+  ['iferr', 'if err != nil {\n\treturn ${1:err}\n}', 'Return the error'],
+  ['forr', 'for ${1:i}, ${2:v} := range ${3:s} {\n\t$0\n}', 'for … range'],
+  ['fori', 'for ${1:i} := 0; $1 < ${2:n}; $1++ {\n\t$0\n}', 'Counting loop'],
+  ['struct', 'type ${1:Name} struct {\n\t$0\n}', 'Struct type'],
+  ['interface', 'type ${1:Name} interface {\n\t$0\n}', 'Interface type'],
+  ['switch', 'switch ${1:x} {\ncase ${2}:\n\t$0\n}', 'Switch'],
+];
+const LSP_KINDS = [, 'Text', 'Method', 'Function', 'Constructor', 'Field', 'Variable', 'Class', 'Interface', 'Module', 'Property', 'Unit', 'Value', 'Enum',
+  'Keyword', 'Snippet', 'Color', 'File', 'Reference', 'Folder', 'EnumMember', 'Constant', 'Struct', 'Event', 'Operator', 'TypeParameter'];
+
+const suggestMode = () => {
+  const m = prefs.get('editor.suggestions');
+  return m === 'full' && suggest.state === 'unavailable' ? 'basic' : m;
+};
+function suggestOptions() {
+  const m = suggestMode(), on = m !== 'off';
+  return {
+    quickSuggestions: on ? { other: true, comments: false, strings: false } : false, suggestOnTriggerCharacters: on,
+    wordBasedSuggestions: m === 'basic' ? 'currentDocument' : 'off', snippetSuggestions: on ? 'inline' : 'none',
+    parameterHints: { enabled: m === 'full' },
+  };
+}
+function renderSuggestState() {
+  const el = $('suggest-state');
+  if (!el) return;
+  const m = prefs.get('editor.suggestions'), s = suggest.state;
+  const [dot, text, tip] = m === 'off' ? [] : m === 'basic' ? ['off', 'Basic suggestions', 'Keywords, snippets and words']
+    : s === 'ready' ? ['', 'gopls', 'Full suggestions are on']
+    : s === 'unavailable' ? ['dirty', 'Basic suggestions', 'gopls could not start: ' + suggest.error]
+    : ['saving', 'Starting gopls…', 'The first start downloads gopls, which can take a minute'];
+  el.innerHTML = text ? `<span class="save-dot ${dot}"></span>${text}` : '';
+  el.title = tip || '';
+}
+// suggestWarmup starts gopls when Full is chosen and polls until it is ready.
+async function suggestWarmup() {
+  clearTimeout(suggest.poll);
+  if (prefs.get('editor.suggestions') === 'full' && suggest.state !== 'ready') {
+    try { ({ state: suggest.state, error: suggest.error } = await api('/api/lsp/status')); }
+    catch (e) { suggest.state = 'unavailable'; suggest.error = e.message; }
+    if (suggest.state === 'starting') suggest.poll = setTimeout(suggestWarmup, 1500);
+    if (suggest.state === 'unavailable' && !suggest.warned) { suggest.warned = true; toast('gopls could not start, so Basic suggestions are on', 'err', 4000); }
+    if (suggest.state === 'ready' && cur && cur.editor) for (const [f, m] of Object.entries(cur.models)) suggestChanged(f, m, 0);
+  }
+  if (cur && cur.editor) cur.editor.updateOptions(suggestOptions());
+  renderSuggestState();
+}
+
+const fileOf = model => cur && Object.keys(cur.models).find(n => cur.models[n] === model);
+const toLsp = p => ({ line: p.lineNumber - 1, character: p.column - 1 });
+const toRange = r => new monaco.Range(r.start.line + 1, r.start.character + 1, r.end.line + 1, r.end.character + 1);
+const toDoc = d => d && (typeof d === 'string' ? d : { value: d.value });
+// lspCall returns null while gopls is still starting.
+async function lspCall(op, file, body = {}) {
+  if (!cur) return null;
+  const d = await api(`/api/lsp/${op}/${enc(cur.ex.id)}`, 'POST', { file, ...body });
+  if (d.state) { suggest.state = d.state; suggestWarmup(); return null; }
+  return d;
+}
+const lspSync = (file, model) => lspCall('sync', file, { text: model.getValue() });
+
+// suggestChanged sends the edited text to gopls (debounced) and then pulls its diagnostics.
+function suggestChanged(file, model, delay = 350) {
+  if (suggestMode() !== 'full' || suggest.state !== 'ready') return;
+  clearTimeout(suggest.timers[file]);
+  suggest.timers[file] = setTimeout(async () => {
+    if (model.isDisposed()) return;
+    const ver = model.getVersionId();
+    try { await lspSync(file, model); } catch { return; }
+    await pullDiagnostics(file, model, ver); // the server answers once gopls has checked this text
+    setTimeout(() => pullDiagnostics(file, model, ver), 1500); // analyzer warnings come a little later
+  }, delay);
+}
+async function pullDiagnostics(file, model, ver) {
+  if (model.isDisposed() || suggestMode() !== 'full') return;
+  const d = await lspCall('diagnostics', file).catch(() => null);
+  if (!d || model.isDisposed() || model.getVersionId() !== ver) return; // text changed: a newer pull is coming
+  const sev = [, 'Error', 'Warning', 'Info', 'Hint'];
+  monaco.editor.setModelMarkers(model, 'gopls', (d.diagnostics || []).map(x => {
+    const r = toRange(x.range);
+    return { startLineNumber: r.startLineNumber, startColumn: r.startColumn, endLineNumber: r.endLineNumber, endColumn: r.endColumn,
+      message: x.message, source: x.source, severity: monaco.MarkerSeverity[sev[x.severity || 1]] };
+  }));
+}
+function closeSuggestions(old) {
+  if (prefs.get('editor.suggestions') !== 'full' || suggest.state !== 'ready') return;
+  for (const file of Object.keys(old.models)) {
+    clearTimeout(suggest.timers[file]);
+    fetch(`/api/lsp/sync/${enc(old.ex.id)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file, close: true }), keepalive: true });
+  }
+}
+
+function basicItems(range) {
+  const K = monaco.languages.CompletionItemKind;
+  return GO_WORDS.map(w => ({ label: w, kind: K.Keyword, insertText: w, range })).concat(GO_SNIPPETS.map(([label, body, detail]) => ({
+    label, detail, kind: K.Snippet, insertText: body, range, insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+  })));
+}
+function lspItem(i, range) {
+  const te = i.textEdit;
+  return {
+    label: i.label, detail: i.detail, documentation: toDoc(i.documentation),
+    kind: monaco.languages.CompletionItemKind[LSP_KINDS[i.kind]] ?? monaco.languages.CompletionItemKind.Text,
+    insertText: te ? te.newText : i.insertText || i.label,
+    insertTextRules: i.insertTextFormat === 2 ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet : undefined,
+    range: te ? toRange(te.range || te.replace) : range,
+    filterText: i.filterText, sortText: i.sortText, preselect: i.preselect,
+    additionalTextEdits: (i.additionalTextEdits || []).map(e => ({ range: toRange(e.range), text: e.newText })), // e.g. add the import
+  };
+}
+// Providers are global to the Go language, so they are registered once and look up the open exercise.
+function registerSuggestions(monaco) {
+  if (suggest.registered) return;
+  suggest.registered = true;
+  monaco.languages.registerCompletionItemProvider('go', {
+    triggerCharacters: ['.'],
+    async provideCompletionItems(model, position, context) {
+      const file = fileOf(model), mode = suggestMode();
+      if (!file || mode === 'off') return { suggestions: [] };
+      const w = model.getWordUntilPosition(position);
+      const range = new monaco.Range(position.lineNumber, w.startColumn, position.lineNumber, w.endColumn);
+      const basic = context.triggerKind === monaco.languages.CompletionTriggerKind.TriggerCharacter ? [] : basicItems(range);
+      if (mode === 'basic') return { suggestions: basic };
+      try {
+        await lspSync(file, model);
+        const d = await lspCall('completion', file, toLsp(position));
+        if (!d) return { suggestions: basic };
+        const items = Array.isArray(d.result) ? d.result : d.result?.items || [];
+        return { suggestions: items.map(i => lspItem(i, range)), incomplete: !!d.result?.isIncomplete };
+      } catch { return { suggestions: [] }; }
+    },
+  });
+  monaco.languages.registerHoverProvider('go', {
+    async provideHover(model, position) {
+      const file = fileOf(model);
+      if (!file || suggestMode() !== 'full') return null;
+      const r = (await lspCall('hover', file, toLsp(position)).catch(() => null))?.result;
+      if (!r || !r.contents) return null;
+      return { contents: [toDoc(r.contents)], range: r.range && toRange(r.range) };
+    },
+  });
+  monaco.languages.registerSignatureHelpProvider('go', {
+    signatureHelpTriggerCharacters: ['(', ','], signatureHelpRetriggerCharacters: [','],
+    async provideSignatureHelp(model, position) {
+      const file = fileOf(model);
+      if (!file || suggestMode() !== 'full') return null;
+      try {
+        await lspSync(file, model);
+        const r = (await lspCall('signatureHelp', file, toLsp(position)))?.result;
+        if (!r || !r.signatures?.length) return null;
+        const active = r.activeSignature || 0;
+        return {
+          value: {
+            signatures: r.signatures.map(s => ({ label: s.label, documentation: toDoc(s.documentation), parameters: (s.parameters || []).map(p => ({ label: p.label, documentation: toDoc(p.documentation) })) })),
+            activeSignature: active, activeParameter: r.activeParameter ?? r.signatures[active].activeParameter ?? 0,
+          },
+          dispose() { },
+        };
+      } catch { return null; }
+    },
+  });
 }
 
 // --- layout ---
@@ -1068,7 +1297,7 @@ function renderWorkspace() {
       <section class="panel" id="code-panel">
         <div class="panel-head" id="code-tabs"></div>
         <div id="editor"><div class="editor-loading"><span class="spinner"></span>Loading editor…</div></div>
-        <div class="panel-foot"><span id="save-state"></span><span class="spacer"></span><span id="cursor-pos"></span><span class="hide-sm"><kbd>Ctrl</kbd> <kbd>S</kbd> format</span></div>
+        <div class="panel-foot"><span id="save-state"></span><span class="spacer"></span><span id="suggest-state"></span><span id="cursor-pos"></span><span class="hide-sm"><kbd>Ctrl</kbd> <kbd>S</kbd> format</span></div>
       </section>
       <div class="gutter-h" id="gut-h" title="Drag to resize"></div>
       <section class="panel" id="result-panel">
@@ -1266,12 +1495,13 @@ async function mountEditor() {
   if (cur !== mine) return;
   defineTheme(monaco);
   await patchGoTokens(monaco);
+  registerSuggestions(monaco);
   for (const f of cur.ex.files) {
     const uri = monaco.Uri.parse('file:///' + cur.ex.id + '/' + f.name);
     monaco.editor.getModel(uri)?.dispose();
-    cur.models[f.name] = monaco.editor.createModel(f.content, 'go', uri);
+    const model = cur.models[f.name] = monaco.editor.createModel(f.content, 'go', uri);
     cur.saved[f.name] = f.content;
-    cur.models[f.name].onDidChangeContent(scheduleAutosave);
+    model.onDidChangeContent(() => { scheduleAutosave(); suggestChanged(f.name, model); });
   }
   const host = $('editor');
   host.innerHTML = '';
@@ -1284,7 +1514,10 @@ async function mountEditor() {
     guides: { indentation: true }, smoothScrolling: true, cursorSmoothCaretAnimation: 'on', cursorBlinking: 'smooth',
     fixedOverflowWidgets: true, overviewRulerLanes: 0, hideCursorInOverviewRuler: true, overviewRulerBorder: false,
     scrollbar: { verticalScrollbarSize: 10, horizontalScrollbarSize: 10, useShadows: false, verticalSliderSize: 6, horizontalSliderSize: 6 },
+    ...suggestOptions(),
   });
+  suggestWarmup();
+  for (const [f, m] of Object.entries(cur.models)) suggestChanged(f, m, 0);
   document.fonts.ready.then(() => window.monaco && monaco.editor.remeasureFonts());
   setMarkers('go', diagnosticsFromResult(cur.result));
   const pos = () => { const p = cur.editor.getPosition(); if (p) $('cursor-pos').textContent = `Ln ${p.lineNumber}, Col ${p.column}`; };
@@ -1527,6 +1760,7 @@ document.addEventListener('keydown', e => {
   if ((e.key === 's' || e.key === 'S') && cur) { e.preventDefault(); formatNow(); }
 });
 window.addEventListener('popstate', route);
+suggestWarmup(); // gopls takes seconds to load, so start it before an exercise is opened
 loadCourse().then(route).catch(e => { $view.innerHTML = `<div class="empty"><span class="big">${icon('alert')}</span><h3>Could not reach the platform server</h3><p>${esc(e.message)}</p></div>`; });
 </script>
 </body>
