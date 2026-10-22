@@ -1,0 +1,9 @@
+{
+  "title": "Atomic max",
+  "difficulty": "medium",
+  "hints": [
+    "`CompareAndSwap(old, new)` stores `new` only if the value is still `old`, and tells you whether it did. If it fails, someone else got there first: read again and decide again.",
+    "`StoreMax` is a `for` loop: `old := m.Load()`; if `v <= old` there's nothing to do (`return false`); otherwise `if m.CompareAndSwap(old, v) { return true }`, and if that failed, loop. For `Inc`, use the value `Add` **returns**: a separate `Load` afterwards could see other goroutines' increments.",
+    "`StoreMax`: `for { old := m.Load(); if v <= old { return false }; if m.CompareAndSwap(old, v) { return true } }`. `Inc`: `n := g.current.Add(1); StoreMax(&g.peak, n); return n`. `Dec`: `return g.current.Add(-1)`. `Current` / `Peak`: `Load()`."
+  ]
+}

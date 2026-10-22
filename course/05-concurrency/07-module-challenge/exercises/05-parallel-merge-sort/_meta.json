@@ -1,0 +1,9 @@
+{
+  "title": "Parallel merge sort",
+  "difficulty": "hard",
+  "hints": [
+    "Recursion does the work: `SortFunc` on a slice calls `SortFunc` on each half with `depth-1`. The two halves `s[:mid]` and `s[mid:]` share no elements, so two goroutines can sort them at the same time without a lock. Only the **merge** needs both halves finished.",
+    "Base case first: `if depth <= 0 || len(s) < 2 { slices.SortFunc(s, cmp); return }`. Then start **one** goroutine for the left half with a `sync.WaitGroup` (`wg.Go`), sort the right half in the current goroutine, `wg.Wait()`, and merge. Sorting a half yourself instead of starting a second goroutine saves one goroutine per level.",
+    "Merge with two indexes into a new slice, then copy back:\n```go\nout := make([]T, 0, len(s))\ni, j := 0, mid\nfor i < mid && j < len(s) {\n\tif cmp(s[j], s[i]) < 0 {\n\t\tout = append(out, s[j]); j++\n\t} else {\n\t\tout = append(out, s[i]); i++\n\t}\n}\nout = append(out, s[i:mid]...)\nout = append(out, s[j:]...)\ncopy(s, out)\n```\nIn the solution file the parameter `cmp` hides the `cmp` package inside `SortFunc`; that's fine, `Sort` still sees it and passes `cmp.Compare[T]`."
+  ]
+}

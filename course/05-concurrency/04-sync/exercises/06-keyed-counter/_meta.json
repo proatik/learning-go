@@ -1,0 +1,9 @@
+{
+  "title": "Keyed counter",
+  "difficulty": "medium",
+  "hints": [
+    "A map is a reference: returning `c.counts` from `Snapshot` hands the caller the very map your goroutines are writing to, outside the lock. Copy it while you hold the lock (`maps.Clone`), and return the copy.",
+    "In `Add`, lock, `if c.counts == nil { c.counts = make(map[string]int) }`, then `c.counts[key] += n` and return `c.counts[key]`, all before unlocking: reading the count after unlocking could return another goroutine's increment. `Inc` is `c.Add(key, 1)`.",
+    "`Snapshot`: lock, `out := maps.Clone(c.counts)` (nil for a nil map, so `if out == nil { out = map[string]int{} }`), return `out`. `Reset` doesn't need to copy: lock, `old := c.counts`, `c.counts = nil`, return `old` (or an empty map if it was nil). The next write makes a fresh map."
+  ]
+}

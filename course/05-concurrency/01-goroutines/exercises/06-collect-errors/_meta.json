@@ -1,0 +1,9 @@
+{
+  "title": "Collect errors",
+  "difficulty": "medium",
+  "hints": [
+    "It's parallel map with errors as the results: one `error` slot per task, written by that task's goroutine, read after `Wait`.",
+    "`errs := make([]error, len(tasks))`; in goroutine `i`, `errs[i] = task()`. After `wg.Wait()`, `errors.Join(errs...)` skips the `nil`s, keeps the order of the slice, and returns `nil` if every element is `nil`.",
+    "`for i, task := range tasks { wg.Go(func() { errs[i] = task() }) }; wg.Wait(); return errors.Join(errs...)`. Appending each error to a shared slice as it arrives would be a data race and would use finishing order."
+  ]
+}

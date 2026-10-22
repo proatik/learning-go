@@ -1,0 +1,9 @@
+{
+  "title": "Timed tasks",
+  "difficulty": "medium",
+  "hints": [
+    "Two clocks: one started once, before the loop, for `total`; one started inside each goroutine, around just its own task, for `each[i]`.",
+    "`each := make([]time.Duration, len(tasks))` and `start := time.Now()` before the loop. In goroutine `i`: `t0 := time.Now()`, run the task, `each[i] = time.Since(t0)`. After `wg.Wait()`, `total = time.Since(start)`.",
+    "`for i, task := range tasks { wg.Go(func() { t0 := time.Now(); task(); each[i] = time.Since(t0) }) }; wg.Wait(); return time.Since(start), each`. If `total` comes out as the sum of the tasks, they ran one after another."
+  ]
+}

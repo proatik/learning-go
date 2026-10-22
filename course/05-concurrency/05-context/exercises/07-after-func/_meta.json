@@ -1,0 +1,9 @@
+{
+  "title": "AfterFunc bridges",
+  "difficulty": "medium",
+  "hints": [
+    "`context.AfterFunc(ctx, f)` runs `f` in a new goroutine once `ctx` is done, and returns `stop`. `stop()` is `true` if it prevented `f` from running, `false` if `f` already started. That boolean tells you who won the race.",
+    "`ReadCtx`: `stop := context.AfterFunc(ctx, func() { r.Close() })`, then `msg, err := r.Read()`, then `if !stop() { return \"\", ctx.Err() }`. `Merge`: start from `ctx, cancel := context.WithCancelCause(a)`.",
+    "`Merge`: `stop := context.AfterFunc(b, func() { cancel(context.Cause(b)) })` and return `ctx, func() { stop(); cancel(nil) }`. `cancel(nil)` records `context.Canceled`; canceling `a` reaches the child on its own."
+  ]
+}

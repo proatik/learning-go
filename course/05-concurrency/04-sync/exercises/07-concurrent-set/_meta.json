@@ -1,0 +1,9 @@
+{
+  "title": "Concurrent set",
+  "difficulty": "medium",
+  "hints": [
+    "Writing `if !s.Has(v) { /* then add */ }` is a check-then-act race: two goroutines can both see \"not there\" and both report `true`. The check and the insert have to sit under one `Lock`.",
+    "In `Add`: `s.mu.Lock(); defer s.mu.Unlock()`, then `if _, ok := s.items[v]; ok { return false }`, then make the map if it's nil, insert, `return true`. `Remove` is the mirror image. Don't call `s.Has` from inside `Add`: it would try to `RLock` while you hold `Lock` and deadlock.",
+    "`Has`: `s.mu.RLock(); defer s.mu.RUnlock(); _, ok := s.items[v]; return ok`. `Len`: same lock, `return len(s.items)`. `Values`: same lock, `out := make([]T, 0, len(s.items))`, `for v := range s.items { out = append(out, v) }`, `return out`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Count generator",
+  "difficulty": "easy",
+  "hints": [
+    "A generator has three parts: `make` a channel, start a goroutine that sends into it, and `return` the channel straight away. The `chan int` you made converts to `<-chan int` on return by itself.",
+    "Inside the goroutine, loop and send each value with `out <- i`. Start the goroutine with `defer close(out)` so the channel is closed however the loop ends, including when `n <= 0` and it never runs.",
+    "`out := make(chan int); go func() { defer close(out); for i := 1; i <= n; i++ { out <- i } }(); return out`. `Runes` is the same shape with `make(chan rune)` and `for _, r := range s { out <- r }` (ranging over a string yields runes)."
+  ]
+}

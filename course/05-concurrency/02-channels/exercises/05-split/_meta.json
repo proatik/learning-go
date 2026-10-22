@@ -1,0 +1,9 @@
+{
+  "title": "Split evens and odds",
+  "difficulty": "medium",
+  "hints": [
+    "You return `<-chan int` values, but your goroutine must send on them. Make two **bidirectional** channels, use them inside the goroutine, and return them: they convert to receive-only on the way out.",
+    "One goroutine: `for v := range in`, then send to one channel or the other. Test evenness with `v%2 == 0`; `v%2 == 1` misses negative odd numbers because `-3 % 2 == -1`. Close both outputs when the loop ends; two `defer close(...)` lines at the top of the goroutine do it.",
+    "`ev, od := make(chan int), make(chan int); go func() { defer close(ev); defer close(od); for v := range in { if v%2 == 0 { ev <- v } else { od <- v } } }(); return ev, od`."
+  ]
+}

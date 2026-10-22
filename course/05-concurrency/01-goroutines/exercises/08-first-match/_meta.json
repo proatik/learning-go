@@ -1,0 +1,9 @@
+{
+  "title": "First match",
+  "difficulty": "medium",
+  "hints": [
+    "\"First\" means first in the **input**, not first to finish. So don't decide inside the goroutines: just record every answer, then look at them in order.",
+    "`matched := make([]bool, len(items))`; goroutine `i` does `matched[i] = pred(item)`. After `wg.Wait()`, scan `matched` from the start for the first `true`.",
+    "`for i, item := range items { wg.Go(func() { matched[i] = pred(item) }) }; wg.Wait(); return slices.Index(matched, true)`. `slices.Index` already returns `-1` when there's no `true` (and for an empty slice)."
+  ]
+}

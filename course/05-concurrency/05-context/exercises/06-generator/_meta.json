@@ -1,0 +1,9 @@
+{
+  "title": "Leak-free generators",
+  "difficulty": "medium",
+  "hints": [
+    "Same shape as lesson 2's generator: `out := make(chan int)`, a goroutine with `defer close(out)`, then `return out`. The difference is that every blocking operation inside sits in a `select` next to `case <-ctx.Done(): return`.",
+    "`Count`: `for n := start; ; n += step { select { case out <- n: case <-ctx.Done(): return } }`. `Map` has **two** blocking operations per value, the receive from `in` and the send to `out`, so it needs two `select`s.",
+    "`Map`'s loop body: `select { case v, ok := <-in: if !ok { return }; x = v; case <-ctx.Done(): return }`, then `select { case out <- f(x): case <-ctx.Done(): return }`. A plain `for v := range in` would leak while `in` never sends."
+  ]
+}

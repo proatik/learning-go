@@ -1,0 +1,9 @@
+{
+  "title": "Request IDs",
+  "difficulty": "easy",
+  "hints": [
+    "`context.WithValue(parent, key, val)` returns a new child context; `ctx.Value(key)` looks the key up, walking towards the root. The key is `ctxKey{}`, a value of your unexported type.",
+    "`ctx.Value(ctxKey{})` returns `any` (`nil` when missing). Turn it back into a `string` with the comma-ok type assertion so a missing value gives `\"\", false` instead of a panic.",
+    "`WithRequestID`: `return context.WithValue(ctx, ctxKey{}, id)`. `RequestID`: `id, ok := ctx.Value(ctxKey{}).(string); return id, ok`. `Detach`: `return context.WithoutCancel(ctx)`."
+  ]
+}

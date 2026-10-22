@@ -1,0 +1,9 @@
+{
+  "title": "Merge with the nil-channel trick",
+  "difficulty": "medium",
+  "hints": [
+    "Ranging over `a` and then over `b` is sequential: while `a` is open and quiet, nothing from `b` gets through. You need one loop with a `select` that has a case for each input.",
+    "Receive with comma-ok: `case v, ok := <-a:`. When `ok` is false, `a` is closed; set `a = nil` and `continue`. A `nil` channel's case never fires again, so the closed input stops spinning out zero values. Loop `for a != nil || b != nil`.",
+    "`out := make(chan T)`; `go func() { defer close(out); for a != nil || b != nil { select { case v, ok := <-a: if !ok { a = nil; continue }; out <- v /* same for b */ } } }()`; `return out`. A `nil` argument already fails the loop condition, so it needs no extra code."
+  ]
+}

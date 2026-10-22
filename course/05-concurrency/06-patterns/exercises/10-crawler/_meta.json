@@ -1,0 +1,9 @@
+{
+  "title": "Concurrent web crawler",
+  "difficulty": "hard",
+  "hints": [
+    "Keep a `level` slice (starting as `[]string{start}`) and loop `for d := 0; d <= depth && len(level) > 0; d++`. Within one level, start a goroutine per URL and `wg.Wait()` for all of them; the links they find become the next level. Shared state (`seen`, `visited`, the failures, `next`) lives behind one `sync.Mutex`.",
+    "Bound the fetches with `sem := make(chan struct{}, max(limit, 1))`: before `wg.Go`, `select { case sem <- struct{}{}: case <-ctx.Done(): stop launching }`, and release with `defer func() { <-sem }()`. Also check `ctx.Err() != nil` before launching each fetch and before each level. In the goroutine, after `Fetch`, lock and either record the failure or append to `visited` and add every link with `if !seen[l] { seen[l] = true; next = append(next, l) }`. Mark `start` as seen up front.",
+    "Store failures as `struct{ url string; err error }` so you can sort them with `slices.SortFunc(failures, func(a, b failure) int { return cmp.Compare(a.url, b.url) })`, then collect their errors into `[]error`, append `ctx.Err()` if it is non-nil, and return `visited` (after `slices.Sort`) with `errors.Join(errs...)`, which is `nil` for an empty list."
+  ]
+}

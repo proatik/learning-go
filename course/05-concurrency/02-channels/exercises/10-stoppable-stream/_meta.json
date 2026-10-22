@@ -1,0 +1,9 @@
+{
+  "title": "Stoppable stream",
+  "difficulty": "hard",
+  "hints": [
+    "`From` is the lesson's done-channel generator with a start value. In `Take`, list every place the goroutine can block: the receive from `in` **and** the send to `out`. Each needs its own `select` with a `case <-done: return`, or a closed `done` can't reach the goroutine while it waits there.",
+    "`From`: `for i := start; ; i++ { select { case out <- i: case <-done: return } }`. `Take`: loop exactly `n` times (`for range n` does nothing for `n <= 0`). First `select` between `x, ok := <-in` (return if `!ok`) and `<-done`; then `select` between `out <- x` and `<-done`. Put `defer close(out)` at the top of both goroutines so every `return` closes the output.",
+    "`Take`'s goroutine: `defer close(out); for range n { var v int; select { case x, ok := <-in: if !ok { return }; v = x; case <-done: return }; select { case out <- v: case <-done: return } }`. Stopping after `n` without another receive is what leaves the rest of `in` unread."
+  ]
+}

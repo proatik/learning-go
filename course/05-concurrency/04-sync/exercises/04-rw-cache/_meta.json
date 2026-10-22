@@ -1,0 +1,9 @@
+{
+  "title": "Read-mostly cache",
+  "difficulty": "medium",
+  "hints": [
+    "An `RWMutex` has two kinds of lock. `RLock` is shared: any number of goroutines may hold it at once, as long as nobody holds `Lock`. `Lock` is exclusive: it waits until every reader and writer has left.",
+    "Pick the lock by what the method does to `c.items`: reading (`Get`, `Len`) takes `c.mu.RLock()` + `defer c.mu.RUnlock()`; writing (`Set`, `Delete`) takes `c.mu.Lock()` + `defer c.mu.Unlock()`. Pair each lock with its own unlock: `RLock` with `RUnlock`, `Lock` with `Unlock`.",
+    "`New`: `return &Cache{items: make(map[string]string)}`. `Get`: `c.mu.RLock(); defer c.mu.RUnlock(); value, ok = c.items[key]; return value, ok`. `Set`: `c.mu.Lock(); defer c.mu.Unlock(); c.items[key] = value`. `Delete` is the same with `delete(c.items, key)`."
+  ]
+}

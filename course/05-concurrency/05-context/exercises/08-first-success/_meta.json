@@ -1,0 +1,9 @@
+{
+  "title": "First success wins",
+  "difficulty": "medium",
+  "hints": [
+    "Three pieces: a child `ctx, cancel := context.WithCancel(ctx)` with `defer cancel()` (returning early is what cancels the losers), one goroutine per fetcher, and a channel the goroutines send their results on.",
+    "Make the channel buffered with `len(fetchers)` slots and send a small struct `{i int; val string; err error}`. Then receive exactly `len(fetchers)` times: on the first `err == nil` return straight away; otherwise store the error at `errs[r.i]`.",
+    "`errs := make([]error, len(fetchers))`; `for range fetchers { r := <-results; if r.err == nil { return r.val, nil }; errs[r.i] = r.err }`; `return \"\", errors.Join(errs...)`. Indexing by `r.i` keeps argument order whatever the finishing order. Don't forget the `len(fetchers) == 0` case first."
+  ]
+}

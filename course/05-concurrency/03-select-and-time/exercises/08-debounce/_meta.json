@@ -1,0 +1,9 @@
+{
+  "title": "Debounce",
+  "difficulty": "medium",
+  "hints": [
+    "The goroutine has two things to wait for: the next input value, and \"the quiet period is over\". That's a `for` + `select` with a case for `in` and a case for a timer. It also needs to remember the latest value and whether one is pending.",
+    "Create the timer once and stop it right away: `timer := time.NewTimer(d); timer.Stop()`. Keep `var fire <-chan time.Time`, which is `nil` while nothing is pending. On each input: `pending = v`, `timer.Reset(d)`, `fire = timer.C`. On `case <-fire:` send `pending` and set `fire = nil`.",
+    "On `case v, ok := <-in:` with `!ok`: `if fire != nil { out <- pending }` then `return`, with `defer close(out)` at the top of the goroutine. `fire != nil` is exactly \"a value is pending\", so nothing is sent twice."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Lazy config",
+  "difficulty": "medium",
+  "hints": [
+    "\"Run this once, the first time someone needs it, and give everyone the same answer\" is exactly what the `sync.Once` family is for. One of them wraps a function returning **two** values.",
+    "`sync.OnceValues(load)` returns a new `func() (Config, error)`. The first call runs `load`; concurrent callers wait for it; later calls return the saved results (a panic is saved and repeated too). Store that function in `a.config` inside `New`. Creating it doesn't call `load`.",
+    "`New`: `return &App{config: sync.OnceValues(load)}`. `Config`: `return a.config()`. `Addr`: `cfg, err := a.Config()`; on error `return \"\", fmt.Errorf(\"appconf: %w\", err)`; otherwise `return fmt.Sprintf(\"%s:%d\", cfg.Host, cfg.Port), nil`."
+  ]
+}

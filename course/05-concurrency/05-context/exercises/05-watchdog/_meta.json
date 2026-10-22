@@ -1,0 +1,9 @@
+{
+  "title": "Heartbeat watchdog",
+  "difficulty": "medium",
+  "hints": [
+    "`ctx, cancel := context.WithCancelCause(parent)` gives you a `cancel(err)` that records a cause. A goroutine then needs a `for` + `select` over three things: a beat, the countdown running out, and `ctx.Done()`.",
+    "Use one `time.NewTimer(timeout)` (and `defer t.Stop()`). On a beat, `t.Reset(timeout)`. On `<-t.C`, `cancel(ErrStalled)` and return. Receive beats with comma-ok: `!ok` means closed → `cancel(ErrStopped)` and return. On `<-ctx.Done()` just return.",
+    "Return `ctx, func() { cancel(nil) }`: `cancel(nil)` sets the cause to `context.Canceled`. The parent's cancellation and cause reach the child automatically, so the `ctx.Done()` case covers it."
+  ]
+}

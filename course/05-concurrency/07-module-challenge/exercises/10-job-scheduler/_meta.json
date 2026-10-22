@@ -1,0 +1,9 @@
+{
+  "title": "DAG job scheduler",
+  "difficulty": "hard",
+  "hints": [
+    "Do it in two phases. **Validate** without any goroutines (duplicates with a set, unknown deps with a lookup, cycles with Kahn's algorithm: keep removing jobs whose deps are all removed; anything left over is on or behind a cycle). Then **run**: one goroutine per job, each with a `done` channel that is **closed** when the job finishes. Closing is a broadcast: every dependent waiting on it wakes up.",
+    "Each job's goroutine: `defer close(n.done)`; for every dep, `select { case <-dep.done: case <-ctx.Done(): }`; stop (leaving the status `Skipped`) if `ctx.Err() != nil` or `dep.status != Done`. Otherwise call `Run(ctx)` and set `Done` or `Failed`. Writing `status` **before** `close(done)` makes it safe for dependents to read after `<-dep.done`, with no lock.",
+    "Keep `firstErr` and a `ctxSkipped` flag behind one mutex: the first failing job sets `firstErr = fmt.Errorf(\"job %q: %w\", name, err)` only if it is still nil. After `wg.Wait()`, build the report from the nodes, then return `firstErr`, else `ctx.Err()` if `ctxSkipped`, else `nil`. Without validation a cycle would make two goroutines wait on each other forever, which is why it must come first."
+  ]
+}

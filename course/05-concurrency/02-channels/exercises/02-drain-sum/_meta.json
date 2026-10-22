@@ -1,0 +1,9 @@
+{
+  "title": "Drain and sum",
+  "difficulty": "easy",
+  "hints": [
+    "There is a loop form made for exactly this: it receives one value per iteration and ends by itself once the channel is closed and empty.",
+    "`for v := range ch { … }` waits for each value, so it also handles a sender that is still working. Don't use `len(ch)` to decide when to stop, and don't loop on a plain `v := <-ch`: after close it returns zero values forever.",
+    "`Sum`: `total := 0; for v := range ch { total += v }; return total`. `Drain`: `var out []T; for v := range ch { out = append(out, v) }; return out`."
+  ]
+}

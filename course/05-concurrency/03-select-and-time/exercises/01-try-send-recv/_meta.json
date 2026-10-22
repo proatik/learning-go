@@ -1,0 +1,9 @@
+{
+  "title": "Try send, try receive",
+  "difficulty": "easy",
+  "hints": [
+    "A `select` with a `default` case never waits: if no other case can proceed **right now**, `default` runs. A case on a `nil` channel can never proceed, so it falls through to `default` too.",
+    "`TrySend`: one `case ch <- v:` returning `true` and a `default:` returning `false`. `TryRecv`: `case v, ok = <-ch:` (comma-ok, so a closed channel gives `ok == false`) and a `default` returning the zero value and `false`.",
+    "`DrainReady` is a loop around `TryRecv`: `for { v, ok := TryRecv(ch); if !ok { return out }; out = append(out, v) }`. Start with `var out []T` so nothing received means `nil`."
+  ]
+}

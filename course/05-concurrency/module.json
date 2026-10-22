@@ -1,0 +1,14 @@
+{
+  "title": "Module 5 · Concurrency",
+  "short": "5 · Concurrency",
+  "summary": "Goroutines, channels, select and timers, mutexes and atomics, context, and the classic concurrency patterns.",
+  "lessons": {
+    "01-goroutines": "Goroutines",
+    "02-channels": "Channels",
+    "03-select-and-time": "select & Timers",
+    "04-sync": "Mutexes & Atomics",
+    "05-context": "context",
+    "06-patterns": "Patterns",
+    "07-module-challenge": "Challenge"
+  }
+}

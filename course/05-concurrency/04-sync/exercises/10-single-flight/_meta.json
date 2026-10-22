@@ -1,0 +1,9 @@
+{
+  "title": "Single flight",
+  "difficulty": "hard",
+  "hints": [
+    "Two kinds of waiting are mixed up here. The mutex only protects the **map** for a moment (look up / insert / delete). Waiting for the result is done with the call's `done` channel: closing a channel wakes every goroutine receiving from it, which is exactly \"tell all the waiters at once\".",
+    "Start with `g.mu.Lock()`. If `c, ok := g.calls[key]` finds a call: `c.dups++`, unlock, `<-c.done`, return `c.val, true, c.err`. Otherwise create the map if nil, store `c := &call[V]{done: make(chan struct{})}`, unlock, and run `c.val, c.err = fn()` with no lock held.",
+    "After `fn` returns: `g.mu.Lock(); delete(g.calls, key); shared = c.dups > 0; g.mu.Unlock(); close(c.done); return c.val, shared, c.err`. Reading `dups` after the delete (under the lock) is safe: no one can join a call that's no longer in the map. Writing `c.val` before `close(c.done)` makes it visible to every waiter after `<-c.done`."
+  ]
+}

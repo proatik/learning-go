@@ -1,0 +1,9 @@
+{
+  "title": "Parallel map",
+  "difficulty": "easy",
+  "hints": [
+    "Goroutines can't return values, so give each one a place to put its result: a slice made **before** the loop, with one element per input.",
+    "`out := make([]U, len(in))`. Loop `for i, v := range in` and start a goroutine that does `out[i] = f(v)`. Different goroutines write different elements, which is safe. `wg.Wait()` before returning `out`.",
+    "`out := make([]U, len(in)); var wg sync.WaitGroup; for i, v := range in { wg.Go(func() { out[i] = f(v) }) }; wg.Wait(); return out`."
+  ]
+}

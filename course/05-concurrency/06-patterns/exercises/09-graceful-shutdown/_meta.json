@@ -1,0 +1,9 @@
+{
+  "title": "Graceful shutdown",
+  "difficulty": "hard",
+  "hints": [
+    "`New` is a worker pool: make `jobs` (buffered `max(queue, 0)`) and `done`, start `max(workers, 1)` goroutines that `range` over `s.jobs` and call `handle`, and one more goroutine that waits on a WaitGroup and then closes `done`. \"All workers exited\" then becomes something you can `select` on.",
+    "`Submit`: lock, `if s.closed { return ErrClosed }`, then `select { case s.jobs <- job: return nil; default: return ErrQueueFull }`. Because the send never blocks, holding the mutex during it is fine, and it is what keeps `Shutdown` from closing the channel mid-send.",
+    "`Shutdown`: lock; `if !s.closed { s.closed = true; close(s.jobs) }`; unlock (don't hold the lock while waiting). Then `select { case <-s.done: return nil; case <-ctx.Done(): return ctx.Err() }`. Closing `jobs` is the shutdown signal: each worker's `range` ends only after the queued jobs are handled."
+  ]
+}

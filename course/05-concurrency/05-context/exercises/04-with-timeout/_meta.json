@@ -1,0 +1,9 @@
+{
+  "title": "Per-call timeout",
+  "difficulty": "medium",
+  "hints": [
+    "Derive a child from the `ctx` you were given (never from `context.Background()`, or the caller's cancellation and values are lost), pass the **child** to `f`, and make sure its `cancel` runs however `Fetch` returns.",
+    "Declare `var cancel context.CancelFunc`, then `if d > 0 { ctx, cancel = context.WithTimeout(ctx, d) } else { ctx, cancel = context.WithCancel(ctx) }`, followed by `defer cancel()`. You don't need to watch `Done()` yourself: `f` does that.",
+    "`s, err := f(ctx); if err != nil { return \"\", fmt.Errorf(\"fetch: %w\", err) }; return s, nil`. `%w` keeps `context.DeadlineExceeded` findable with `errors.Is`."
+  ]
+}

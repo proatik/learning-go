@@ -1,0 +1,9 @@
+{
+  "title": "WaitGroup.Go",
+  "difficulty": "easy",
+  "hints": [
+    "`wg.Go(fn)` takes a `func()` with no parameters, but `f` needs an `int`. Wrap the call in a closure that captures the loop variable.",
+    "Loop with `for i := range n` (it runs zero times when `n <= 0`). Each iteration: `wg.Go(func() { f(i) })`. Since Go 1.22 every iteration has its own `i`, so each goroutine sees a different value.",
+    "`var wg sync.WaitGroup; started := 0; for i := range n { wg.Go(func() { f(i) }); started++ }; wg.Wait(); return started`. Count in the loop (one goroutine), not inside the goroutines."
+  ]
+}

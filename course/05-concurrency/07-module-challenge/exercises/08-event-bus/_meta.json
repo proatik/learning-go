@@ -1,0 +1,9 @@
+{
+  "title": "Event bus with drop-oldest queues",
+  "difficulty": "hard",
+  "hints": [
+    "Each `Subscription` owns a buffered `queue` channel and one goroutine that does `for msg := range s.queue { handler(msg) }` and then `close(s.done)`. So \"stop and drain\" is just: close the queue (the `range` ends after the last queued message) and wait on `<-s.done`. The only danger is sending on a closed queue, so close queues and send to them only while holding `b.mu`.",
+    "`Publish`: lock, return `ErrClosed` if closed, else enqueue to every subscription in `b.subs[topic]`. Enqueue never blocks: try `select { case s.queue <- msg: return; default: }`; if full, drop one with `select { case <-s.queue: s.dropped.Add(1); default: }` and try again in a loop (the handler may have just taken a message itself).",
+    "`Unsubscribe`: lock, `delete(b.subs[s.topic], s)`, `s.once.Do(func() { close(s.queue) })`, unlock, then `<-s.done` (wait **after** unlocking, or a `Publish` waiting for `mu` could never proceed). `Close`: lock, `closed = true`, copy every subscription into a slice, unlock, then call `Unsubscribe` on each. `Subscribe` on a closed bus starts the goroutine and closes the queue at once."
+  ]
+}

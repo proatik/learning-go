@@ -1,0 +1,9 @@
+{
+  "title": "Batcher",
+  "difficulty": "hard",
+  "hints": [
+    "The state is the current `batch []T` plus one timer that only matters while the batch is non-empty. Write a small `flush` closure that stops the timer, sends `batch` on the output and starts a new, empty batch; all three flush reasons (full, timed out, input closed) call it.",
+    "Use the nil-channel trick for the timer case: `var expired <-chan time.Time` is `nil` while the batch is empty. When the **first** item of a batch arrives: `timer.Reset(wait)` and `expired = timer.C`. In `flush`: `timer.Stop()`, `expired = nil`. Create the timer once with `time.NewTimer(wait)` followed by `timer.Stop()`.",
+    "After `out <- batch`, set `batch = nil`, not `batch = batch[:0]`: the second keeps the same backing array, so the next `append` overwrites what the receiver is holding. On `!ok` from `in`: `if len(batch) > 0 { flush() }` then `return` (with `defer close(out)` at the top). Start with `size = max(size, 1)`."
+  ]
+}

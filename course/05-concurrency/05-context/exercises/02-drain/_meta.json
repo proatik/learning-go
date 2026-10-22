@@ -1,0 +1,9 @@
+{
+  "title": "Drain until canceled",
+  "difficulty": "easy",
+  "hints": [
+    "A `for` loop around a `select` with two cases: one receives a job from `in`, the other fires when `ctx.Done()` is closed. Use the comma-ok receive to notice that `in` was closed.",
+    "`case <-ctx.Done(): return n, ctx.Err()` and `case job, ok := <-in: if !ok { return n, nil }; handle(job); n++`. To make cancellation win over waiting jobs, add a check **before** the `select` in every iteration.",
+    "At the top of the loop: `if err := ctx.Err(); err != nil { return n, err }`. Without it, a canceled ctx and a full channel are both ready, and `select` picks one at random."
+  ]
+}

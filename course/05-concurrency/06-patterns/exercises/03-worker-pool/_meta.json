@@ -1,0 +1,9 @@
+{
+  "title": "Worker pool",
+  "difficulty": "easy",
+  "hints": [
+    "A pool is fan-out plus fan-in: `n` goroutines all `range` over the same `jobs` channel (each value goes to exactly one of them), and they all send into one `out` channel.",
+    "Clamp first with `n = max(n, 1)`. Count the workers with a `sync.WaitGroup`; a separate goroutine waits for them and closes `out`, exactly like Merge.",
+    "`out := make(chan Result); var wg sync.WaitGroup; for range n { wg.Go(func() { for j := range jobs { out <- Result{Job: j, Value: work(j)} } }) }; go func() { wg.Wait(); close(out) }(); return out`."
+  ]
+}

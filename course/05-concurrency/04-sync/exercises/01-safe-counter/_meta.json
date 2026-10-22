@@ -1,0 +1,9 @@
+{
+  "title": "Safe counter",
+  "difficulty": "easy",
+  "hints": [
+    "`c.n++` is really three steps (read, add, write). Two goroutines can both read 41 and both write 42. The mutex makes the three steps happen as one.",
+    "Each method starts with `c.mu.Lock()` and `defer c.mu.Unlock()`, then does its one line of work. `Value` needs the lock too: reading while another goroutine writes is a race.",
+    "`Add`: `c.mu.Lock(); defer c.mu.Unlock(); c.n += delta`. `Inc` can just call `c.Add(1)` (don't lock in `Inc` as well, or it locks twice and deadlocks). `Value`: lock, defer unlock, `return c.n`."
+  ]
+}

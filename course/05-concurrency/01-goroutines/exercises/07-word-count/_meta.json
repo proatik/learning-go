@@ -1,0 +1,9 @@
+{
+  "title": "Word count",
+  "difficulty": "medium",
+  "hints": [
+    "Think of it as parallel map where each result is a whole `map[string]int`: goroutine `i` builds a brand-new map that no other goroutine ever sees, and stores it at index `i`.",
+    "`local := make([]map[string]int, len(docs))`. In goroutine `i`: `m := make(map[string]int)`, `for _, w := range words(doc) { m[strings.ToLower(w)]++ }`, then `local[i] = m`. After `wg.Wait()`, loop over `local` and add every count into one `total` map.",
+    "Merging: `total := make(map[string]int); for _, m := range local { for w, n := range m { total[w] += n } }; return total`. Make `total` with `make` so an empty input still returns a non-nil map."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Stream results",
+  "difficulty": "medium",
+  "hints": [
+    "A channel can carry a struct, so one channel carries both outcomes. The interesting part is the buffer: if `Collect` stops at an error, nobody reads the rest, and a worker sending on an unbuffered channel would be stuck forever. How many slots does the worker need so that it can never block?",
+    "`Run`: `make(chan Result, len(inputs))`, then a goroutine with `defer close(out)` that loops over `inputs`, sends each `Result`, and `return`s right after sending one with an error. `Collect`: check `ch == nil` first, then `for r := range ch` and return as soon as `r.Err != nil`.",
+    "`Run` loop body: `v, err := f(n); out <- Result{Value: v, Err: err}; if err != nil { return }`. `Collect`: `if ch == nil { return nil, nil }; var vals []int; for r := range ch { if r.Err != nil { return vals, r.Err }; vals = append(vals, r.Value) }; return vals, nil`."
+  ]
+}

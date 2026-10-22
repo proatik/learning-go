@@ -1,0 +1,9 @@
+{
+  "title": "Bounded downloader",
+  "difficulty": "hard",
+  "hints": [
+    "Three separate pieces, each from an earlier lesson: a **semaphore** (`sem := make(chan struct{}, limit)`) caps the requests in flight; **results by index** into `make([]Result, len(urls))` keep input order with no lock; a small `fetch` function does the attempt-and-maybe-retry loop for one URL and knows nothing about the others.",
+    "Loop over the URLs in order in `Download` itself. For each one, acquire a slot with `select { case sem <- struct{}{}: case <-ctx.Done(): }`; if `ctx` won, record `{URL, Err: ctx.Err()}` and move on. Otherwise `wg.Go(func() { defer func() { <-sem }(); results[i] = fetch(ctx, c, url, timeout) })`. `wg.Wait()` before returning. Since `select` picks randomly when both cases are ready, check `ctx.Err()` once more right after getting a slot.",
+    "One attempt: `actx, cancel := context.WithTimeout(ctx, timeout); defer cancel(); return c.Get(actx, url)` in its own function, so `defer` runs per attempt. `fetch` makes up to 2 attempts and stops after the first unless `err != nil && ctx.Err() == nil && (errors.Is(err, ErrTemporary) || errors.Is(err, context.DeadlineExceeded))`. Checking the **parent** `ctx` is what tells your own timeout (retry) apart from the caller giving up (don't)."
+  ]
+}

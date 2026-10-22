@@ -1,0 +1,9 @@
+{
+  "title": "Parallel sum",
+  "difficulty": "medium",
+  "hints": [
+    "Work out the chunks first, in the calling goroutine: clamp `k`, then chunk `i` is `nums[i*n/k : (i+1)*n/k]`. Only the summing happens in goroutines.",
+    "`k = max(min(k, n), 1)` does both clamps (in that order). Return early for `n == 0`. Then `partials := make([]int, k)`, and for each `i` start a goroutine that writes `partials[i] = sumChunk(chunk)`. After `wg.Wait()`, add up `partials` for the total.",
+    "`for i := range k { chunk := nums[i*n/k : (i+1)*n/k]; wg.Go(func() { partials[i] = sumChunk(chunk) }) }`, then `wg.Wait()` and `for _, p := range partials { total += p }`. Don't add to `total` inside the goroutines: that's a shared `+=`, a data race."
+  ]
+}
