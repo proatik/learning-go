@@ -1044,11 +1044,13 @@ async function save(format) {
     updateDirtyUI();
   }
 }
+// Autosave waits for a pause in typing; running tests, switching exercises and leaving the page save at once.
+const AUTOSAVE_MS = 5000;
 function scheduleAutosave() {
   if (!cur) return;
   updateDirtyUI();
   clearTimeout(cur.autosaveTimer);
-  cur.autosaveTimer = setTimeout(() => save(false).catch(() => {}), 900);
+  cur.autosaveTimer = setTimeout(() => save(false).catch(() => {}), AUTOSAVE_MS);
 }
 async function formatNow() {
   try {
