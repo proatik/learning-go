@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"sync"
 	"time"
@@ -23,6 +24,7 @@ var webFS embed.FS
 type server struct {
 	root     string
 	ws       *Workspace
+	lsp      *lsp
 	progress *ProgressStore
 
 	mu          sync.Mutex
@@ -63,7 +65,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	s := &server{root: absRoot, ws: ws, progress: progress, lastResults: map[string]TestResult{}}
+	s := &server{root: absRoot, ws: ws, lsp: newLSP(ws), progress: progress, lastResults: map[string]TestResult{}}
 
 	index, err := fs.ReadFile(webFS, "web/index.html")
 	if err != nil {
@@ -86,12 +88,21 @@ func main() {
 	mux.HandleFunc("POST /api/reset/{id...}", s.handleReset)
 	mux.HandleFunc("POST /api/save/{id...}", s.handleSave)
 	mux.HandleFunc("POST /api/reset-all", s.handleResetAll)
+	mux.HandleFunc("GET /api/lsp/status", s.handleLSPStatus) // also starts gopls in the background
+	mux.HandleFunc("POST /api/lsp/{op}/{id...}", s.handleLSP)
 
 	srv := &http.Server{
 		Addr:              *addr,
 		Handler:           mux,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
+	go func() { // Ctrl+C: stop gopls too, so it doesn't linger
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, os.Interrupt)
+		<-sig
+		s.lsp.Stop()
+		os.Exit(0)
+	}()
 	log.Printf("Go learning platform running at http://%s", *addr)
 	log.Fatal(srv.ListenAndServe())
 }
