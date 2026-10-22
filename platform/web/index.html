@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <!-- Monaco's AMD loader must load after marked/hljs, or they stop registering as globals -->
@@ -271,7 +270,15 @@ body.ws-mode #main { overflow: hidden; background: var(--canvas-inset); }
 .markdown-body blockquote > :last-child { margin-bottom: 0; }
 .markdown-body hr { height: 1px; padding: 0; margin: 24px 0; background: var(--border); border: 0; }
 .markdown-body strong { font-weight: 600; }
-.hljs { background: transparent !important; }
+/* highlight.js colours, matched token for token to the editor's Monokai theme (defineTheme) */
+.hljs { background: transparent !important; color: #f8f8f2; }
+.hljs-keyword, .hljs-literal, .hljs-built_in, .hljs-operator { color: #f92672; }
+.hljs-type { color: #66d9ef; font-style: italic; }
+.hljs-title { color: #a6e22e; }
+.hljs-string { color: #e6db74; }
+.hljs-number, .hljs-char.escape_, .hljs-subst { color: #ae81ff; }
+.hljs-comment { color: #75715e; font-style: italic; }
+.language-sh .hljs-built_in { color: #a6e22e; }
 .code-wrap { position: relative; }
 .copy-btn { position: absolute; top: 8px; right: 8px; opacity: 0; transition: opacity .15s; background: var(--btn-bg); border: 1px solid var(--border); }
 .code-wrap:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
@@ -582,6 +589,13 @@ marked.use({ gfm: true });
   };
   add('built_in', ['min', 'max', 'clear']);
   add('type', ['any', 'comparable']);
+  // Colour calls like the editor does: a name followed by "(" is a function, unless it's
+  // a keyword, built-in or type conversion, which keep their own colour.
+  const words = ['keyword', 'literal', 'built_in', 'type'].flatMap(k => {
+    const v = go.keywords[k];
+    return Array.isArray(v) ? v : (v || '').split(/\s+/).filter(Boolean);
+  });
+  go.contains.push({ scope: 'title.function_', match: new RegExp(`\\b(?!(?:${words.join('|')})\\b)[A-Za-z_]\\w*(?=\\s*\\()`) });
 })();
 // bash marks words like `test`/`env` in `go test` as shell built-ins; for our
 // command snippets, colour only the command at the start of a line and comments.
