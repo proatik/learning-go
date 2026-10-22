@@ -1,0 +1,9 @@
+{
+  "title": "Generic set",
+  "difficulty": "medium",
+  "hints": [
+    "`Set[T]` **is** a map, so the receiver `s` can be used like one: `s[v] = struct{}{}`, `_, ok := s[v]`, `delete(s, v)`, `len(s)`, `for v := range s`. Value receivers are fine: a map is already reference-like.",
+    "`New`: `s := make(Set[T], len(vals))`, then `s.Add(vals...)`. The three operations each start with `out := make(Set[T])` and loop over one input, using `Has` on the other. Reading a nil map is safe, so nil sets work automatically.",
+    "`SubsetOf`: return false as soon as some `v` of `s` is missing from `o`. `Equal`: `len(s) == len(o) && s.SubsetOf(o)`. `Sorted`: collect the keys into `make([]T, 0, len(s))`, then `slices.Sort` (allowed because `T` is `cmp.Ordered` there)."
+  ]
+}

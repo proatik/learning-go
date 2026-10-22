@@ -1,0 +1,9 @@
+{
+  "title": "Inventory with internal pricing",
+  "difficulty": "hard",
+  "hints": [
+    "Start with `internal/pricing` — its formulas are in the README and its own tests run too. Convert before multiplying: `cents * int64(100-percent)`. Then `inventory` only calls `pricing.Discount`, `pricing.Apply` and `pricing.AddTax`.",
+    "An option is a closure that edits the config: `func WithTax(bp int) Option { return func(c *config) { if bp >= 0 { c.taxBP = bp } } }`. `New` makes the `items` map, then runs `for _, o := range opts { o(&s.cfg) }` — zero values already mean \"no tax, no tiers\".",
+    "Put the three `Quote` checks in a helper `check(sku, qty) (*Item, error)` so `Buy` can reuse `Quote` and then do `s.items[sku].Stock -= qty`. `Quote` is `pricing.AddTax(pricing.Apply(it.Cents*int64(qty), pricing.Discount(s.cfg.tiers, qty)), s.cfg.taxBP)`. `Items` ranges over `slices.Sorted(maps.Keys(s.items))` and yields `*s.items[sku]` — dereferencing makes the copy."
+  ]
+}

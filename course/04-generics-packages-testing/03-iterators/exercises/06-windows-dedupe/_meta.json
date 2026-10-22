@@ -1,0 +1,9 @@
+{
+  "title": "Windows and Dedupe",
+  "difficulty": "medium",
+  "hints": [
+    "`Windows` loops over start indices, not over values. `Dedupe` needs two variables that live outside its range loop: the previous value and a flag saying whether there is one yet.",
+    "`Windows`: return early when `k < 1`; then `for i := 0; i+k <= len(s); i++` (this also handles `k > len(s)`) and yield `s[i : i+k : i+k]`. `Dedupe`: skip `v` when there is a previous value and `v == prev`; otherwise update `prev` and yield.",
+    "```go\nvar prev V\nfirst := true\nfor v := range seq {\n\tif !first && v == prev {\n\t\tcontinue\n\t}\n\tfirst, prev = false, v\n\tif !yield(v) {\n\t\treturn\n\t}\n}\n```\nWithout `first`, a sequence starting with the zero value (`0`, `\"\"`) would lose its first element."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Frequencies and sorted keys",
+  "difficulty": "medium",
+  "hints": [
+    "Each function asks for exactly the constraint it needs: map keys need `comparable`; sorting needs `cmp.Ordered`; map values that you never compare can be `any`.",
+    "`Frequencies`: `counts := make(map[T]int)` then `counts[x]++` (a missing key reads as 0). `SortedKeys`: `make([]K, 0, len(m))`, append every key, then `slices.Sort(keys)`.",
+    "`MostCommon`: `counts := Frequencies(xs)`, then `for _, k := range SortedKeys(counts) { if counts[k] > count { value, count, ok = k, counts[k], true } }`. Strict `>` keeps the smallest key on a tie, and the empty case falls out for free."
+  ]
+}

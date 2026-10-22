@@ -1,0 +1,10 @@
+{
+  "title": "Named subtests",
+  "difficulty": "easy",
+  "hints": [
+    "Most grading bugs are off-by-one errors. For every edge (`90`, `80`, `70`, `60`, `0`, `100`), test the value on each side of it.",
+    "Add a `name string` field to your table struct. Inside the loop, call `t.Run(tt.name, func(t *testing.T) { ... })` and put the check inside the closure. Remember the invalid scores `-1` and `101`.",
+    "```go\nfor _, tt := range tests {\n\tt.Run(tt.name, func(t *testing.T) {\n\t\tif got := Grade(tt.score); got != tt.want {\n\t\t\tt.Errorf(\"Grade(%d) = %q, want %q\", tt.score, got, tt.want)\n\t\t}\n\t})\n}\n```\nwith cases like `{\"lowest A\", 90, \"A\"}`, `{\"highest F\", 59, \"F\"}`, `{\"lowest D\", 60, \"D\"}`, `{\"above 100\", 101, \"invalid\"}`, `{\"negative\", -1, \"invalid\"}`."
+  ],
+  "editable": ["grade_test.go"]
+}

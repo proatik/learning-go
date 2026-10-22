@@ -1,0 +1,9 @@
+{
+  "title": "Max, min and clamp",
+  "difficulty": "easy",
+  "hints": [
+    "`cmp.Ordered` allows `<` and `>`, so the bodies look exactly like an `int` version. The only generic part is the empty case: you can't write `0` for an unknown `T`.",
+    "For the empty case: `var zero T; return zero, false`. Otherwise start with `best := xs[0]` and loop over `xs[1:]`, replacing `best` when you find a bigger (or smaller) element.",
+    "`Clamp`: `if lo > hi { lo, hi = hi, lo }`, then `if v < lo { return lo }`, `if v > hi { return hi }`, `return v`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Generic matrix",
+  "difficulty": "hard",
+  "hints": [
+    "The `~` in `Number` lets `Cents` (underlying `int64`) in, and because every type in the set supports `+` and `*`, you can write `sum += a * b` with `var sum T`. The untyped constant `1` converts to any `T`, so `Identity` can call `m.Set(i, i, 1)`.",
+    "Do the shape checks first and let `New` build every result: `out, _ := New[T](m.rows, o.cols)`. For `Mul`, element `(r, c)` is the sum over `k` of `m.At(r, k) * o.At(k, c)`. `FromRows` checks `len(rows) == 0`, calls `New` with `len(rows[0])` (which rejects an empty first row), then checks and `copy`s each row into `m.data[r*m.cols:]`.",
+    "`Apply` is a generic method, so inside it you can build a matrix of the **other** type: `out, _ := New[U](m.rows, m.cols); for i, v := range m.data { out.data[i] = f(v) }`. `Rows` makes `row := make([]T, m.cols)`, copies `m.data[r*m.cols:(r+1)*m.cols]` into it, and returns when `yield(r, row)` is false. `String` ranges over `m.Rows()` and `strings.Join`s the `fmt.Sprint(row)` lines."
+  ]
+}

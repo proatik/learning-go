@@ -1,0 +1,9 @@
+{
+  "title": "Map, Filter, Reduce, Find",
+  "difficulty": "medium",
+  "hints": [
+    "`Map` turns `T`s into `U`s, so the output slice is `[]U`. `Reduce`'s accumulator has its own type `A`, which may differ from the element type (`int` total from `[]string`).",
+    "`Map`: `out := make([]U, 0, len(xs))` and `append(out, f(x))`. `Filter`: start with `var out []T` and append only when `keep(x)`. `Reduce`: `acc := init`, then `acc = f(acc, x)` in a loop.",
+    "`Find`: `for _, x := range xs { if pred(x) { return x, true } }`, then `var zero T; return zero, false`. Each body is 4-6 lines; none of them should touch `xs[i] = ...`."
+  ]
+}

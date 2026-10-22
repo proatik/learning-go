@@ -1,0 +1,10 @@
+{
+  "title": "Bug hunt: checkout discounts",
+  "difficulty": "hard",
+  "hints": [
+    "Split the work in two tables: carts that should succeed (`want int64`) and carts that should fail (`want error`). Give each row a `name` and run it with `t.Run`. Two small helpers with `t.Helper()` — `checkTotal(t, lines, code, want)` and `checkErr(t, lines, code, wantErr)` — keep the rows one line each.",
+    "A test only catches a bug if the bug changes the answer for that input. Pick inputs that make each bug visible: exactly 10 units for \"starts at 11\"; a line total that isn't a multiple of 10 (e.g. 11 × 13 = 143) for rounding; one bulk line **plus** one normal line for \"whole cart\"; exactly 2500 for \"more than 2500\"; 10 × 270 (2700 before bulk, 2430 after) for the SAVE5 order bug.",
+    "For `HALF`, use two items where the priciest one has `Qty > 1` — `[{a 300 2} {b 1000 3}]` must give `3100`: the cheapest-unit bug gives 3450 and the whole-line bug 2100. Also cover: `nil` and empty carts, a `Qty: 0` line **after** a valid one, a negative price, a free item that must be accepted, `\"save5\"` in lower case, and an unknown code like `\"FREE\"`."
+  ],
+  "editable": ["checkout_test.go"]
+}

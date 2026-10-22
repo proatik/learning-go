@@ -1,0 +1,10 @@
+{
+  "title": "Bug hunt: stack and queue",
+  "difficulty": "medium",
+  "hints": [
+    "Read the bug names in `check_test.go`: each one tells you which behaviour to pin down. A good test describes a **sequence of operations** and the expected results — e.g. push 1, 2, 3, then pop 3, pop 2, then `Len()` is 1.",
+    "Make the table rows scripts: `struct{ name string; ops []op; wantLen int; wantAll []int }`, where an `op` is either a push or a pop with an expected value and `ok`. Run each row in `t.Run(tt.name, ...)` and replay the ops with a `t.Helper()` function. Compare `slices.Collect(c.All())` with `wantAll`.",
+    "The tricky queue bugs need a wrapped buffer: push 1, 2, 3, 4, pop twice (the front is now at index 2), then push 5, 6 (they wrap to indices 0 and 1) and 7 (forces a grow). Expect `All()` = `[3 4 5 6 7]`. For the stale-value bug: push 7, 8, pop both, then `Pop()` must return `0, false`. For the break bug: `for v := range s.All() { ...; break }`."
+  ],
+  "editable": ["containers_test.go"]
+}

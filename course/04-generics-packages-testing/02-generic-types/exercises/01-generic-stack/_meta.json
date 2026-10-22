@@ -1,0 +1,9 @@
+{
+  "title": "Generic stack",
+  "difficulty": "easy",
+  "hints": [
+    "Inside every method, `T` is the element type this stack was created with, so `s.items` is a `[]T`. For \"nothing to return\" you need a `T` value: `var zero T` gives you its zero value (`0`, `\"\"`, `nil`, …).",
+    "`Push`: `s.items = append(s.items, v)`. `Peek`: if `len(s.items) == 0` return `zero, false`, else return the last element. `Pop`: reuse `Peek`, then shrink with `s.items = s.items[:len(s.items)-1]`.",
+    "`Drain` only knows the interface: `out := make([]T, 0, c.Len())`, then `for { v, ok := c.Pop(); if !ok { return out }; out = append(out, v) }`."
+  ]
+}

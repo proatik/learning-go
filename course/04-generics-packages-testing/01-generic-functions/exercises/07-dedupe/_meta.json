@@ -1,0 +1,9 @@
+{
+  "title": "Dedupe, preserving order",
+  "difficulty": "medium",
+  "hints": [
+    "Keep a \"seen\" set (`map[K]struct{}`) next to the output slice. Walk the input once: if the key is already in the set, skip the element; otherwise record it and append.",
+    "`DedupeBy` is the general one: `seen := make(map[K]struct{})`, `k := key(x)`, `if _, dup := seen[k]; dup { continue }`. Then `Dedupe` is just `DedupeBy(xs, func(x T) T { return x })`, since `T` is `comparable` there.",
+    "`Intersect`: put every value of `b` into a set `inB`, then loop over `Dedupe(a)` and append the values found in `inB`. The output keeps `a`'s order because you walk `a`."
+  ]
+}

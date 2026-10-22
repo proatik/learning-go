@@ -1,0 +1,9 @@
+{
+  "title": "Money and Invoices",
+  "difficulty": "medium",
+  "hints": [
+    "Store everything as cents in the unexported field. Because `invoice` can't write `money.Amount{cents: -5}`, every `Amount` it sees went through `New` or `FromCents`, so the invariant \"never negative\" holds everywhere.",
+    "`New` is `units*100 + cents` after the checks (negative first, then `cents > 99`). `String` is `fmt.Sprintf(\"%d.%02d\", a.cents/100, a.cents%100)`. In `invoice`, `Subtotal` is `l.Price.Times(l.Qty)`, and `Total` starts from the zero `money.Amount` and calls `Add`.",
+    "`Lines` returns `slices.Clone(inv.lines)`. `String` builds `rows` with `fmt.Sprintf(\"%d x %s @ %s = %s\", l.Qty, l.Item, l.Price, l.Subtotal())` (`%s` calls the `String` method), appends `\"Total: \" + inv.Total().String()`, and returns `strings.Join(rows, \"\\n\")`."
+  ]
+}

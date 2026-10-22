@@ -1,0 +1,9 @@
+{
+  "title": "Line reader",
+  "difficulty": "medium",
+  "hints": [
+    "The scanner already does the reading and splitting. Your iterator is the `for lr.sc.Scan() { … }` loop from the stdlib-interfaces lesson, with `yield` in place of a print.",
+    "Count first (`lr.line++`, so skipped lines are counted too), then `strings.TrimSpace(lr.sc.Text())`, then `continue` for `\"\"` or a `#` prefix (`strings.HasPrefix`). Yield `(lr.line, text)` and return when `yield` returns `false`.",
+    "```go\nfor lr.sc.Scan() {\n\tlr.line++\n\ttext := strings.TrimSpace(lr.sc.Text())\n\tif text == \"\" || strings.HasPrefix(text, \"#\") {\n\t\tcontinue\n\t}\n\tif !yield(lr.line, text) {\n\t\treturn\n\t}\n}\n```\nThe counter lives in the struct, so a second range continues the numbering."
+  ]
+}

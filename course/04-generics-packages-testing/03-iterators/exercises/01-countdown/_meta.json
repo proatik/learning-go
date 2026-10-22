@@ -1,0 +1,9 @@
+{
+  "title": "Countdown",
+  "difficulty": "easy",
+  "hints": [
+    "The starter already returns a function of the right shape. Put an ordinary `for` loop inside it and call `yield` once per value.",
+    "`Countdown`: `for i := n; i >= 1; i--`. `Repeat`: `for range n` (zero or negative `n` runs no iterations). Wrap every call as `if !yield(x) { return }`.",
+    "```go\nfor i := n; i >= 1; i-- {\n\tif !yield(i) {\n\t\treturn\n\t}\n}\n```\n`Repeat` is the same loop with `for range n` and `yield(v)`."
+  ]
+}

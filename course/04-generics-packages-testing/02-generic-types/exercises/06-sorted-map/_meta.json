@@ -1,0 +1,9 @@
+{
+  "title": "Sorted map",
+  "difficulty": "medium",
+  "hints": [
+    "Two structures, one job each: the `vals` map answers `Get` in O(1), and the sorted `keys` slice gives the order. Every method that changes one must change the other. `Get` and `Len` work on the zero value already (reading a nil map is fine); `Put` must `make` the map first.",
+    "`slices.BinarySearch(m.keys, k)` returns the index where `k` is or would be inserted, and whether it was found. `Put`: if `k` is new, `m.keys = slices.Insert(m.keys, i, k)`. `Delete`: if found, `m.keys = slices.Delete(m.keys, i, i+1)` and `delete(m.vals, k)`.",
+    "`Range`: return nil if `lo >= hi`; else `from, _ := slices.BinarySearch(m.keys, lo)` and `to, _ := slices.BinarySearch(m.keys, hi)`, and build entries for `m.keys[from:to]`. A small helper `entries(keys []K) []Entry[K, V]` serves `Entries` and `Range`. `Keys` is `slices.Clone(m.keys)`."
+  ]
+}

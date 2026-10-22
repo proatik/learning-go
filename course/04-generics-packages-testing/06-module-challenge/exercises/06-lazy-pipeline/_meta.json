@@ -1,0 +1,9 @@
+{
+  "title": "Lazy pipeline library",
+  "difficulty": "hard",
+  "hints": [
+    "Every adapter has the same shape: return a `func(yield func(X) bool)` that ranges over `seq`, does its one job, and `return`s the moment a `yield` returns false. Nothing runs until somebody ranges over the result — that is what makes it lazy.",
+    "`Filter`: `if keep(v) && !yield(v) { return }`. `Take`: return immediately if `n <= 0`; otherwise yield, count, and `return` as soon as `count == n` — **before** the loop asks the source for another value. `Batch`: append to `batch`; when it reaches `size`, yield it and start a **new** slice with `batch = nil` (reusing it with `batch[:0]` would overwrite pages you already handed out); after the loop, yield the leftover batch if it is not empty.",
+    "In `report`: `Revenue` is `pipe.Fold(pipe.Filter(orders, paid), 0, func(sum int64, o Order) int64 { return sum + o.Cents })` — note the untyped `0` becomes `int64`. `LargeOrderIDs` is `slices.Collect(pipe.Take(pipe.Map(large, func(o Order) int { return o.ID }), n))`, replacing a nil result with `[]int{}`. `Line` uses `fmt.Sprintf(\"#%d %s $%d.%02d\", o.ID, o.Customer, o.Cents/100, o.Cents%100)`."
+  ]
+}

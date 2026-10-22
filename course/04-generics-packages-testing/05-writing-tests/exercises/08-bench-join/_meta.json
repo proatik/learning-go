@@ -1,0 +1,10 @@
+{
+  "title": "A benchmark",
+  "difficulty": "medium",
+  "hints": [
+    "Two functions, two jobs. The test proves `JoinInts` is **correct**: think empty, one number, negatives, a multi-character separator. The benchmark measures how **fast** it is and how much it allocates.",
+    "In the benchmark, everything before `for b.Loop()` is setup and is not timed. `b.ReportAllocs()` adds the `B/op` and `allocs/op` columns. The loop body is just the call: `b.Loop` keeps its result alive, so the compiler can't delete it.",
+    "```go\nfunc BenchmarkJoinInts(b *testing.B) {\n\tnums := make([]int, 100)\n\tfor i := range nums {\n\t\tnums[i] = i * 1000\n\t}\n\tb.ReportAllocs()\n\tfor b.Loop() {\n\t\tJoinInts(nums, \",\")\n\t}\n}\n```"
+  ],
+  "editable": ["joiner_test.go"]
+}

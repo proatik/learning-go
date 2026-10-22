@@ -1,0 +1,9 @@
+{
+  "title": "Ordered map",
+  "difficulty": "medium",
+  "hints": [
+    "This is the Module 3 LRU list made generic: a `map[K]*entry[K, V]` finds an entry in O(1), and the `prev`/`next` links keep the order. Every type mention inside the methods needs its parameters: `&entry[K, V]{...}`, `var zero V`.",
+    "`Set` on a new key links the entry after `m.tail` (or makes it the `head` of an empty list). `Delete` fixes the neighbours: `e.prev.next = e.next` or, if `e` was first, `m.head = e.next`; same for the other side with `m.tail`.",
+    "To survive a delete during ranging, read the link **before** yielding: `for e := m.head; e != nil; { next := e.next; if !yield(e.key, e.value) { return }; e = next }`. `Keys` can range over `m.All()` and yield only `k`; `Collect` is `m := New[K, V](); for k, v := range seq { m.Set(k, v) }`."
+  ]
+}

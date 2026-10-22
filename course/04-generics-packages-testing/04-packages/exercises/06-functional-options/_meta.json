@@ -1,0 +1,9 @@
+{
+  "title": "Functional Options",
+  "difficulty": "medium",
+  "hints": [
+    "An `Option` is just a function that edits a `*Server`. Each `WithX` returns a closure that remembers its argument: `func WithName(name string) Option { return func(s *Server) { s.name = name } }`. `WithMiddleware` uses `append(s.middleware, names...)`.",
+    "`New`: build `s := &Server{addr: addr, name: DefaultName, timeout: DefaultTimeout, maxConns: DefaultMaxConns}`, run `for _, opt := range opts { opt(s) }`, then collect problems in `var errs []error` and `return nil, err` when `err := errors.Join(errs...)` is non-nil (`Join` of nothing is `nil`).",
+    "`String` is `fmt.Sprintf(\"%s@%s timeout=%v maxConns=%d middleware=%v\", …)`; a nil `[]string` prints as `[]`. `Middleware` returns `slices.Clone(s.middleware)`. `NewProduction` builds `opts := []server.Option{server.WithName(\"api\"), …}` and calls `server.New(addr, append(opts, extra...)...)`."
+  ]
+}

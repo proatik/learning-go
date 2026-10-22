@@ -1,0 +1,9 @@
+{
+  "title": "Find things with comparable",
+  "difficulty": "easy",
+  "hints": [
+    "`comparable` is exactly what allows `x == target`. With `T any` the same code wouldn't compile.",
+    "`IndexOf`: `for i, x := range xs { if x == target { return i } }`, then `return -1` after the loop. `LastIndexOf` walks backwards: `for i := len(xs) - 1; i >= 0; i--`.",
+    "`Contains` is one line: `return IndexOf(xs, target) >= 0` (inference picks `T` for you). `Count` keeps `n := 0` and does `n++` on every match."
+  ]
+}

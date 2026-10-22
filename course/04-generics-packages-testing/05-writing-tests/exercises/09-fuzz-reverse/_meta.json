@@ -1,0 +1,10 @@
+{
+  "title": "A fuzz test",
+  "difficulty": "hard",
+  "hints": [
+    "A fuzz function gets inputs it has never seen, so it can't compare against a fixed `want`. It checks **properties** instead: facts that are true for every correct answer. Reversing twice gives the original back, for example.",
+    "Each property catches different bugs. A byte-wise reverse passes the round trip but breaks UTF-8 on `\"héllo\"`. A function that leaves the first rune in place also passes the round trip, but its output starts with the wrong rune. Your seeds must include text where these bugs show: spaces and multi-byte runes.",
+    "```go\nf.Add(\"hello world\")\nf.Add(\"héllo, 世界\")\nf.Fuzz(func(t *testing.T, s string) {\n\tif !utf8.ValidString(s) {\n\t\tt.Skip(\"not UTF-8\")\n\t}\n\tr := Reverse(s)\n\tif Reverse(r) != s { t.Errorf(...) }\n\tif !utf8.ValidString(r) || len(r) != len(s) { t.Errorf(...) }\n\tif s != \"\" {\n\t\tfirst, _ := utf8.DecodeRuneInString(r)\n\t\tlast, _ := utf8.DecodeLastRuneInString(s)\n\t\tif first != last { t.Errorf(...) }\n\t}\n})\n```"
+  ],
+  "editable": ["rev_test.go"]
+}

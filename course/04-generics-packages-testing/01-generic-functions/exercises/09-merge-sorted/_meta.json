@@ -1,0 +1,9 @@
+{
+  "title": "Merge sorted slices",
+  "difficulty": "hard",
+  "hints": [
+    "This is the merge step of merge sort. Keep one index into each slice and repeatedly take the smaller front element. When one slice runs out, copy the rest of the other. The comparator replaces `<`, so `T` can stay `any`.",
+    "`out := make([]T, 0, len(a)+len(b))`; `for i < len(a) && j < len(b)`: if `compare(a[i], b[j]) <= 0` take `a[i]` (the `=` makes it stable), else take `b[j]`. After the loop: `out = append(out, a[i:]...)` and `append(out, b[j:]...)`.",
+    "`MergeOrdered`: `return Merge(a, b, cmp.Compare[T])`. `MergeAll`: `var out []T; for _, l := range lists { out = Merge(out, l, compare) }` (earlier lists are in `out`, i.e. on the `a` side, so they win ties). `Desc`: `return func(x, y T) int { return compare(y, x) }`."
+  ]
+}

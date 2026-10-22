@@ -1,0 +1,9 @@
+{
+  "title": "Result chains",
+  "difficulty": "medium",
+  "hints": [
+    "Most functions are one-liners: `Ok` fills `val`, `Fail` fills `err`, `IsOk` is `r.err == nil`. When the compiler can't infer `T` from the arguments, instantiate explicitly: `Fail[U](r.err)`.",
+    "`Map` and `Then` start the same way: `if r.err != nil { return Fail[U](r.err) }`. Then `Map` returns `Ok(f(r.val))`, and `Then` can return `Of(f(r.val))` — a call returning `(U, error)` can be passed straight into a function taking `(v U, err error)`.",
+    "`Try` needs a named result and a deferred closure: `defer func() { if p := recover(); p != nil { r = Fail[T](fmt.Errorf(\"%w: %v\", ErrPanic, p)) } }()`, then `return Ok(f())`. `Collect` ranges with a counter `i`; on the first error `return nil, fmt.Errorf(\"item %d: %w\", i, err)` — returning from inside the loop makes `yield` return false, so the source stops."
+  ]
+}

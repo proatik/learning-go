@@ -1,0 +1,9 @@
+{
+  "title": "Explicit Registry",
+  "difficulty": "medium",
+  "hints": [
+    "The problem with `init` + a global map: every importer shares one registry, registration happens invisibly at import time, and nothing can report an error. Moving the map into a `Registry` struct fixes all three: callers create one, fill it with an explicit call, and get errors back.",
+    "`Register`: check the name, then `f == nil`, then `if _, ok := r.funcs[name]; ok { return fmt.Errorf(\"%w: %q\", ErrDuplicate, name) }`. Create the map lazily before writing. Reading a nil map in `Render` and `Names` is fine. `Names` can be `slices.Sorted(maps.Keys(r.funcs))`.",
+    "`RegisterAll` calls `r.Register` three times, returning at the first non-nil error. `Default` is `r := &render.Registry{}`, then `if err := builtin.RegisterAll(r); err != nil { return nil, err }`, then `return r, nil`. Finally delete the old block in `render.go` and the `init` in `builtin.go`."
+  ]
+}

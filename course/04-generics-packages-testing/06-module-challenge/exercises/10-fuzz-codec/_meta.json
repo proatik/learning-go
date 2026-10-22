@@ -1,0 +1,10 @@
+{
+  "title": "Bug hunt: fuzzing a codec",
+  "difficulty": "hard",
+  "hints": [
+    "A fuzz test is `func FuzzX(f *testing.F)`: call `f.Add(seed)` for each seed, then `f.Fuzz(func(t *testing.T, s string) { ... })`. Inside, don't compare with hand-written answers — check a **property** that holds for every input, like `Decode(Encode(s)) == s`.",
+    "Each bug name tells you which seed exposes it: a run of 12 of the same rune (two-digit count), `\"aAAa\"` (case), `\"héé\"` or `\"日本日本\"` (multi-byte), `\"::a:\"` (the separator as text), and any non-empty string (the last run). For the `Decode` fuzz test, seed broken inputs such as `\"3:\"` and `\"1:\\xff\"`; if `Decode` panics, the test fails on its own.",
+    "The zero-count bug produces a valid-looking result, so no round-trip property can see it — that is what the table test is for: `for _, in := range []string{\"a\", \":a\", \"3:\", \"0:a\", \"x:a\", \"2:a3\"} { if _, err := Decode(in); !errors.Is(err, ErrMalformed) { t.Errorf(...) } }`. Finish with `func ExampleEncode() { fmt.Println(Encode(\"aaab\")) // Output: 3:a1:b }` and `func BenchmarkEncode(b *testing.B) { s := strings.Repeat(\"aaab\", 100); for b.Loop() { Encode(s) } }`."
+  ],
+  "editable": ["rle_test.go"]
+}

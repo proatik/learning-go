@@ -1,0 +1,9 @@
+{
+  "title": "Filter, Map and Reduce",
+  "difficulty": "medium",
+  "hints": [
+    "`Filter` and `Map` are adapters: inside the returned function, `for v := range seq`, then decide what to yield. `Reduce` is a consumer: it just loops, no closure needed.",
+    "`Filter`: yield `v` only when `keep(v)` is true. `Map`: yield `f(v)`. In both, `return` as soon as `yield` returns `false`; that `return` also stops `seq`. `Reduce`: `acc := init`, then `acc = f(acc, v)` in a range loop.",
+    "```go\nfor v := range seq {\n\tif keep(v) && !yield(v) {\n\t\treturn\n\t}\n}\n```\n`&&` short-circuits: `yield` runs only for kept values. `Map` is the same loop with `if !yield(f(v)) { return }`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Config Loader",
+  "difficulty": "medium",
+  "hints": [
+    "Load explicitly, never in `init`: the caller decides when to load, passes the input, and gets an error back. Start from `c := Default()`, loop over `slices.Sorted(maps.Keys(settings))`, and collect problems in `var errs []error` instead of returning on the first one.",
+    "Use a `switch key` with one case per known key and a `default:` for unknown keys. In each parsing case, only assign the field when the parse succeeded; on failure append `fmt.Errorf(\"%w: %s=%q\", ErrBadValue, key, value)`. `Validate` uses the same pattern with its three checks and returns `errors.Join(problems...)`, which is `nil` for an empty list.",
+    "After the loop: `errs = append(errs, c.Validate())` (`errors.Join` skips nil errors), then `if err := errors.Join(errs...); err != nil { return Config{}, err }` and `return c, nil`. `Describe` is `fmt.Sprintf(\"%s:%d debug=%t timeout=%v\", c.Host, c.Port, c.Debug, c.Timeout)`."
+  ]
+}

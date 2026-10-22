@@ -1,0 +1,9 @@
+{
+  "title": "Build planner on a generic graph",
+  "difficulty": "hard",
+  "hints": [
+    "Write `graph` first; its own tests run too. Storing `adj[n] = nil` for a node with no successors still makes `n` a key, so `_, ok := g.adj[n]` tells you whether a node exists. `Nodes` can be `slices.Values(slices.Sorted(maps.Keys(g.adj)))`, and `Neighbors` is `slices.Values(g.adj[n])`.",
+    "`BFS`: a `dist := map[N]int{start: 0}` doubles as the visited set, and a slice is the queue: pop `queue[0]`, yield it with `dist[n]` (return if false), then append every successor not yet in `dist` with distance `dist[n]+1`. `TopoSort`: count in-degrees, put every 0-in-degree node in `ready`, then loop: take `slices.Min(ready)` out, append it to `order`, decrement its successors and add the ones that hit 0.",
+    "If `len(order) < len(g.adj)` after the loop, the nodes with in-degree still above 0 are the stuck ones: sort them and `return nil, &CycleError[N]{Nodes: stuck}`. In `build`, share one helper `depGraph(targets) (*graph.Graph[string], error)` between `Plan` and `Affected`: first record all names in a `known` map, then `g.AddNode(t.Name)` and `g.AddEdge(d, t.Name)` for each dep."
+  ]
+}

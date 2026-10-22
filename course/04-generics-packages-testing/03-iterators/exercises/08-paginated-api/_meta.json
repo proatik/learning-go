@@ -1,0 +1,9 @@
+{
+  "title": "Paginated API",
+  "difficulty": "medium",
+  "hints": [
+    "Two nested loops: an outer one over page numbers (`for page := 1; ; page++`) and an inner `for _, item := range items`. The outer loop ends on an error or when `more` is `false`.",
+    "Inside the outer loop: call `fetch(page)`; on `err != nil` yield `(zero, err)` and `return`; yield every item with `nil` (return if `yield` says stop); then `if !more { return }`. `CollectAll` is a range loop that returns early on the first non-nil `err`.",
+    "```go\nitems, more, err := fetch(page)\nif err != nil {\n\tvar zero T\n\tyield(zero, err)\n\treturn\n}\nfor _, item := range items {\n\tif !yield(item, nil) {\n\t\treturn // return, not break: leave both loops\n\t}\n}\nif !more {\n\treturn\n}\n```"
+  ]
+}

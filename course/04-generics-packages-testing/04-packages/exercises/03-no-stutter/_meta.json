@@ -1,0 +1,9 @@
+{
+  "title": "No Stutter",
+  "difficulty": "easy",
+  "hints": [
+    "Read each name the way a caller writes it: `cache.CacheStore` says \"cache\" twice. The package name already gives the context, so the identifier only needs the rest: `cache.Store`, `cache.New()`, `s.Get(k)`.",
+    "Rename the type, the stats type, the constructor and all five methods in `cache/cache.go`, then fix every use in `lookup.go` (`*cache.Store`, `s.Get`, `s.Set`) and rename `LookupCached` to `Cached`. Update each doc comment so it starts with the new name.",
+    "For the zero value: reading (`s.items[key]`, `len`, `delete`) on a nil map is fine, but writing panics. Add `if s.items == nil { s.items = map[string]string{} }` at the top of `Set`."
+  ]
+}

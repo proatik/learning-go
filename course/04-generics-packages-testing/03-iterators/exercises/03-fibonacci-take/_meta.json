@@ -1,0 +1,9 @@
+{
+  "title": "Fibonacci and Take",
+  "difficulty": "easy",
+  "hints": [
+    "An infinite iterator is a `for { … }` loop with no exit condition except `yield` returning `false`. `Take` is a `for v := range seq` loop that counts.",
+    "`Fibonacci`: `a, b := 0, 1`; in the loop yield `a`, then `a, b = b, a+b`. `Take`: return early when `n <= 0`; otherwise yield each value, increment a counter, and `return` when it reaches `n`.",
+    "Check the count **after** yielding, not before: a check at the top of the loop body runs only once `seq` has already produced value `n+1`.\n```go\nfor v := range seq {\n\tif !yield(v) {\n\t\treturn\n\t}\n\tcount++\n\tif count == n {\n\t\treturn\n\t}\n}\n```"
+  ]
+}

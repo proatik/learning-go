@@ -1,0 +1,9 @@
+{
+  "title": "Pairs and Zip",
+  "difficulty": "easy",
+  "hints": [
+    "A `Pair[A, B]` literal needs its type arguments spelled out: `Pair[A, B]{First: a, Second: b}`. `Swap` builds a `Pair[B, A]` the same way, with the fields crossed over.",
+    "`String`: `fmt.Sprintf(\"(%v, %v)\", p.First, p.Second)`. `Zip`: `n := min(len(as), len(bs))`, `make([]Pair[A, B], n)`, then fill index by index (`for i := range n`).",
+    "`Unzip`: `as := make([]A, len(ps))` and `bs := make([]B, len(ps))`, then `for i, p := range ps { as[i], bs[i] = p.First, p.Second }`."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Module 4 · Generics, Packages & Testing",
+  "short": "4 · Generics & Testing",
+  "summary": "Generic functions and types, iterators, packages and API design, and writing your own tests.",
+  "lessons": {
+    "01-generic-functions": "Generic Functions",
+    "02-generic-types": "Generic Types",
+    "03-iterators": "Iterators",
+    "04-packages": "Packages",
+    "05-writing-tests": "Writing Tests",
+    "06-module-challenge": "Challenge"
+  }
+}

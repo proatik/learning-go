@@ -1,0 +1,10 @@
+{
+  "title": "A test helper",
+  "difficulty": "medium",
+  "hints": [
+    "Without `t.Helper()`, every failure is reported at the `t.Errorf` line *inside* the helper. Six different failures would all point at the same line, and you could not tell which case failed.",
+    "The helper body is three lines: `t.Helper()`, then `if got != want { t.Errorf(...) }`. For the cases, think about what each bug could get wrong: lowercase input, one word, three words, extra spaces, a first letter that is more than one byte (`é`).",
+    "```go\nfunc assertEqual[T comparable](t *testing.T, got, want T) {\n\tt.Helper()\n\tif got != want {\n\t\tt.Errorf(\"got %v, want %v\", got, want)\n\t}\n}\n```\nthen `assertEqual(t, Initials(\"Grace Brewster Hopper\"), \"GBH\")`, `assertEqual(t, Initials(\"émile zola\"), \"ÉZ\")`, ..."
+  ],
+  "editable": ["initials_test.go"]
+}

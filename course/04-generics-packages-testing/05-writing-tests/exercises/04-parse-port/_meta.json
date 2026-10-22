@@ -1,0 +1,10 @@
+{
+  "title": "Error paths",
+  "difficulty": "medium",
+  "hints": [
+    "Test the edges of the valid range (`1`, `65535`) and just outside them (`0`, `65536`). Then one input for every error rule, including the sneaky ones: `\"+80\"`, `\"-1\"`, `\" 80\"`.",
+    "Put `wantErr error` in the table (nil for valid ports). `errors.Is(err, nil)` is true only when `err` is nil, so one check covers both the success and the error cases. Check the port **as well**, even on error: it must be `0`.",
+    "```go\nfor _, tt := range tests {\n\tgot, err := ParsePort(tt.in)\n\tif !errors.Is(err, tt.wantErr) {\n\t\tt.Errorf(\"ParsePort(%q) error = %v, want %v\", tt.in, err, tt.wantErr)\n\t\tcontinue\n\t}\n\tif got != tt.want {\n\t\tt.Errorf(\"ParsePort(%q) = %d, want %d\", tt.in, got, tt.want)\n\t}\n}\n```"
+  ],
+  "editable": ["port_test.go"]
+}

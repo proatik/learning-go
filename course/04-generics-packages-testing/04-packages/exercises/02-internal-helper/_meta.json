@@ -1,0 +1,9 @@
+{
+  "title": "Internal Helper",
+  "difficulty": "easy",
+  "hints": [
+    "Two packages: `slug` (in `internal/slug/`) does the text work; `blog` only calls `slug.Make`. Because `blog.go` sits in the parent of `internal/`, the import is allowed; a package outside this exercise would get `use of internal package … not allowed`.",
+    "In `Make`, range over the runes with a `strings.Builder` and a `dash bool`. A rune that isn't a letter or digit only sets `dash = true`. Before writing a kept rune, write `'-'` if `dash` is set **and** the builder isn't empty, then reset `dash`.",
+    "In `NewPosts`, keep `taken := map[string]bool{}`. For each title call `NewPost`; on error `return nil, fmt.Errorf(\"title %d: %w\", i, err)`. If `taken[p.Slug]`, loop `for n := 2; taken[p.Slug]; n++ { p.Slug = fmt.Sprintf(\"%s-%d\", base, n) }`, then mark it taken and append."
+  ]
+}

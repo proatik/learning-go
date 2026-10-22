@@ -1,0 +1,10 @@
+{
+  "title": "Slugs",
+  "difficulty": "easy",
+  "hints": [
+    "Read the rules as a list of separate promises. For each promise, write one input that breaks if *only* that promise is broken.",
+    "You need cases for: uppercase letters, digits, a run of several separators, a separator at the start, and one at the end. `\"Hello World\"` alone checks almost nothing.",
+    "```go\ntests := []struct{ in, want string }{\n\t{\"Hello World\", \"hello-world\"},\n\t{\"Go 1.27\", \"go-1-27\"},\n\t{\"a  --  b\", \"a-b\"},\n\t{\"  Leading\", \"leading\"},\n\t{\"Trailing!!\", \"trailing\"},\n}\n```"
+  ],
+  "editable": ["slug_test.go"]
+}

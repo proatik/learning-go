@@ -1,0 +1,9 @@
+{
+  "title": "Generic LRU cache",
+  "difficulty": "hard",
+  "hints": [
+    "Split the work into three small unexported helpers and build everything on them: `pushFront(n)` links `n` in as the new head, `unlink(n)` takes `n` out (fixing its neighbours, and `head` / `tail` when `n` was at an end), and `moveToFront(n)` is `unlink` + `pushFront`. Inside generic methods, `node[K, V]` and `Entry[K, V]` need their type arguments, e.g. `&node[K, V]{Entry: Entry[K, V]{Key: k, Val: v}}`.",
+    "`New`: panic on `capacity < 1`, else `&Cache[K, V]{capacity: capacity, items: make(map[K]*node[K, V])}`. `Get` = map lookup + `moveToFront`; `Peek` = map lookup only. `Remove` = `unlink` + `delete(c.items, k)`. `Entries`: walk `for n := c.head; n != nil; n = n.next` and append `n.Entry` (the embedded field is named after its type).",
+    "`Put`: if `k` exists, set `n.Val = v`, `moveToFront(n)` and return `Entry[K, V]{}, false`. Otherwise, if `len(c.items) == c.capacity`, take `lru := c.tail`, `unlink(lru)`, `delete(c.items, lru.Key)` and remember `lru.Entry, true` as the result. Then create the node, `pushFront` it and store it in the map. In `unlink`: `if n.prev != nil { n.prev.next = n.next } else { c.head = n.next }`, and the mirror image for `n.next` / `c.tail`."
+  ]
+}

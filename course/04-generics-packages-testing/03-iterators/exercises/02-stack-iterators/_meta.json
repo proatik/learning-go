@@ -1,0 +1,9 @@
+{
+  "title": "Stack iterators",
+  "difficulty": "easy",
+  "hints": [
+    "Each method returns a closure that loops over `s.items`. The closure reads the stack when it runs, not when the method is called.",
+    "`All`: `for i := len(s.items) - 1; i >= 0; i--` and yield `s.items[i]`. `Backward`: `for _, v := range s.items`. `Drain`: an endless `for` that calls `s.Pop()` and stops when the stack is empty or `yield` returns `false`.",
+    "```go\nfor {\n\tv, ok := s.Pop()\n\tif !ok || !yield(v) {\n\t\treturn\n\t}\n}\n```\nPop **before** yielding: the loop body has already seen `v`, so it is consumed even if the body then breaks."
+  ]
+}

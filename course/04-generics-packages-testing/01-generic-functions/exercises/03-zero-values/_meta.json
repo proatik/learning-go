@@ -1,0 +1,9 @@
+{
+  "title": "Zero values and Must",
+  "difficulty": "easy",
+  "hints": [
+    "Inside a generic function you can't write `0` or `\"\"` for `T`. `var zero T` gives you the zero value of whatever `T` turns out to be.",
+    "`Must`: `if err != nil { panic(err) }; return v`. `IsZero` needs `==`, which is why it is `[T comparable]`: `var zero T; return v == zero`.",
+    "`FirstNonZero`: `for _, v := range vals { if !IsZero(v) { return v } }`, then `var zero T; return zero`. `FirstOr`: `if len(xs) == 0 { return fallback }; return xs[0]`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "A Number constraint with ~",
+  "difficulty": "medium",
+  "hints": [
+    "A union lists types with `|`. Without `~`, `int` matches only `int` itself, so `Score` (an `int` underneath) is rejected. With `~int` it is accepted.",
+    "`type Number interface { ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64 }`. Once every type in the set supports `+`, `*`, `-` and `<`, your bodies compile.",
+    "`Sum`: `var total T` then `total += x`. `Abs`: `if x < 0 { return -x }; return x`. `Scale`: `out := make(S, len(s)); for i, v := range s { out[i] = v * k }; return out`. Using `S` (not `[]E`) keeps `Readings` as `Readings`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Priority queue",
+  "difficulty": "medium",
+  "hints": [
+    "In a heap stored in a slice, the children of `i` are `2*i+1` and `2*i+2`, and its parent is `(i-1)/2`. Write two unexported helpers, `up(i)` and `down(i)`, and everything else becomes short. `NewOrdered` is just `return New(cmp.Less[T])`.",
+    "`up`: while `i > 0` and `less(items[i], items[parent])`, swap them and move to the parent. `down`: find which of `i` and its (up to two) children comes first; if it is a child, swap and continue from there, otherwise stop. `Pop` saves `items[0]`, moves the last item to index 0, shrinks the slice, then calls `down(0)`.",
+    "`Drain` is a loop: `for { v, ok := q.Pop(); if !ok || !yield(v) { return } }`. For `TopK`, keep `small := NewOrdered[T]()`; push while `small.Len() < k`, else `if top, _ := small.Peek(); v > top { small.Pop(); small.Push(v) }`. At the end, `slices.Collect(small.Drain())` is smallest-first — reverse it."
+  ]
+}

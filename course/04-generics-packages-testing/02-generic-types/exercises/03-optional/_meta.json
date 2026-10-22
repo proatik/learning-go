@@ -1,0 +1,9 @@
+{
+  "title": "Optional values",
+  "difficulty": "easy",
+  "hints": [
+    "The `ok` field is what tells `Some(0)` apart from `None`: `value` alone can't, because `0` is both a real value and the zero value.",
+    "`Some` returns `Optional[T]{value: v, ok: true}`; `None` is just `Optional[T]{}`. `Get` is one line: `return o.value, o.ok`. `OrElse` returns `o.value` when `o.ok`, else `fallback`.",
+    "`String`: `if !o.ok { return \"None\" }`, then `fmt.Sprintf(\"Some(%v)\", o.value)`. `First`: `if len(s) == 0 { return None[T]() }; return Some(s[0])`. `Lookup`: `v, ok := m[k]` (safe on a nil map), then `Some(v)` or `None[V]()`."
+  ]
+}

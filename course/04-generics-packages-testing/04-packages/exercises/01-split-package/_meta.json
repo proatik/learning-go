@@ -1,0 +1,9 @@
+{
+  "title": "Split a Package",
+  "difficulty": "easy",
+  "hints": [
+    "Open the `stats.go` tab: it's a different package (`package stats`) in its own directory. Code there can only be used from `grades` if its names start with a capital letter.",
+    "Cut the bodies of `sum`, `mean` and `minMax` into `Sum`, `Mean` and `MinMax`. Inside `stats`, `Mean` calls `Sum` directly (same package, no prefix). Then delete the three helpers from `grades.go`.",
+    "`Report` becomes: `lo, hi, ok := stats.MinMax(scores)`; return `\"n=0\"` when `!ok`; otherwise `fmt.Sprintf(\"n=%d mean=%.2f min=%d max=%d\", len(scores), stats.Mean(scores), lo, hi)`. Remove the `_ = stats.Sum` line."
+  ]
+}

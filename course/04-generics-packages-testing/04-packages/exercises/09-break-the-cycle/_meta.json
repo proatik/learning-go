@@ -1,0 +1,9 @@
+{
+  "title": "Break the Cycle",
+  "difficulty": "hard",
+  "hints": [
+    "Ask what each side really needs. `audit` doesn't need a `*bank.Account`, only the ID, a kind and an amount: plain data. `bank` doesn't need a `*audit.Log`, only something with a `Record` method: an interface. Put both in `event`, which imports neither.",
+    "In `event/event.go` declare `type Event struct { Account string; Kind string; Amount int }` and `type Recorder interface { Record(e Event) }`. In `audit`, change the method to `func (l *Log) Record(e event.Event)` and use `e.Account`, `e.Kind`, `e.Amount`. Replace the `bank` import with `event`.",
+    "In `bank`, replace the `audit` import with `event`, the field with `rec event.Recorder`, and the constructor with `New(id string, rec event.Recorder)`. `record` becomes `if a.rec != nil { a.rec.Record(event.Event{Account: a.id, Kind: kind, Amount: amount}) }`. `wire.go` compiles unchanged, because `*audit.Log` now satisfies `event.Recorder` implicitly."
+  ]
+}

@@ -4,7 +4,7 @@
 
 **Learn Go by solving problems, LeetCode-style, on your own machine.**
 
-177 exercises · instant feedback · hints when you're stuck
+237 exercises · instant feedback · hints when you're stuck
 
 ![Learn Go platform](assets/screenshot.png)
 
@@ -25,6 +25,7 @@
 | 1 · Foundations | Variables, control flow, functions, strings |
 | 2 · Composite Types | Slices, maps, structs, pointers |
 | 3 · Methods, Interfaces & Errors | Methods, interfaces, `io`, error handling |
+| 4 · Generics, Packages & Testing | Generics, iterators, packages, writing your own tests |
 
 More modules are coming: concurrency, REST APIs, databases and microservices.
 

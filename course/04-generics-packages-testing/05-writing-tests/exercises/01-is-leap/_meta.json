@@ -1,0 +1,10 @@
+{
+  "title": "Leap years",
+  "difficulty": "easy",
+  "hints": [
+    "Each rule in the definition needs at least one year that only that rule decides. A test with just `2024` cannot tell a correct `IsLeap` from one that only checks `% 4`.",
+    "Pick one year per rule: a normal year (`2023`), a leap year (`2024`), a century that is not leap (`1900`) and a 400th year (`2000`). Put them in a `[]struct{ year int; want bool }` and loop.",
+    "```go\ntests := []struct {\n\tyear int\n\twant bool\n}{\n\t{2023, false}, {2024, true}, {1900, false}, {2000, true},\n}\nfor _, tt := range tests {\n\tif got := IsLeap(tt.year); got != tt.want {\n\t\tt.Errorf(\"IsLeap(%d) = %t, want %t\", tt.year, got, tt.want)\n\t}\n}\n```"
+  ],
+  "editable": ["leap_test.go"]
+}

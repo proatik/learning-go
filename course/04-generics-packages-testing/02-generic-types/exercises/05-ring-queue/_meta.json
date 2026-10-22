@@ -1,0 +1,9 @@
+{
+  "title": "Ring-buffer queue",
+  "difficulty": "medium",
+  "hints": [
+    "Draw it: with `len(buf) == 4`, `head == 3` and `n == 2`, the elements sit at indexes `3` and `0`. Everything is `(head + i) % len(q.buf)` for the i-th element from the front. Start every `Push` with `if q.n == len(q.buf) { grow }` so the zero value (empty `buf`) works too.",
+    "Grow: `buf := make([]T, max(4, 2*len(q.buf)))`, copy `q.buf[(q.head+i)%len(q.buf)]` to `buf[i]` for `i` in `range q.n`, then `q.buf, q.head = buf, 0`. Push then writes `q.buf[(q.head+q.n)%len(q.buf)] = v; q.n++`. Pop reads `q.buf[q.head]`, writes `var zero T` into that slot, then `q.head = (q.head + 1) % len(q.buf)` and `q.n--`.",
+    "`Bounded`: `NewBounded` returns `&Bounded[T]{limit: max(limit, 1)}`. Its `Push` shadows the embedded one: `if b.Len() == b.limit { b.Pop(); b.dropped++ }`, then call the embedded method explicitly with `b.Queue.Push(v)` (plain `b.Push(v)` would call itself forever)."
+  ]
+}

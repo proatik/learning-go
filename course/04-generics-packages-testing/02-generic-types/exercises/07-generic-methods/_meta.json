@@ -1,0 +1,9 @@
+{
+  "title": "Generic methods",
+  "difficulty": "medium",
+  "hints": [
+    "In `func (l List[T]) Map[U any](f func(T) U) List[U]`, `T` comes from the receiver and `U` is the method's own type parameter: inside the body you can use both. Build a `[]U`, then wrap it: `List[U]{items: out}`.",
+    "`Of` and `Items`: `slices.Clone`. `Map`: `out := make([]U, len(l.items))` and `out[i] = f(v)`. `FlatMap`: `out = append(out, f(v)...)`. `Reduce`: `acc := init`, then `acc = f(acc, v)` for every element.",
+    "`GroupBy`: `groups := make(map[K]List[T])`; for each `v`, `k := key(v); g := groups[k]; g.items = append(g.items, v); groups[k] = g` (map elements aren't addressable, so copy out and store back). `Sum` can reuse a generic method: `return l.Reduce(0, func(acc, v N) N { return acc + v })`."
+  ]
+}

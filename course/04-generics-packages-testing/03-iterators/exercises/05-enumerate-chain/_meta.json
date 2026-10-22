@@ -1,0 +1,9 @@
+{
+  "title": "Enumerate, Chain, Keys and Values",
+  "difficulty": "medium",
+  "hints": [
+    "All four are adapters with the same skeleton: `return func(yield …) { for … := range seq { if !yield(…) { return } } }`. Only what you range over and what you yield change.",
+    "`Enumerate`: `i := 0` before the loop, `yield(i, v)`, then `i++`. `Keys`: `for k := range seq` (a one-variable range over a `Seq2` gives the first value). `Values`: `for _, v := range seq`. `Chain`: `for _, seq := range seqs`, skip `nil`, then range over `seq`.",
+    "In `Chain`, stopping must leave **both** loops, so use `return`, not `break`:\n```go\nfor _, seq := range seqs {\n\tif seq == nil {\n\t\tcontinue\n\t}\n\tfor v := range seq {\n\t\tif !yield(v) {\n\t\t\treturn\n\t\t}\n\t}\n}\n```"
+  ]
+}

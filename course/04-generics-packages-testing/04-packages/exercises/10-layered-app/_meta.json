@@ -1,0 +1,9 @@
+{
+  "title": "Layered App",
+  "difficulty": "hard",
+  "hints": [
+    "Work bottom-up. `store` knows nothing about rules, `service` knows rules but not which store it gets, and `todo` only connects them. `service.Store` lists exactly the four methods the service calls, so the real `*store.Memory` and the tests' `fakeStore` both satisfy it implicitly.",
+    "`store.Memory`: `NewMemory` makes the map. `Create` does `m.lastID++; t.ID = m.lastID`. `List` walks `slices.Sorted(maps.Keys(m.tasks))`. In `service`, `New` replaces a nil `now` with `time.Now`. `Add` trims, checks `title == \"\"`, then `utf8.RuneCountInString(title) > MaxTitle`, then loops over `Pending()` with `strings.EqualFold`.",
+    "Wrap every store error: `return store.Task{}, fmt.Errorf(\"add: %w\", err)`, `fmt.Errorf(\"complete %d: %w\", id, err)`, etc. `Complete` is Get → `if t.Done { return ErrAlreadyDone }` → `t.Done = true` → Update. `todo.New` is one line: `return service.New(store.NewMemory(), now)`."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "title": "An Example test",
+  "difficulty": "medium",
+  "hints": [
+    "An Example is a test whose \"assertion\" is its printed output. It only catches a bug if one of the printed lines changes. So choose sizes where a wrong base, a missing decimal or a missing unit would print something different.",
+    "Print sizes at the edges: `1000` and `1023` (still bytes), `1024` (the first KiB), `1536` (needs the decimal), and one value in each of MiB, GiB and TiB. Write the `// Output:` comment last, one `// ` line per printed line.",
+    "```go\nfmt.Println(FormatBytes(1000))\nfmt.Println(FormatBytes(1024))\nfmt.Println(FormatBytes(1536))\nfmt.Println(FormatBytes(3 << 30))\n// Output:\n// 1000 B\n// 1.0 KiB\n// 1.5 KiB\n// 3.0 GiB\n```\nAdd a `TiB` line too."
+  ],
+  "editable": ["bytesize_test.go"]
+}

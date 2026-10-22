@@ -1,0 +1,9 @@
+{
+  "title": "Zip and Merge",
+  "difficulty": "hard",
+  "hints": [
+    "Two `for range` loops can't advance in step, so turn one (`Zip`) or both (`Merge`) inputs into pull iterators: `next, stop := iter.Pull(seq)` followed immediately by `defer stop()`.",
+    "`Zip`: range over `as`; for each `a` call `nextB()`; return if it reports `false` or if `yield(a, b)` returns `false`. `Merge`: read one head from each side (`va, okA := nextA()`), then while both are valid yield the smaller one (`<=` keeps `a` first on ties) and read the next value from **that** side only. Afterwards drain whichever side is left.",
+    "```go\nnextA, stopA := iter.Pull(a)\ndefer stopA()\nnextB, stopB := iter.Pull(b)\ndefer stopB()\nva, okA := nextA()\nvb, okB := nextB()\nfor okA && okB {\n\tif va <= vb {\n\t\tif !yield(va) {\n\t\t\treturn\n\t\t}\n\t\tva, okA = nextA()\n\t} else {\n\t\t// same for b\n\t}\n}\nfor ; okA; va, okA = nextA() {\n\tif !yield(va) {\n\t\treturn\n\t}\n}\n// same for b\n```"
+  ]
+}

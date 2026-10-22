@@ -1,0 +1,10 @@
+{
+  "title": "Files in a temp dir",
+  "difficulty": "hard",
+  "hints": [
+    "`t.TempDir()` gives each test a fresh, empty directory that is deleted after the test. Build paths inside it with `filepath.Join(dir, \"app.log\")`. Small helpers (`openLog`, `readLines`) with `t.Helper()` keep the test readable.",
+    "List what can go wrong and write one scenario for each: two writes read back as two separate lines; close, reopen and write again (are the old lines still there?); `Write` after `Close`; `ReadLines` on a file that does not exist. Compare the **whole** slice with `slices.Equal`, so an extra empty line or a missing last line is caught.",
+    "```go\nfunc openLog(t *testing.T, path string) *Log {\n\tt.Helper()\n\tl, err := Open(path)\n\tif err != nil {\n\t\tt.Fatalf(\"Open(%q) error = %v, want nil\", path, err)\n\t}\n\tt.Cleanup(func() { l.Close() })\n\treturn l\n}\n```\nthen, in a subtest: `path := filepath.Join(t.TempDir(), \"app.log\")`, `l := openLog(t, path)`, `l.Write(\"one\")`, `l.Write(\"two\")`, `l.Close()`, `openLog(t, path).Write(\"three\")`, and check `ReadLines(path)` equals `[]string{\"one\", \"two\", \"three\"}`."
+  ],
+  "editable": ["logfile_test.go"]
+}

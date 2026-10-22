@@ -1,0 +1,9 @@
+{
+  "title": "Tree walk",
+  "difficulty": "hard",
+  "hints": [
+    "A closure can't easily call itself, so put the recursion in a separate generic function that takes the node and `yield`. It must **return a bool**: `false` means \"the loop stopped, unwind everything\".",
+    "`walk(nil)` returns `true` (nothing to do). Otherwise: walk the left subtree, then `yield(n.key)`, then walk the right subtree, and return `false` the moment any of the three returns `false`. `All` just calls `walk(t.root, yield)`. For `Range`, only go left if `n.key > lo`, only yield if `lo <= n.key && n.key <= hi`, and only go right if `n.key < hi`.",
+    "`&&` short-circuits, which gives exactly the stop behaviour you need:\n```go\nfunc walk[K cmp.Ordered](n *node[K], yield func(K) bool) bool {\n\tif n == nil {\n\t\treturn true\n\t}\n\treturn walk(n.left, yield) && yield(n.key) && walk(n.right, yield)\n}\n```\nThe classic bug is calling `walk(n.left, yield)` as a statement and ignoring its result: the walk then keeps going after a `break` and the range loop panics."
+  ]
+}

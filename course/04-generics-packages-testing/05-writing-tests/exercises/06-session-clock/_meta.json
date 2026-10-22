@@ -1,0 +1,10 @@
+{
+  "title": "A fake clock",
+  "difficulty": "medium",
+  "hints": [
+    "The closure `func() time.Time { return now }` reads the variable `now` every time it is called. Assigning a new value to `now` in your test \"moves the clock\" for the session too.",
+    "Bugs hide at the deadline: check `Expired` and `Remaining` at `start + ttl - 1ns`, at exactly `start + ttl`, and later. For `Touch`, call it partway through, then check just before and exactly at `touch time + ttl`.",
+    "```go\nstart := time.Date(2025, 1, 1, 12, 0, 0, 0, time.UTC)\nnow := start\ns := New(time.Hour, func() time.Time { return now })\n\nnow = start.Add(time.Hour - time.Nanosecond)\nif s.Expired() { t.Errorf(\"Expired() 1ns before the deadline = true, want false\") }\nnow = start.Add(time.Hour)\nif !s.Expired() { t.Errorf(\"Expired() at the deadline = false, want true\") }\nif got := s.Remaining(); got != 0 { t.Errorf(\"Remaining() = %v, want 0s\", got) }\n```\nThen do the same around a `Touch()` at `start + 40m` (new deadline `start + 1h40m`)."
+  ],
+  "editable": ["session_test.go"]
+}

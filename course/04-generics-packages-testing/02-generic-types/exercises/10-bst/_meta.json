@@ -1,0 +1,9 @@
+{
+  "title": "Generic binary search tree",
+  "difficulty": "hard",
+  "hints": [
+    "Recursion works on nodes, not on the `Tree`, so write the recursive helpers as small generic **functions** on nodes, e.g. `func height[T cmp.Ordered](n *node[T]) int` (`0` for nil, else `1 + max(height(n.left), height(n.right))`). Compare with `<` / `>` or `cmp.Compare(v, n.val)`, both allowed by `cmp.Ordered`.",
+    "`Insert`: walk from the root left or right until the spot is nil, return false on an equal value; remember to `t.size++`. A neat trick: walk a `link := &t.root` pointer-to-pointer, then `*link = &node[T]{val: v}`. `Floor`: walk down; when `n.val <= v`, remember it as the best so far and go right, otherwise go left (`Ceil` is the mirror image). `InOrder`: recurse left, append `n.val`, recurse right.",
+    "`Delete` is easiest as a recursive helper returning the new subtree root: `func deleteNode[T cmp.Ordered](n *node[T], v T) (*node[T], bool)`. Go left/right and reassign `n.left` / `n.right` with the result. On a match: if `n.left == nil` return `n.right, true`; if `n.right == nil` return `n.left, true`; otherwise find the minimum `succ` of `n.right`, copy `n.val = succ.val`, then `n.right, _ = deleteNode(n.right, succ.val)`. `Tree.Delete` sets `t.root` from the helper and decrements `size` when found."
+  ]
+}

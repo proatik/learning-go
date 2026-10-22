@@ -1,0 +1,9 @@
+{
+  "title": "ID Generator",
+  "difficulty": "medium",
+  "hints": [
+    "State that belongs to *one user* of a package should live in a value that user creates, not in a package-level variable. Give `Generator` two fields, `prefix string` and `n int`; the zero value then counts from 1 with an empty prefix for free.",
+    "`(g *Generator) Next()` does `g.n++` and returns `g.prefix + strconv.Itoa(g.n)`. For compatibility, replace `var counter int` with `var defaultGen Generator` and make the package-level `Next` return `defaultGen.Next()`. Add a blank `//` line and then `// Deprecated: Use a Generator from New instead.` to its doc comment.",
+    "In `users`, swap the `prefix` field for `ids *ids.Generator`, set it with `ids.New(prefix)` in `NewDirectory`, and in `Add` check `name == \"\"` **first**, then `id := d.ids.Next()`."
+  ]
+}

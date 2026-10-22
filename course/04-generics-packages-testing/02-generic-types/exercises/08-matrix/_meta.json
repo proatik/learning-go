@@ -1,0 +1,9 @@
+{
+  "title": "Numeric matrix",
+  "difficulty": "medium",
+  "hints": [
+    "All the data lives in one flat slice: element `(i, j)` is `m.data[i*m.cols+j]`. A small unexported helper `newMatrix[T Number](rows, cols int) *Matrix[T]` that allocates `make([]T, rows*cols)` will save you repeating yourself. Because `T` is constrained by `Number`, `+`, `*` and the constant `1` all work on `T` values.",
+    "`FromRows`: reject `len(rows) == 0 || len(rows[0]) == 0`, then for each row check `len(row) == cols` and `copy(m.data[i*cols:], row)`. `Rows`: each row is `append([]T(nil), m.data[i*m.cols:(i+1)*m.cols]...)` so it's a copy. `Transpose`: element `(i, j)` of `m` goes to `(j, i)` of a `cols × rows` result.",
+    "`Mul`: for each `i` in `range m.rows` and `j` in `range o.cols`, `var sum T` then `sum += m.At(i, k) * o.At(k, j)` for `k` in `range m.cols`. Shape errors: `fmt.Errorf(\"%s %dx%d and %dx%d: %w\", op, m.rows, m.cols, o.rows, o.cols, ErrShape)` in one helper used by `Add` and `Mul`."
+  ]
+}

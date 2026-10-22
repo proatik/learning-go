@@ -1,0 +1,9 @@
+{
+  "title": "Group, partition, pick the best",
+  "difficulty": "medium",
+  "hints": [
+    "Only the **key** needs a constraint: `comparable` to be a map key in `GroupBy`, `cmp.Ordered` to use `>` in `MaxBy`. The elements themselves stay `any`.",
+    "`GroupBy`: `groups := make(map[K][]T)`, then `groups[k] = append(groups[k], x)` (appending to a missing key's nil slice works). `Partition`: two named results, append each element to `yes` or `no`.",
+    "`MaxBy`: guard the empty case with `var zero T`. Then `best, bestKey := xs[0], key(xs[0])` and loop over `xs[1:]`: `if k := key(x); k > bestKey { best, bestKey = x, k }`. Strict `>` keeps the first on ties, and storing `bestKey` avoids calling `key` twice."
+  ]
+}
