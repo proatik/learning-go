@@ -228,6 +228,12 @@ body.ws-mode #main { overflow: hidden; background: var(--canvas-inset); }
 .stepper button { width: 32px; height: 30px; border: 0; background: var(--btn-bg); cursor: pointer; font-size: 16px; }
 .stepper button:hover { background: var(--btn-hover); }
 .stepper span { width: 44px; text-align: center; font: 500 13px var(--mono); }
+/* every Settings control lines up in one right-hand column */
+.setting-row { --ctl-w: 156px; }
+.setting-row > .stepper, .setting-row > .select, .setting-row > .btn { width: var(--ctl-w); height: 32px; flex-shrink: 0; }
+.setting-row > .btn { font-size: 13px; }
+.setting-row > .stepper span { flex: 1; }
+.setting-row .select-btn { width: 100%; height: 32px; font-size: 13px; padding: 0 12px; }
 /* Primer-style action menu */
 .select { position: relative; flex-shrink: 0; }
 .select-btn { min-width: 120px; justify-content: space-between; }
@@ -1430,7 +1436,7 @@ function renderSolution(pad) {
   pad.innerHTML = `<div class="empty"><span class="big">${icon(passed ? 'unlock' : 'lock')}</span>
     <h3>${passed ? 'Solution unlocked' : 'Solution is locked'}</h3>
     <p>${passed ? 'You solved it — compare your code with the reference solution.' : 'It unlocks automatically when all tests pass. Try the hints in the Description tab first.'}</p>
-    <div style="margin-top:8px">${passed ? `<button class="btn btn-primary" id="sol-btn">${icon('unlock')} View solution</button>` : `<button class="btn btn-ghost btn-sm" id="sol-btn" style="color:var(--danger)">I give up — show it anyway</button>`}</div></div>`;
+    <div style="margin-top:8px">${passed ? `<button class="btn btn-primary" id="sol-btn">${icon('unlock')} View solution</button>` : `<button class="btn btn-ghost" id="sol-btn" style="color:var(--danger)">I give up — show it anyway</button>`}</div></div>`;
   $('sol-btn').onclick = async () => {
     if (!passed && !await modal({ title: 'Show the solution?', body: 'Struggling is where the learning happens — try the hints first. If you continue, this exercise is marked as “solution viewed early”.', confirm: 'Show solution', danger: true })) return;
     try {
