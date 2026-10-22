@@ -1,0 +1,9 @@
+{
+  "title": "Live leaderboard",
+  "difficulty": "hard",
+  "hints": [
+    "Two kinds of sharing, two tools. Writers change a `map` in place, so they need `mu`. Readers only ever see a **finished** `*Snapshot` that nobody changes again, so swapping a pointer with `b.latest.Store(snap)` and reading it with `b.latest.Load()` is enough: no lock, and never a half-built value.",
+    "`Add` and `Transfer` each lock once, change the map (`Transfer` changes both players under the **same** lock) and do `version++`. `Publish`: under the lock, copy the scores into a fresh `[]Entry`, sum `Total`, read `Players` and `Version`; unlock; then sort the copy and keep the first `min(n, len(entries))`; finally `Store` the new snapshot.",
+    "Sort with `slices.SortFunc(entries, func(x, y Entry) int { return cmp.Or(cmp.Compare(y.Score, x.Score), strings.Compare(x.Player, y.Player)) })` (`y` before `x` for descending scores). `New` must call `Publish()` **before** returning, so `Latest` never loads a nil pointer, then `go b.publisher(every)`: a ticker loop with `defer close(b.done)` that returns on `<-b.stop`. `Latest` is `return *b.latest.Load()`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "MapReduce word count",
+  "difficulty": "hard",
+  "hints": [
+    "Draw the pipeline before coding: `docs` → **jobs channel** → m mappers → `emit` → **r reducer channels** → r reducers → r partial maps → merged result. Each channel has one owner who closes it: you close `jobs` after sending every doc; the reducer channels close once the mappers' WaitGroup is done.",
+    "`Partition`: `h := fnv.New32a(); h.Write([]byte(key)); return int(h.Sum32() % uint32(r))`. In `MapReduce`, make `toReducer := make([]chan pair, r)` and `emit := func(k string, v int) { toReducer[Partition(k, r)] <- pair{k, v} }`. Start the **reducers first** (or mappers block on their first emit forever), then the mappers, then feed `jobs`.",
+    "Order of shutdown: `close(jobs)` → `mappers.Wait()` → `close` every reducer channel → `reducers.Wait()`. Each reducer: `for p := range toReducer[i] { groups[p.key] = append(groups[p.key], p.value) }`, then `reduceFn` per key into its own map stored at `partial[i]` (results by index, no lock). Finally copy every `partial[i]` into one `map[string]int{}`."
+  ]
+}

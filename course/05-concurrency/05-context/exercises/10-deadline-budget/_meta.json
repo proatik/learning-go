@@ -1,0 +1,9 @@
+{
+  "title": "Deadline budget",
+  "difficulty": "hard",
+  "hints": [
+    "Do the arithmetic once, up front: `deadline, ok := ctx.Deadline()`, `total := time.Until(deadline)`, and the sum of the weights (a weight below 1 counts as 1). Then loop over the steps, computing `budget := total * time.Duration(w) / time.Duration(sum)`.",
+    "Put one step in a helper so `defer cancel()` runs per step: `stepCtx, cancel := context.WithTimeoutCause(ctx, budget, &StepTimeoutError{Step: s.Name, Budget: budget})`, then `err := s.Run(stepCtx)`. Watch the order: once `cancel` has run, `stepCtx.Err()` is **always** non-nil, so inspect `stepCtx` before canceling.",
+    "In the helper: `if err == nil { return nil }`; `if stepCtx.Err() != nil { return context.Cause(stepCtx) }` (your `*StepTimeoutError`, or the parent's cause if the parent ended first); otherwise `return fmt.Errorf(\"step %q: %w\", s.Name, err)`. In the loop, `if ctx.Err() != nil { return context.Cause(ctx) }` before each step. `Error()` is `fmt.Sprintf(\"step %q timed out after %v\", e.Step, e.Budget)`."
+  ]
+}

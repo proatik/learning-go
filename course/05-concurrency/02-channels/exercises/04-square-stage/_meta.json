@@ -1,0 +1,9 @@
+{
+  "title": "Square stage",
+  "difficulty": "medium",
+  "hints": [
+    "Both functions have the generator shape from the lesson: `make` an output channel, start a goroutine that fills it and closes it, and return the channel at once. The only difference is where the values come from.",
+    "`Generate` ranges over `nums`. `Square` ranges over the **input channel**: `for v := range in` receives each value as it arrives and ends when `in` is closed, which is exactly when `Square` should close its own output.",
+    "`out := make(chan int); go func() { defer close(out); for v := range in { out <- v * v } }(); return out`. `Generate` is the same with `for _, n := range nums { out <- n }`."
+  ]
+}

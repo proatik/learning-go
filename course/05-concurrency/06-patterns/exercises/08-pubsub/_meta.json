@@ -1,0 +1,9 @@
+{
+  "title": "Pub/sub broker",
+  "difficulty": "medium",
+  "hints": [
+    "Every method starts with `b.mu.Lock(); defer b.mu.Unlock()`. `Subscribe` makes `ch := make(chan T, b.buffer)`, stores it under a fresh `id := b.nextID; b.nextID++`, and returns `ch` plus a closure that remembers `id`.",
+    "The unsubscribe closure locks too, then closes the channel only if `b.subs[id]` is still there (`if c, ok := b.subs[id]; ok { delete(b.subs, id); close(c) }`). That one check makes a second call, or a call after `Close`, harmless. `Close` sets `closed`, then closes and deletes every channel.",
+    "`Publish`: `n := 0; for _, ch := range b.subs { select { case ch <- v: n++; default: } }; return n`. The sends can't block, so holding the lock is fine. In `Subscribe`, if `b.closed`, close the new channel and return it with `func() {}`."
+  ]
+}

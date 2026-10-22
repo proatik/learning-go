@@ -1,0 +1,9 @@
+{
+  "title": "Fan-in: merge channels",
+  "difficulty": "easy",
+  "hints": [
+    "Start one goroutine per non-nil input; each one copies its input to the shared output. Several goroutines may send on one channel, but only one party may close it, and only after all senders are done.",
+    "A `sync.WaitGroup` counts the copying goroutines. One extra goroutine does `wg.Wait()` and then `close(out)`, so Merge itself can return straight away.",
+    "`out := make(chan T); var wg sync.WaitGroup; for _, in := range inputs { if in == nil { continue }; wg.Go(func() { for v := range in { out <- v } }) }; go func() { wg.Wait(); close(out) }(); return out`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Retry with backoff",
+  "difficulty": "medium",
+  "hints": [
+    "Write the loop without waiting first: call `f`, return `nil` on success, and wrap the error once the last attempt has failed. Then add the wait between attempts, and only between them.",
+    "Keep a `delay` that starts at `base` and doubles after every wait; each wait uses `min(delay, maxDelay)` (the built-in `min`). Wait with `t := time.NewTimer(…)` and a `select` on `<-t.C` and `<-stop`. A receive from a `nil` `stop` never fires, so `nil` needs no extra code.",
+    "Loop `for call := 1; ; call++ { if err = f(); err == nil { return nil }; if call == attempts { return fmt.Errorf(\"retry: %d attempts failed: %w\", attempts, err) }; … select …; delay *= 2 }`. In the `stop` case: `t.Stop()` and `return fmt.Errorf(\"%w after %d attempts: %w\", ErrStopped, call, err)`."
+  ]
+}

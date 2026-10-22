@@ -1,0 +1,9 @@
+{
+  "title": "Ordered concurrent results",
+  "difficulty": "medium",
+  "hints": [
+    "Use two goroutines. A **dispatcher** reads `in` and, for every value, makes a promise `p := make(chan R, 1)`, puts `p` on `queue := make(chan chan R, workers)` (in input order) and starts `go func() { p <- f(v) }()`. An **emitter** ranges over `queue` and, for each promise, waits for its value and sends it on `out`.",
+    "Bound the running calls with a semaphore `sem := make(chan struct{}, workers)`: acquire before `go`, release with `defer func() { <-sem }()` inside the worker. The dispatcher closes `queue` when it returns, so the emitter's `range` ends; the emitter does `defer close(out)`.",
+    "Make every blocking step a two-case `select` with `<-ctx.Done()` returning: the receive from `in` (comma-ok, return on close), `sem <- struct{}{}`, `queue <- p` (release the slot with `<-sem` before returning), and in the emitter both `r = <-p` and `out <- r`. Worker sends never block because each promise has a buffer of 1."
+  ]
+}

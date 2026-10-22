@@ -1,0 +1,9 @@
+{
+  "title": "Batch a stream",
+  "difficulty": "medium",
+  "hints": [
+    "Do the `size` check **before** the `go` statement: a panic inside the goroutine would crash the program instead of reaching the caller. Then keep a buffer slice in the goroutine and decide, after each value, whether it's full.",
+    "`for v := range in { buf = append(buf, v); if len(buf) == size { out <- buf; buf = <a new slice> } }`. After the loop (that's when `in` is closed), send `buf` only if `len(buf) > 0`. A slice sent on a channel shares its backing array with your `buf`, so start a fresh one with `make` after every send instead of `buf[:0]`.",
+    "`if size < 1 { panic(\"batch: size must be at least 1\") }; out := make(chan []string); go func() { defer close(out); buf := make([]string, 0, size); for v := range in { buf = append(buf, v); if len(buf) == size { out <- buf; buf = make([]string, 0, size) } }; if len(buf) > 0 { out <- buf } }(); return out`."
+  ]
+}

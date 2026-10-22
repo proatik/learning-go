@@ -1,0 +1,9 @@
+{
+  "title": "Atomic stats",
+  "difficulty": "easy",
+  "hints": [
+    "An `atomic.Int64` has no `++`: you call its methods. `Add(1)` increments, `Load()` reads, `Swap(v)` stores `v` and returns the old value, all as one indivisible step.",
+    "`Hit` is `s.hits.Add(1)`. `Snapshot` builds a `Counts` from two `Load()` calls. For `Reset`, a `Load()` followed by `Store(0)` loses any hit that lands between the two calls; `Swap(0)` does both at once.",
+    "`Reset`: `return Counts{Hits: s.hits.Swap(0), Misses: s.misses.Swap(0)}`. `Total`: `c.Hits + c.Misses`. `HitRate`: `if c.Total() == 0 { return 0 }`, then `float64(c.Hits) / float64(c.Total())`."
+  ]
+}

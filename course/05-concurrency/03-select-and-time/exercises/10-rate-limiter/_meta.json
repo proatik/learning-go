@@ -1,0 +1,9 @@
+{
+  "title": "Rate limiter",
+  "difficulty": "hard",
+  "hints": [
+    "A buffered channel of capacity `n` is a bucket of tokens: a value in the buffer is one allowed event. Taking a token is a receive; refilling is a send. `Wait` is then just a blocking receive and `Allow` a non-blocking one.",
+    "Write a `fill()` helper that sends `cap(l.tokens) - len(l.tokens)` tokens, each with `select { case l.tokens <- struct{}{}: default: return }`. Counting first matters: blocked `Wait` callers take tokens as fast as you send them, so a loop that stops only when the buffer is full would release all of them. `New` validates, makes both channels, calls `fill()` once (start full) and starts `go l.refill(interval)`.",
+    "`refill`: `t := time.NewTicker(interval)`, `defer t.Stop()`, then `for { select { case <-t.C: l.fill(); case <-l.stop: return } }`. `Stop` is `close(l.stop)`: closing wakes the goroutine's `<-l.stop` case."
+  ]
+}

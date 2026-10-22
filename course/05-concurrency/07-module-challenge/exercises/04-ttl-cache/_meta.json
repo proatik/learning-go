@@ -1,0 +1,9 @@
+{
+  "title": "TTL cache with a janitor",
+  "difficulty": "medium",
+  "hints": [
+    "Store the **expiry moment** (`time.Now().Add(ttl)`), not the ttl: then \"is it expired?\" is just `!time.Now().Before(e.expires)`. Every method locks `c.mu`, including `Len`. The janitor is one goroutine started in `New` and owned by the cache: `stop` tells it to quit, `done` tells `Close` it has quit.",
+    "`New`: default `sweepEvery`, make `items`, `stop` and `done`, then `go c.janitor(sweepEvery)`. The janitor: `defer close(c.done)`, make a `time.NewTicker(every)` with `defer tick.Stop()`, and loop on a `select` over `<-tick.C` (sweep) and `<-c.stop` (return).",
+    "`sweep` locks, reads `now := time.Now()` once, and deletes while ranging: `for k, e := range c.items { if !now.Before(e.expires) { delete(c.items, k) } }` (deleting during `range` is allowed). `Close`: `c.closeOnce.Do(func() { close(c.stop) })`, then `<-c.done`; receiving from a closed channel returns at once, so a second `Close` doesn't block."
+  ]
+}

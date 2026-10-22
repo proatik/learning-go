@@ -1,0 +1,9 @@
+{
+  "title": "Retry with backoff",
+  "difficulty": "hard",
+  "hints": [
+    "Write a `for n := 1; ; n++` loop and follow the README's rule list literally, in order, after each failure. A small helper `sleep(ctx, d) bool` (exercise 1 with a bool result) keeps the loop readable.",
+    "The wait is `base << (n - 1)`. The deadline test is `dl, ok := ctx.Deadline(); ok && !time.Now().Add(wait).Before(dl)`: \"not before\" means equal also gives up, because the context would already be done when the attempt starts. Check `ctx.Err() != nil` **before** the deadline test, so a context that already expired reports \"stopped\", not `ErrNoTime`.",
+    "Both wrapped errors use two `%w` verbs: `fmt.Errorf(\"retry: stopped after attempt %d: %w: %w\", n, context.Cause(ctx), err)` and `fmt.Errorf(\"%w (after attempt %d): %w\", ErrNoTime, n, err)`. `if attempts < 1 { attempts = 1 }` handles `0` and negatives, and the up-front `if err := ctx.Err(); err != nil { return err }` handles an already-canceled ctx."
+  ]
+}

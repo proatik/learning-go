@@ -1,0 +1,9 @@
+{
+  "title": "Every tick",
+  "difficulty": "medium",
+  "hints": [
+    "`time.NewTicker(interval)` returns a `*time.Ticker` whose channel `t.C` receives once per interval, forever, until you call `t.Stop()`. You want to wait on that channel **and** on `stop` at the same time.",
+    "Guard `interval <= 0` first. Then `t := time.NewTicker(interval)`, `defer t.Stop()`, and a `for` loop around a `select` with `case <-stop:` and `case <-t.C:`.",
+    "In the tick case: `n++` then `f(n)`. In the stop case: `return n`. Use `return`, not `break`: a plain `break` inside `select` only leaves the `select`, and the loop keeps going."
+  ]
+}

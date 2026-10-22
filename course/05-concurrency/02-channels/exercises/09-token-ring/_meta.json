@@ -1,0 +1,9 @@
+{
+  "title": "Token ring",
+  "difficulty": "hard",
+  "hints": [
+    "Build it in three steps: make a slice of `n` channels (`links`) plus one `result` channel back to `Ring`; start the players; then put an empty token into `links[0]` and wait on `result`. Each player only needs two channels: `in := links[i]` and `out := links[(i+1)%n]`. For the lone-player case, think about what a buffer of one slot changes for a send to yourself.",
+    "A player is a `for token := range in` loop: if `len(token) >= turns`, send it on `result`, otherwise `out <- append(token, name)`. Using `>=` makes negative `turns` behave like `0`. To shut down: once `Ring` holds the token, nobody can send any more, so `Ring` (which made the links) can close them all; every player's `range` then ends. Use a `sync.WaitGroup` so `Ring` returns only after all players have exited.",
+    "`links[i] = make(chan []string, 1)`; `result := make(chan []string)`; for each player `wg.Go(func() { for token := range in { if len(token) >= turns { result <- token; continue }; out <- append(token, name) } })`; then `links[0] <- nil; log := <-result; for _, l := range links { close(l) }; wg.Wait(); return log`. Return `nil` straight away when `names` is empty."
+  ]
+}

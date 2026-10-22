@@ -1,0 +1,9 @@
+{
+  "title": "Resource pool",
+  "difficulty": "medium",
+  "hints": [
+    "A buffered channel **is** a pool: its buffer holds the idle resources, a receive borrows one (and blocks when it's empty), a send gives one back. Closing a second channel, `closed`, is how `Close` reaches every waiting `Get` at once.",
+    "`New`: `idle: make(chan T, len(resources))` and send every resource into it; `closed: make(chan struct{})`. `Get` is a `select` over three cases: `r := <-p.idle`, `<-ctx.Done()` and `<-p.closed`. `Idle` is `len(p.idle)`. `Close` is `p.closeOnce.Do(func() { close(p.closed) })`.",
+    "When several `select` cases are ready, Go picks one **at random**, so a closed pool with idle resources might still lend one. Check `closed` first with a non-blocking `select { case <-p.closed: return zero, ErrClosed; default: }`, then the blocking one. `Put` does the same check, then `select { case p.idle <- r: default: panic(\"pool: Put into a full pool\") }`."
+  ]
+}

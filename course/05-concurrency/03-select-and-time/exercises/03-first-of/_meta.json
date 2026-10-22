@@ -1,0 +1,9 @@
+{
+  "title": "First of two",
+  "difficulty": "easy",
+  "hints": [
+    "This is one `select` with three receive cases: one for `a`, one for `b`, and one for the clock. `select` blocks until any case can proceed, then runs only that case.",
+    "The clock case is `case <-time.After(timeout):`. Each case returns straight away with the right `from` value: `1`, `2` or `0`.",
+    "You don't need any special code for `nil` channels: a receive from `nil` can never proceed, so `select` just ignores that case. `case v = <-a: return v, 1` (note `=`, assigning the named result) is the whole first case."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Reusable barrier",
+  "difficulty": "medium",
+  "hints": [
+    "One closed channel wakes **every** goroutine waiting on it, which is exactly \"release them all\". Each round needs its own channel, because a closed channel can't be reopened.",
+    "`New` makes the first `release` channel. In `Wait`, under the mutex: remember the current `round` and `release`, then `count++`. If you are not the last, unlock and block on `<-release`. If you are the last (`count == n`), reset `count`, bump `round`, make a **new** `release` for the next round, unlock, and `close` the old one.",
+    "```go\nb.mu.Lock()\nround, release := b.round, b.release\nb.count++\nif b.count == b.n {\n\tb.count = 0\n\tb.round++\n\tb.release = make(chan struct{})\n\tb.mu.Unlock()\n\tclose(release)\n\treturn round\n}\nb.mu.Unlock()\n<-release\nreturn round\n```\nCopy `release` into a local **before** unlocking: by the time a waiter wakes up, `b.release` already belongs to the next round."
+  ]
+}

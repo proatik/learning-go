@@ -1,0 +1,9 @@
+{
+  "title": "With timeout",
+  "difficulty": "easy",
+  "hints": [
+    "You need to wait on two things at once, the result and a clock, so that's a `select` with two receive cases. `time.After(d)` gives you a channel that receives once `d` has passed.",
+    "Make `result := make(chan T, 1)`, start `go func() { result <- f() }()`, then `select` on `<-result` and `<-time.After(d)`. Handle `d <= 0` first with an early `return zero, ErrTimeout`.",
+    "The buffer of 1 matters: after a timeout nobody receives from `result`, and with an unbuffered channel the goroutine would block on `result <- f()` forever. With the buffer, the send succeeds and the goroutine exits."
+  ]
+}

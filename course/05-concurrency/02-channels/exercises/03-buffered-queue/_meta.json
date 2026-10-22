@@ -1,0 +1,9 @@
+{
+  "title": "Buffered queue",
+  "difficulty": "easy",
+  "hints": [
+    "`len` and `cap` work on channels: `len(ch)` is how many values are waiting in the buffer, `cap(ch)` is the buffer size. Since only one goroutine uses the queue, checking them first tells you whether a send or receive would block.",
+    "`New` stores `make(chan string, capacity)`. A send on a buffered channel blocks only when it is full, so `Push` returns `false` when `len(q.ch) == cap(q.ch)` and otherwise sends. `Pop` returns `\"\", false` when `len(q.ch) == 0` and otherwise receives.",
+    "`Push`: `if len(q.ch) == cap(q.ch) { return false }; q.ch <- s; return true`. `Pop`: `if len(q.ch) == 0 { return \"\", false }; return <-q.ch, true`. `Len` and `Cap` are one line each. With capacity 0, `len == cap == 0`, so `Push` always says full."
+  ]
+}

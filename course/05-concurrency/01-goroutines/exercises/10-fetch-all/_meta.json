@@ -1,0 +1,9 @@
+{
+  "title": "Fetch all",
+  "difficulty": "hard",
+  "hints": [
+    "Work in three phases, and only the middle one is concurrent: (1) in the caller, de-duplicate `keys` into a `unique` slice (first occurrence wins); (2) one goroutine per unique key writes a small `result{value, err}` into `results[i]`; (3) after `Wait`, build the maps and `Failed` from `unique` and `results`.",
+    "Put the fetch in a helper `fetchOne(f, key) (res result)` with a deferred `recover` that sets the named result, so a panic becomes `fmt.Errorf(\"fetch %q panicked: %v\", key, r)`. A normal error becomes `fmt.Errorf(\"fetch %q: %w\", key, err)`. Handle `\"\"` before starting a goroutine: `results[i].err = ErrEmptyKey`.",
+    "Phase 3: `rep := Report{Values: make(map[string]string), Errors: make(map[string]error), Failed: []string{}}`, then `for i, key := range unique { if results[i].err != nil { rep.Errors[key] = results[i].err; rep.Failed = append(rep.Failed, key) } else { rep.Values[key] = results[i].value } }` and `slices.Sort(rep.Failed)`. The `seen` map in phase 1 is fine: only the calling goroutine touches it."
+  ]
+}

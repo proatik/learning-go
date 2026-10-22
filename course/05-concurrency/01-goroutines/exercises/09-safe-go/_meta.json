@@ -1,0 +1,9 @@
+{
+  "title": "Safe go",
+  "difficulty": "hard",
+  "hints": [
+    "`recover` only catches a panic in **its own** goroutine, so the `defer`/`recover` must run inside each task's goroutine, not in `SafeRun`. Put it in a small helper `protect(i int, task func()) (err error)` that calls the task.",
+    "In `protect`, a deferred function calls `recover()`; if the result is non-nil, set the **named** result `err`. Check `r.(error)`: wrap with `%w` when it is an error, use `%v` otherwise (both print the same text). `SafeRun` is then parallel map: `errs[i] = protect(i, task)` in goroutine `i`.",
+    "`defer func() { r := recover(); if r == nil { return }; if e, ok := r.(error); ok { err = fmt.Errorf(\"task %d panicked: %w\", i, e) } else { err = fmt.Errorf(\"task %d panicked: %v\", i, r) } }()`, then `task(); return nil`. A nil `task` panics on the call, inside `protect`, so it is recovered too."
+  ]
+}

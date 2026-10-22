@@ -1,0 +1,9 @@
+{
+  "title": "Bounded parallel map",
+  "difficulty": "medium",
+  "hints": [
+    "Two separate problems: order (write `out[i]` into a slice made with `make([]R, len(in))`) and the bound (a channel with capacity `max(limit, 1)`; a send takes a slot, a receive frees one).",
+    "In the loop, `sem <- struct{}{}` **before** starting the goroutine: once `limit` slots are taken, the loop itself blocks until a call finishes. Inside the goroutine, `defer func() { <-sem }()` releases the slot. A `sync.WaitGroup` lets you wait for the last calls.",
+    "`out := make([]R, len(in)); sem := make(chan struct{}, max(limit, 1)); var wg sync.WaitGroup; for i, v := range in { sem <- struct{}{}; wg.Go(func() { defer func() { <-sem }(); out[i] = f(v) }) }; wg.Wait(); return out`."
+  ]
+}

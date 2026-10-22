@@ -1,0 +1,9 @@
+{
+  "title": "Three-stage pipeline",
+  "difficulty": "easy",
+  "hints": [
+    "Every producing stage has the same shape: make a channel, start a goroutine that sends into it, return the channel straight away. The goroutine is the only sender, so it is the one that closes.",
+    "Inside the goroutine, `defer close(out)` first, then loop. `Gen` loops over `nums`; `Square` uses `for n := range in`, which stops by itself once `in` is closed and empty.",
+    "`out := make(chan int); go func() { defer close(out); for n := range in { out <- n * n } }(); return out`. `Sum` needs no goroutine: `total := 0; for n := range in { total += n }; return total`."
+  ]
+}

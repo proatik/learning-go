@@ -1,0 +1,9 @@
+{
+  "title": "Idle timeout",
+  "difficulty": "medium",
+  "hints": [
+    "A single `time.After(d)` created before the loop is an **overall** deadline: it fires 250ms after the start no matter how busy the stream is. You need a deadline that moves every time an event arrives.",
+    "`idle := time.NewTimer(d)` and `defer idle.Stop()`, then `for { select { … } }` with two cases: `case e, ok := <-events:` and `case <-idle.C:`. The timer case means \"quiet for d\": return.",
+    "In the event case: `if !ok { return got }`, then `got = append(got, e)` and `idle.Reset(d)`. Since Go 1.23 `Reset` on an active timer is safe without stopping or draining it first."
+  ]
+}

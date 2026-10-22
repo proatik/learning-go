@@ -1,0 +1,9 @@
+{
+  "title": "Your own errgroup",
+  "difficulty": "medium",
+  "hints": [
+    "`WithContext` is two lines: `ctx, cancel := context.WithCancelCause(ctx)`, then return a Group holding `cancel`, plus the new ctx. The tasks get the context from the caller's closure, not from the Group.",
+    "`Go` wraps `f` in `g.wg.Go(func() { … })`. Inside, call `f`; when the error is non-nil, record it with `g.once.Do(func() { … })` so only the first one wins, and cancel there too.",
+    "In `Go`: `if err := f(); err != nil { g.once.Do(func() { g.err = err; if g.cancel != nil { g.cancel(err) } }) }`. `Wait`: `g.wg.Wait(); if g.cancel != nil { g.cancel(g.err) }; return g.err`. Reading `g.err` after `wg.Wait()` is safe: Wait happens after every `Done`."
+  ]
+}

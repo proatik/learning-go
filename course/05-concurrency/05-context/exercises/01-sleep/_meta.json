@@ -1,0 +1,9 @@
+{
+  "title": "Cancelable sleep",
+  "difficulty": "easy",
+  "hints": [
+    "You need to wait for **two** things at once: the time running out, and `ctx.Done()` being closed. Which statement from lesson 3 waits on several channels?",
+    "Check `ctx.Err()` first and return it if it's not `nil`; then handle `d <= 0`. Otherwise create `t := time.NewTimer(d)`, `defer t.Stop()`, and `select` on `t.C` and `ctx.Done()`.",
+    "`select { case <-t.C: return nil; case <-ctx.Done(): return ctx.Err() }`. The `defer t.Stop()` releases the timer when the context wins."
+  ]
+}

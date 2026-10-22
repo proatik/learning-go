@@ -1,0 +1,9 @@
+{
+  "title": "Zip two channels",
+  "difficulty": "medium",
+  "hints": [
+    "`range` can only watch one channel. Here you need to know, for **each** receive, whether that channel is closed: that's what `v, ok := <-ch` is for (`ok` is `false` once it's closed and empty).",
+    "Inside the goroutine: an endless `for` loop, then `x, ok := <-a` and `return` if `!ok`; then `y, ok := <-b` and `return` if `!ok`; then send the pair. With `defer close(out)` at the top, every `return` closes the output. (`for x := range a { … }` for the first receive works too.)",
+    "`out := make(chan Pair[X, Y]); go func() { defer close(out); for { x, ok := <-a; if !ok { return }; y, ok := <-b; if !ok { return }; out <- Pair[X, Y]{First: x, Second: y} } }(); return out`."
+  ]
+}

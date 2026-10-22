@@ -1,0 +1,9 @@
+{
+  "title": "Bank account",
+  "difficulty": "easy",
+  "hints": [
+    "Picture two goroutines withdrawing 1 from a balance of 1. If both check `balance >= 1` before either subtracts, both succeed and the balance ends at -1. The check and the update must be inside one critical section.",
+    "Validate `amount <= 0` first (it doesn't touch shared state, so no lock needed). Then `a.mu.Lock(); defer a.mu.Unlock()` and do the check **and** the change while holding it.",
+    "`Withdraw`: `if amount <= 0 { return fmt.Errorf(\"withdraw %d: %w\", amount, ErrInvalidAmount) }`, then lock + defer unlock, then `if amount > a.balance { return …ErrInsufficientFunds }`, then `a.balance -= amount; return nil`. Don't call `a.Balance()` while holding the lock: it would lock `a.mu` a second time and deadlock."
+  ]
+}

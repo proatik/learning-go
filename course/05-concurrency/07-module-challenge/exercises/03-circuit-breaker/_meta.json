@@ -1,0 +1,9 @@
+{
+  "title": "Circuit breaker",
+  "difficulty": "medium",
+  "hints": [
+    "Split `Call` into three steps: **decide** under the lock (may this call run? is it the trial?), **run** `fn` without the lock, **record** the outcome under the lock again. Holding the mutex across `fn` would serialise every call.",
+    "`allow()`: `Closed` → run. `Open` → if `time.Since(b.openedAt) < b.cooldown` reject, otherwise set `HalfOpen` and fall through. `HalfOpen` → if `b.probing` reject, else set `probing = true` and run as the trial. `record(trial, err)`: a trial clears `probing` and goes to `Closed` on success or `Open` (with `openedAt = time.Now()`) on failure.",
+    "For a non-trial call, `record` returns early unless the state is still `Closed`; then `err == nil` resets `failures`, and an error does `failures++` and, if `failures >= threshold`, sets `state, openedAt, failures = Open, time.Now(), 0`. `New` uses `max(threshold, 1)`."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Deadlock-free transfers",
+  "difficulty": "hard",
+  "hints": [
+    "The deadlock: goroutine 1 locks A and waits for B, goroutine 2 locks B and waits for A. Neither can move. If every goroutine takes the two locks in the **same global order**, the second one waits on the first lock and holds nothing, so the cycle can't form.",
+    "In `Transfer`, validate first (no locks needed), then pick `first, second := from, to` and swap them if `second.ID < first.ID`. Lock `first`, then `second`, `defer` both unlocks, and only then check `from.balance` and move the money. Use the fields directly: calling `from.Balance()` while you hold `from.mu` locks it twice.",
+    "`Total`: `sorted := slices.Clone(accounts)`; `slices.SortFunc(sorted, func(a, b *Account) int { return cmp.Compare(a.ID, b.ID) })`; then `for _, a := range sorted { a.mu.Lock(); defer a.mu.Unlock() }` (each `defer` runs when `Total` returns, not at the end of the loop iteration), then add up `a.balance` for every account."
+  ]
+}

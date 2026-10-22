@@ -1,0 +1,9 @@
+{
+  "title": "Run all",
+  "difficulty": "easy",
+  "hints": [
+    "Calling `task()` in a plain loop runs the tasks one after another: three 1s tasks take 3s. Put `go` in front of each call, then make `RunAll` wait.",
+    "Declare `var wg sync.WaitGroup`. For each task: `wg.Add(1)` **before** `go`, and `defer wg.Done()` as the first line inside the goroutine. After the loop, `wg.Wait()`.",
+    "`for _, task := range tasks { wg.Add(1); go func() { defer wg.Done(); task() }() }`, then `wg.Wait()`. Since Go 1.22 each iteration has its own `task`, so the closure is safe."
+  ]
+}
